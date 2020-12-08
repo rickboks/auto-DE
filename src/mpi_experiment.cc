@@ -26,11 +26,11 @@ void experiment
 int main(int argc, char **argv) {
 	suite.setDEAdaptationManagers({"S"});
 	suite.setCrossoverManagers({"B"});
-	//suite.setConstraintHandlers({"CO"});
-	//
 
 	std::string templateFile = "./configuration.ini";
+
 	int id;
+
 	MPI_Init(&argc, &argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &id);
 
