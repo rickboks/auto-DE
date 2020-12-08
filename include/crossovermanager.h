@@ -2,10 +2,10 @@
 #include <random>
 #include <stdexcept>
 #include <vector>
-#include<algorithm>
+#include <algorithm>
+#include <functional>
 #include "rng.h"
 #include "solution.h"
-#include <functional>
 
 class CrossoverManager {
 	protected:

@@ -3,11 +3,8 @@
 #include <set>
 #include <mpi.h>
 #include <fstream>
-#include "hybridalgorithm.h"
 #include "differentialevolution.h"
 #include "desuite.h"
-#include "hybridsuite.h"
-#include "particleswarmsuite.h"
 #include "util.h"
 
 DESuite suite;
