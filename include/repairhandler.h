@@ -42,73 +42,53 @@ class ConservatismRepair : public DEConstraintHandler {
 		void repairDE(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
-// Particle Swarm Optimization
-class HyperbolicRepair : public PSOConstraintHandler {
-	public:
-		HyperbolicRepair(std::vector<double> const lb, std::vector<double> const ub):ConstraintHandler(lb,ub), PSOConstraintHandler(lb, ub){};
-		void repairVelocityPre(Particle * const p);
-};
-
-class PBestDimRepair : public PSOConstraintHandler {
-	public:
-		PBestDimRepair(std::vector<double> const lb, std::vector<double> const ub):ConstraintHandler(lb,ub), PSOConstraintHandler(lb, ub){};
-		void repairPSO(Particle * const p);
-};
-
 // Generic
-class ResamplingRepair : public DEConstraintHandler, public PSOConstraintHandler  {
+class ResamplingRepair : public DEConstraintHandler {
 	public:
 		ResamplingRepair(std::vector<double> const lb, std::vector<double> const ub)
-			:ConstraintHandler(lb,ub), DEConstraintHandler(lb,ub), PSOConstraintHandler(lb, ub){};
+			:ConstraintHandler(lb,ub), DEConstraintHandler(lb,ub){};
 		bool resample(Solution * const p, int const resamples);
 };
 
-class DeathPenalty : public DEConstraintHandler, public PSOConstraintHandler {
+class DeathPenalty : public DEConstraintHandler {
 	public:
 		DeathPenalty(std::vector<double>const lb,std::vector<double>const ub):ConstraintHandler(lb,ub), 
-			DEConstraintHandler(lb,ub), PSOConstraintHandler(lb,ub){};
+			DEConstraintHandler(lb,ub){};
 		void penalize(Solution* const p);
 };
 
-class ReinitializationRepair : public DEConstraintHandler, public PSOConstraintHandler {
+class ReinitializationRepair : public DEConstraintHandler {
 	public:
 		ReinitializationRepair(std::vector<double> const lb, std::vector<double> const ub)
-			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub), PSOConstraintHandler(lb,ub){}; 
+			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub){}; 
 		void repair(Solution* const p);
-		void repair(Particle* const p);
 };
 
-class ProjectionRepair : public DEConstraintHandler, public PSOConstraintHandler {
+class ProjectionRepair : public DEConstraintHandler {
 	public:
 		ProjectionRepair(std::vector<double> const lb, std::vector<double> const ub)
-			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub), PSOConstraintHandler(lb,ub){};
+			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub){};
 		void repair(Solution* const p);
-		void repair(Particle* const p);
 };
 
-class ReflectionRepair : public DEConstraintHandler, public PSOConstraintHandler {
+class ReflectionRepair : public DEConstraintHandler{
 	public:
 		ReflectionRepair(std::vector<double> const lb, std::vector<double> const ub)
-			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub), PSOConstraintHandler(lb,ub){}; 
+			:ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub){}; 
 		void repair(Solution* const p);
-		void repair(Particle* const p);
 };
 
-class WrappingRepair : public DEConstraintHandler, public PSOConstraintHandler {
+class WrappingRepair : public DEConstraintHandler {
 	public:
-		WrappingRepair(std::vector<double> const lb, std::vector<double> const ub):ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub), 
-		PSOConstraintHandler(lb,ub){}; 
+		WrappingRepair(std::vector<double> const lb, std::vector<double> const ub):ConstraintHandler(lb,ub), DEConstraintHandler(lb, ub){};
 		void repair(Solution* const p);
-		void repair(Particle* const p);
 };
 
-class TransformationRepair : public DEConstraintHandler, public PSOConstraintHandler { //Adapted from https://github.com/psbiomech/c-cmaes
+class TransformationRepair : public DEConstraintHandler { //Adapted from https://github.com/psbiomech/c-cmaes
 	private:
 		std::vector<double> al, au, xlo, xhi, r;
 		bool shift(Solution* const p);
-		bool shift(Particle* const p);
 	public:
 		TransformationRepair(std::vector<double> const lb, std::vector<double> const ub);
 		void repair(Solution* const p);
-		void repair(Particle* const p);
 };

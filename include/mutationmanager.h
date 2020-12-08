@@ -1,7 +1,6 @@
 #pragma once
 #include <algorithm>
 #include <iostream>
-#include "particle.h"
 #include "constrainthandler.h"
 #include <functional>
 #include <limits>

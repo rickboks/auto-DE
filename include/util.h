@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 #include "rng.h"
-#include "particle.h"
+#include "solution.h"
 
 void scale(std::vector<double>& vec, double const x);
 void add(std::vector<double>const& lhs, std::vector<double>const& rhs, std::vector<double>& store);

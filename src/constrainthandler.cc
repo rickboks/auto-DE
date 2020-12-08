@@ -1,6 +1,6 @@
 #include "constrainthandler.h"
-#include "particle.h"
 #include "repairhandler.h"
+#include "solution.h"
 #define LC(X) [](std::vector<double>lb, std::vector<double>ub){return new X(lb,ub);}
 
 bool ConstraintHandler::isFeasible(Solution const * const p) const{
@@ -40,20 +40,3 @@ std::map<std::string, std::function<DEConstraintHandler*(std::vector<double>, st
 	{"PB", LC(ProjectionBaseRepair)},
 	{"CO", LC(ConservatismRepair)}
 });
-
-std::map<std::string, std::function<PSOConstraintHandler*(std::vector<double>, std::vector<double>)>> const psoCHs {
-	// Generic
-	{"DP", LC(DeathPenalty)},
-	{"RS", LC(ResamplingRepair)},
-
-	// Almost generic
-	{"RI", LC(ReinitializationRepair)},
-	{"PR", LC(ProjectionRepair)},
-	{"RF", LC(ReflectionRepair)},
-	{"WR", LC(WrappingRepair)},
-	{"TR", LC(TransformationRepair)},
-
-	//// PSO
-	{"HY", LC(HyperbolicRepair)},
-	{"PD", LC(PBestDimRepair)},
-};
