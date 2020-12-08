@@ -4,7 +4,6 @@
 #include <set>
 #include <map>
 #include <functional>
-#include <stdexcept>
 
 class DEAdaptationManager {
 protected:

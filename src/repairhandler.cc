@@ -1,8 +1,5 @@
 #include "repairhandler.h"
 #include "util.h"
-#include <algorithm>
-#include <exception>
-#include <limits>
 
 // Differential Evolution
 void RandBaseRepair::repairDE(Solution* const p, Solution const* const base, Solution const* const target) {

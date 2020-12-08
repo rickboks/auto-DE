@@ -1,9 +1,6 @@
-#include "deadaptationmanager.h"
-#include <algorithm>
 #include <numeric>
-#include <iostream>
+#include "deadaptationmanager.h"
 #include "rng.h"
-#include "util.h"
 
 #define LC(X) [](int const popSize){return new X(popSize);}
 std::map<std::string, std::function<DEAdaptationManager*(int const)>> const deAdaptations({

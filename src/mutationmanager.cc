@@ -1,7 +1,5 @@
 #include "mutationmanager.h"
 #include "util.h"
-#include <limits>
-#include <numeric>
 
 #define LC(X) [](int const D, DEConstraintHandler* const ch){return new X(D,ch);}
 

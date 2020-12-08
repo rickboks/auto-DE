@@ -1,6 +1,5 @@
 #include "util.h"
 #include "crossovermanager.h"
-#include<unordered_set>
 
 CrossoverManager::CrossoverManager(int const D): D(D){}
 CrossoverManager::~CrossoverManager(){}

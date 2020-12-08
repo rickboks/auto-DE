@@ -1,11 +1,5 @@
 #pragma once
-#include <algorithm>
-#include <iostream>
 #include "constrainthandler.h"
-#include <functional>
-#include <limits>
-#include "rng.h"
-#include "util.h"
 
 class MutationManager {
 	protected:

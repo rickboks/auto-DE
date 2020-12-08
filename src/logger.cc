@@ -1,5 +1,4 @@
 #include "logger.h"
-#include <iomanip>
 #include <numeric>
 
 void Logger::log(int const function, int const D, std::vector<double> const percCorrected, 

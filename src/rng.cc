@@ -1,5 +1,4 @@
 #include "rng.h"
-#include <algorithm>
 
 RNG::RNG()
 : rng(dev()), boolDist(0.5){

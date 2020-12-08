@@ -1,10 +1,8 @@
 #pragma once
 #include <random>
-#include <stdexcept>
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include "rng.h"
 #include "solution.h"
 
 class CrossoverManager {
