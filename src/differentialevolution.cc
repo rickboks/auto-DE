@@ -31,8 +31,8 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 
 	int iteration = 0;
 
-	std::map<MutationManager*, std::vector<int>> mutationManagers;
-	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; 
+	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
+	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
 
 	while (problem->IOHprofiler_get_evaluations() < evalBudget && !problem->IOHprofiler_hit_optimal()){
 		paramAdaptationManager->nextParameters(Fs, Crs);
@@ -41,9 +41,14 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
 		for (MutationManager* m : configSpace->mutation){
-			m->preMutation(genomes);
-			for (int i: mutationManagers[m])
-				 donors[i] = m->mutate(genomes, i, Fs[i]);
+			if (mutationManagers.count(m)){
+				std::vector<int> indices = mutationManagers[m];
+				if (!indices.empty()){
+					m->preMutation(genomes);
+					for (int i : indices)
+						 donors[i] = m->mutate(genomes, i, Fs[i]);
+				}
+			}
 		}
 
 		// Crossover step
