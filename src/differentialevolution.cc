@@ -20,9 +20,9 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 		genomes[i]->evaluate(problem, iohLogger);
 	}
 
-	DEConstraintHandler * const deCH = deCHs.at(config.constraintHandler)(lowerBound, upperBound);
+	ConstraintHandler * const ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
 	CrossoverManager const* const crossoverManager = crossovers.at(config.crossover)(D);
-	MutationManager* const mutationManager = mutations.at(config.mutation)(D, deCH);
+	MutationManager* const mutationManager = mutations.at(config.mutation)(D, ch);
 	ParameterAdaptationManager* const adaptationManager = deAdaptations.at(config.adaptation)(popSize);
 
 	std::vector<double> Fs(popSize);
@@ -42,7 +42,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 		for (int i = 0; i < popSize; i++){
 			parentF[i] = genomes[i]->getFitness();
 			trials[i]->evaluate(problem, iohLogger);
-			deCH->penalize(trials[i]); 
+			ch->penalize(trials[i]); 
 			trialF[i] = trials[i]->getFitness();
 
 			if (trialF[i] < parentF[i])
@@ -61,7 +61,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 	delete mutationManager;
 	delete crossoverManager;
 	delete adaptationManager;
-	delete deCH;
+	delete ch;
 
 	genomes.clear();
 }

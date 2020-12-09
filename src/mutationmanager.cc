@@ -1,7 +1,7 @@
 #include "mutationmanager.h"
 #include "util.h"
 
-#define LC(X) [](int const D, DEConstraintHandler* const ch){return new X(D,ch);}
+#define LC(X) [](int const D, ConstraintHandler* const ch){return new X(D,ch);}
 
 std::vector<Solution*> MutationManager::mutate(std::vector<Solution*>const& genomes, std::vector<double>const& Fs){
 	this->genomes = genomes;
@@ -15,8 +15,8 @@ std::vector<Solution*> MutationManager::mutate(std::vector<Solution*>const& geno
 		int resamples = 0;
 		while (true){
 			Solution* m = mutate(i);
-			if (!deCH->resample(m, resamples)){
-				deCH->repair(m); //generic repair
+			if (!ch->resample(m, resamples)){
+				ch->repair(m); //generic repair
 				mutants[i] = m; 
 				break;
 			}
@@ -27,7 +27,7 @@ std::vector<Solution*> MutationManager::mutate(std::vector<Solution*>const& geno
 	return mutants;
 }
 
-std::map<std::string, std::function<MutationManager* (int const, DEConstraintHandler*const)>> const mutations ({
+std::map<std::string, std::function<MutationManager* (int const, ConstraintHandler*const)>> const mutations ({
 		{"R1", LC(Rand1MutationManager)},
 		{"T1", LC(TTB1MutationManager)},
 		{"T2", LC(TTB2MutationManager)},
@@ -57,7 +57,7 @@ Solution* Rand1MutationManager::mutate(int const i) const{
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -82,7 +82,7 @@ Solution* TTB1MutationManager::mutate(int const i) const{
 
 	add(mutant, difference, mutant);
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, genomes[i], genomes[i]);
+	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
 
@@ -110,7 +110,7 @@ Solution* TTB2MutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, genomes[i], genomes[i]);
+	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
 
@@ -134,7 +134,7 @@ Solution* TTPB1MutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, genomes[i], genomes[i]);
+	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
 
@@ -157,7 +157,7 @@ Solution* Best1MutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, best, genomes[i]);
+	ch->repair(m, best, genomes[i]);
 	return m;
 }
 
@@ -181,7 +181,7 @@ Solution* Best2MutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, best, genomes[i]);
+	ch->repair(m, best, genomes[i]);
 	return m;
 }
 
@@ -201,7 +201,7 @@ Solution* Rand2MutationManager::mutate(int const i) const{
 
 	add(mutant, difference, mutant);
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[4], genomes[i]);
+	ch->repair(m, xr[4], genomes[i]);
 	return m;
 }
 
@@ -229,7 +229,7 @@ Solution* Rand2DirMutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -255,7 +255,7 @@ Solution* NSDEMutationManager::mutate(int const i) const {
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -299,7 +299,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(int const i) const
 	add(temp, mutant, mutant);
 	
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, &base, genomes[i]);
+	ch->repair(m, &base, genomes[i]);
 	return m;
 }
 
@@ -316,7 +316,7 @@ Solution* TrigonometricMutationManager::rand1Mutation(int const i) const{
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -337,7 +337,7 @@ Solution* TwoOpt1MutationManager::mutate(int const i) const{
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -362,7 +362,7 @@ Solution* TwoOpt2MutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -422,7 +422,7 @@ Solution* ProximityMutationManager::mutate(int const i) const{
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, xr[0], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -470,6 +470,6 @@ Solution* RankingMutationManager::mutate(int const i) const{
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
-	deCH->repairDE(m, genomes[i], genomes[i]);
+	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }

@@ -1,4 +1,5 @@
 #include "desuite.h"
+#include "constrainthandler.h"
 #include "crossovermanager.h"
 #include "parameteradaptationmanager.h"
 #include <iostream>
@@ -12,7 +13,7 @@ DESuite::DESuite(){
 		this->crossoverManagers.push_back(i.first);
 	for (auto&i : ::deAdaptations)
 		this->adaptationManagers.push_back(i.first);
-	for (auto&i : ::deCHs)
+	for (auto&i : ::constraintHandlers)
 		this->constraintHandlers.push_back(i.first);
 
 	generateConfigurations();

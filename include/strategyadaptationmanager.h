@@ -4,9 +4,15 @@
 
 class StrategyAdaptationManager {
 	public:
-		StrategyAdaptationManager ();
-		virtual ~StrategyAdaptationManager ();
-		virtual void nextStrategies(std::vector<MutationManager*> mutation, std::vector<CrossoverManager*> crossover)=0;
+		StrategyAdaptationManager();
+		virtual ~StrategyAdaptationManager();
+		virtual void nextStrategies(std::vector<MutationManager*>& mutation, std::vector<CrossoverManager*>& crossover)=0;
 	private:
-		/* data */
+};
+
+class ConstantStrategyManager {
+	public:
+		ConstantStrategyManager();
+		void nextStrategies(std::vector<MutationManager*>& mutation, std::vector<CrossoverManager*>& crossover);
+	private:
 };
