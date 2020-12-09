@@ -11,8 +11,7 @@ void algorithm
 }
 
 void _run_experiment(bool const log) {
-    de = new DifferentialEvolution(DEConfig("T2", "B", "S", "PM"));
-
+    de = new DifferentialEvolution(DEConfig({"T2"}, {"B"}, "S", "PM"));
 	std::string templateFile = "./configuration.ini";
     std::string configFile = generateConfig(templateFile, de->getIdString());
     IOHprofiler_experimenter<double> experimenter(configFile,algorithm); 
