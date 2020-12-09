@@ -1,6 +1,6 @@
 #include "desuite.h"
 #include "crossovermanager.h"
-#include "deadaptationmanager.h"
+#include "parameteradaptationmanager.h"
 #include <iostream>
 #include <algorithm>
 #include <pthread.h>
@@ -41,7 +41,7 @@ void DESuite::setCrossoverManagers(std::vector<std::string> crossoverManagers){
 	generateConfigurations();
 }
 
-void DESuite::setDEAdaptationManagers(std::vector<std::string> adaptationManagers){
+void DESuite::setParameterAdaptationManagers(std::vector<std::string> adaptationManagers){
 	this->adaptationManagers = adaptationManagers;
 	generateConfigurations();
 }

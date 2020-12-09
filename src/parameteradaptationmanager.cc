@@ -1,19 +1,19 @@
 #include <numeric>
-#include "deadaptationmanager.h"
+#include "parameteradaptationmanager.h"
 #include "rng.h"
 
 #define LC(X) [](int const popSize){return new X(popSize);}
-std::map<std::string, std::function<DEAdaptationManager*(int const)>> const deAdaptations({
+std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const deAdaptations({
 		{"J", LC(JADEManager)},
 		{"S", LC(SHADEManager)},
 		{"N", LC(NoAdaptationManager)},
 });
 
-DEAdaptationManager::DEAdaptationManager(int const popSize): popSize(popSize){}
+ParameterAdaptationManager::ParameterAdaptationManager(int const popSize): popSize(popSize){}
 
 //JADE
 JADEManager::JADEManager(int const popSize)
- : DEAdaptationManager(popSize), MuCr(0.5), MuF(0.6), c(0.1){}
+ : ParameterAdaptationManager(popSize), MuCr(0.5), MuF(0.6), c(0.1){}
 
 void JADEManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
 	std::vector<double> SF, SCr;
@@ -68,7 +68,7 @@ double JADEManager::lehmerMean(std::vector<double>const& SF) const {
 }
 
 // SHADE
-SHADEManager::SHADEManager(int const popSize) : DEAdaptationManager(popSize), H(popSize), MCr(H), MF(H), r(H), k(0){
+SHADEManager::SHADEManager(int const popSize) : ParameterAdaptationManager(popSize), H(popSize), MCr(H), MF(H), r(H), k(0){
 	for (int i = 0; i < H; i++)
 		r[i] = rng.randInt(0, H-1);
 
@@ -144,7 +144,7 @@ void SHADEManager::nextCr(std::vector<double>& Crs){
 
 //NO ADAPTATION
 NoAdaptationManager::NoAdaptationManager(int const popSize)
- : DEAdaptationManager(popSize), F(0.5), Cr(.9){}
+ : ParameterAdaptationManager(popSize), F(0.5), Cr(.9){}
 
 void NoAdaptationManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
 	//ignore

@@ -19,7 +19,7 @@ void experiment
 }
 
 int main(int argc, char **argv) {
-	suite.setDEAdaptationManagers({"S"});
+	suite.setParameterAdaptationManagers({"S"});
 	suite.setCrossoverManagers({"B"});
 
 	std::string templateFile = "./configuration.ini";

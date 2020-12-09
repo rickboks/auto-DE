@@ -5,7 +5,7 @@
 #include "differentialevolution.h"
 #include "mutationmanager.h"
 #include "crossovermanager.h"
-#include "deadaptationmanager.h"
+#include "parameteradaptationmanager.h"
 
 class DESuite {
 	private:		
@@ -19,7 +19,7 @@ class DESuite {
 		void generateConfigurations();
 		void setMutationManagers(std::vector<std::string> mutationManagers);
 		void setCrossoverManagers(std::vector<std::string> crossoverManagers);
-		void setDEAdaptationManagers(std::vector<std::string> adaptationManagers);
+		void setParameterAdaptationManagers(std::vector<std::string> adaptationManagers);
 		void setConstraintHandlers(std::vector<std::string> adaptationManagers);
 		DifferentialEvolution getDE(int const i);	
 		int size() const;

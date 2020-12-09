@@ -5,20 +5,20 @@
 #include <map>
 #include <functional>
 
-class DEAdaptationManager {
+class ParameterAdaptationManager {
 protected:
 	int const popSize;
 public:
-	DEAdaptationManager(int const popSize); 
-	virtual ~DEAdaptationManager(){};
+	ParameterAdaptationManager(int const popSize); 
+	virtual ~ParameterAdaptationManager(){};
 	virtual void nextF(std::vector<double>& Fs)=0;
 	virtual void nextCr(std::vector<double>& Crs)=0;
 	virtual void update(std::vector<double>const& targets, std::vector<double>const& trials)=0;
 };
 
-extern std::map<std::string, std::function<DEAdaptationManager*(int const)>> const deAdaptations;
+extern std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const deAdaptations;
 
-class JADEManager : public DEAdaptationManager{
+class JADEManager : public ParameterAdaptationManager{
 private:
 	std::vector<double> previousFs;
 	std::vector<double> previousCrs;
@@ -34,7 +34,7 @@ public:
 	void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };
 
-class SHADEManager : public DEAdaptationManager {
+class SHADEManager : public ParameterAdaptationManager {
 	private:
 		std::vector<double> previousFs;
 		std::vector<double> previousCrs;
@@ -55,7 +55,7 @@ class SHADEManager : public DEAdaptationManager {
 		void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };
 
-class NoAdaptationManager : public DEAdaptationManager {
+class NoAdaptationManager : public ParameterAdaptationManager {
 private:
 	double const F;
 	double const Cr;

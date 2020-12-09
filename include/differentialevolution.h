@@ -1,7 +1,7 @@
 #pragma once
 #include "mutationmanager.h"
 #include "crossovermanager.h"
-#include "deadaptationmanager.h"
+#include "parameteradaptationmanager.h"
 
 template <typename T>
 class IOHprofiler_problem;

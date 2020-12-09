@@ -23,7 +23,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 	DEConstraintHandler * const deCH = deCHs.at(config.constraintHandler)(lowerBound, upperBound);
 	CrossoverManager const* const crossoverManager = crossovers.at(config.crossover)(D);
 	MutationManager* const mutationManager = mutations.at(config.mutation)(D, deCH);
-	DEAdaptationManager* const adaptationManager = deAdaptations.at(config.adaptation)(popSize);
+	ParameterAdaptationManager* const adaptationManager = deAdaptations.at(config.adaptation)(popSize);
 
 	std::vector<double> Fs(popSize);
 	std::vector<double> Crs(popSize);
