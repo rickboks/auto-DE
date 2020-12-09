@@ -66,10 +66,7 @@ double JADEManager::lehmerMean(std::vector<double>const& SF) const {
 }
 
 // SHADE
-SHADEManager::SHADEManager(int const popSize) : ParameterAdaptationManager(popSize), H(popSize), MCr(H), MF(H), r(H), k(0){
-	for (int i = 0; i < H; i++)
-		r[i] = rng.randInt(0, H-1);
-
+SHADEManager::SHADEManager(int const popSize) : ParameterAdaptationManager(popSize), H(popSize), MCr(H), MF(H), k(0){
 	std::fill(MCr.begin(), MCr.end(), 0.5);
 	std::fill(MF.begin(), MF.end(), 0.5);
 }
@@ -117,26 +114,23 @@ void SHADEManager::update(std::vector<double>const& targets, std::vector<double>
 		MCr[k] = weightedMean(SCr, _w);
 		k = (k+1)%H;
 	}
-
-	for (int i = 0; i < H; i++)
-		r[i] = rng.randInt(0, H-1);
 }
 
 void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
-	// Update mutation rate
 	for (int i = 0; i < popSize; i++){
-		double const MFr = MF[r[i]];
+		int const randIndex = rng.randInt(0, H-1);
+
+		// Update mutation rate
+		double const MFr = MF[randIndex];
 		do{
 			Fs[i] = std::min(rng.cauchyDistribution(MFr, 0.1), 1.);
 		} while (Fs[i] <= 0.);
-	}
- 
-	// Update crossover rate
-	for (int i = 0; i < popSize; i++){
-		double const MCrr = MCr[r[i]];
+
+		// Update crossover rate
+		double const MCrr = MCr[randIndex];
 		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, 0.1),0.),1.);
 	}
-
+ 
 	previousFs = Fs;
 	previousCrs = Crs;
 }
