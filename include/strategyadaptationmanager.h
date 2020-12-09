@@ -6,7 +6,7 @@ class StrategyAdaptationManager {
 	public:
 		StrategyAdaptationManager ();
 		virtual ~StrategyAdaptationManager ();
-		void nextStrategies(std::vector<MutationManager*> mutation, std::vector<CrossoverManager*> crossover);
+		virtual void nextStrategies(std::vector<MutationManager*> mutation, std::vector<CrossoverManager*> crossover)=0;
 	private:
 		/* data */
 };

@@ -52,12 +52,12 @@ class SHADEManager : public ParameterAdaptationManager {
 		void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };
 
-class NoAdaptationManager : public ParameterAdaptationManager {
-private:
-	double const F;
-	double const Cr;
-public:
-	NoAdaptationManager(int const popSize);
-	void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
-	void update(std::vector<double>const& orig, std::vector<double>const& trials);
+class ConstantParameterManager : public ParameterAdaptationManager {
+	private:
+		double const F;
+		double const Cr;
+	public:
+		ConstantParameterManager(int const popSize);
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
+		void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };

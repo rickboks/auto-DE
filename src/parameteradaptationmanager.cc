@@ -6,13 +6,13 @@
 std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const deAdaptations({
 		{"J", LC(JADEManager)},
 		{"S", LC(SHADEManager)},
-		{"N", LC(NoAdaptationManager)},
-});
+		{"C", LC(ConstantParameterManager)},
+	});
 
-ParameterAdaptationManager::ParameterAdaptationManager(int const popSize): popSize(popSize){}
+	ParameterAdaptationManager::ParameterAdaptationManager(int const popSize): popSize(popSize){}
 
-//JADE
-JADEManager::JADEManager(int const popSize)
+	//JADE
+	JADEManager::JADEManager(int const popSize)
  : ParameterAdaptationManager(popSize), MuCr(0.5), MuF(0.6), c(0.1){}
 
 void JADEManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
@@ -142,14 +142,14 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 }
 
 //NO ADAPTATION
-NoAdaptationManager::NoAdaptationManager(int const popSize)
+ConstantParameterManager::ConstantParameterManager(int const popSize)
  : ParameterAdaptationManager(popSize), F(0.5), Cr(.9){}
 
-void NoAdaptationManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
+void ConstantParameterManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
 	//ignore
 }
 
-void NoAdaptationManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
+void ConstantParameterManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
 	// Update mutation rate
 	std::fill(Fs.begin(), Fs.end(), F);
 	// Update crossover rate

@@ -1,10 +1,8 @@
-results
-compile_commands.json
+obj
+data
+scratch
 experiment
 mpi_experiment
-obj
-.clangd
 configurations
-Visualizer
-scratch
+.clangd
 .ycm_extra_conf.py
