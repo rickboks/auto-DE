@@ -250,7 +250,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 	mutant = add(mutant, xr[2]->getX());
 	mutant = scale(mutant, 1./3.);
 
-	Solution base = Solution(mutant); // only used for correction strategies
+	Solution const base = Solution(mutant); // only used for correction strategies
 
 	std::vector<double> temp;
 	temp = subtract(xr[0]->getX(), xr[1]->getX());
@@ -316,9 +316,8 @@ Solution* TwoOpt2MutationManager::do_mutation(std::vector<Solution*>const& genom
 		std::swap(xr[0], xr[1]);
 
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference;
 
-	difference = subtract(xr[1]->getX(), xr[2]->getX());
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
 	difference = add(difference, xr[3]->getX());
 	difference = subtract(difference, xr[4]->getX());
 	difference = scale(difference, F);
