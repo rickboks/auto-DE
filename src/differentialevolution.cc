@@ -13,8 +13,8 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 	std::vector<double> const lowerBound = problem->IOHprofiler_get_lowerbound();
 	std::vector<double> const upperBound = problem->IOHprofiler_get_upperbound();
 
+	// Initialize and evaluate the population
 	std::vector<Solution*> genomes(popSize);
-
 	for (int i = 0; i < popSize; i++){
 		genomes[i] = new Solution(D);
 		genomes[i]->randomize(lowerBound, upperBound);
@@ -44,7 +44,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 			if (mutationManagers.count(m)){
 				std::vector<int> indices = mutationManagers[m];
 				if (!indices.empty()){
-					m->preMutation(genomes);
+					m->prepare(genomes);
 					for (int i : indices)
 						 donors[i] = m->mutate(genomes, i, Fs[i]);
 				}

@@ -4,7 +4,7 @@
 #define LC(X) [](int const D, ConstraintHandler* const ch){return new X(D,ch);}
 
 Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){
-	//preMutation(); // Some mutation managers use this to prepare some stuff
+	//prepare(); // Some mutation managers use this to prepare some stuff
 	//std::vector<Solution*> mutants(genomes.size());
 
 	int resamples = 0;
@@ -55,7 +55,7 @@ Solution* Rand1MutationManager::do_mutation(std::vector<Solution*>const& genomes
 }
 
 // Target-to-best/1
-void TTB1MutationManager::preMutation(std::vector<Solution*>const& genomes){
+void TTB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
@@ -80,7 +80,7 @@ Solution* TTB1MutationManager::do_mutation(std::vector<Solution*>const& genomes,
 }
 
 // Target-to-best/2
-void TTB2MutationManager::preMutation(std::vector<Solution*>const& genomes){
+void TTB2MutationManager::prepare(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
@@ -132,7 +132,7 @@ Solution* TTPB1MutationManager::do_mutation(std::vector<Solution*>const& genomes
 }
 
 // Best/1
-void Best1MutationManager::preMutation(std::vector<Solution*>const& genomes){
+void Best1MutationManager::prepare(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
@@ -155,7 +155,7 @@ Solution* Best1MutationManager::do_mutation(std::vector<Solution*>const& genomes
 }
 
 // Best/2
-void Best2MutationManager::preMutation(std::vector<Solution*>const& genomes){
+void Best2MutationManager::prepare(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
@@ -363,7 +363,7 @@ Solution* TwoOpt2MutationManager::do_mutation(std::vector<Solution*>const& genom
 // TODO: currently, this assumes hyperbox constraints by using 
 // eucledian distance.
 // TODO: not implemented correctly I think. Contacted an author.
-void ProximityMutationManager::preMutation(std::vector<Solution*>const& genomes){
+void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	//Initialize the matrices
 	if (Rp.empty()){
@@ -420,7 +420,7 @@ Solution* ProximityMutationManager::do_mutation(std::vector<Solution*>const& gen
 }
 
 // Ranking based
-void RankingMutationManager::preMutation(std::vector<Solution*>const& genomes){
+void RankingMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	probability.clear();
 

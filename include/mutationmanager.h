@@ -9,7 +9,7 @@ class MutationManager {
 	public:
 		MutationManager(int const D, ConstraintHandler * const ch):D(D), ch(ch){};
 		virtual ~MutationManager(){};
-		virtual void preMutation(std::vector<Solution*>const& genomes){};
+		virtual void prepare(std::vector<Solution*>const& genomes){};
 		Solution* mutate(std::vector<Solution*>const& genomes, int const i, double const F);
 };
 
@@ -26,7 +26,7 @@ class TTB1MutationManager : public MutationManager {
 		Solution const* best;
 	public:
 		TTB1MutationManager(int const D, ConstraintHandler* const ch): MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -35,7 +35,7 @@ class TTB2MutationManager : public MutationManager {
 		Solution const* best;
 	public:
 		TTB2MutationManager(int const D, ConstraintHandler* const ch): MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -50,7 +50,7 @@ class Best1MutationManager: public MutationManager {
 		Solution const* best;
 	public:
 		Best1MutationManager(int const D, ConstraintHandler* const ch):MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -59,7 +59,7 @@ class Best2MutationManager: public MutationManager {
 		Solution const* best;
 	public:
 		Best2MutationManager(int const D, ConstraintHandler* const ch):MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -109,7 +109,7 @@ class ProximityMutationManager : public MutationManager {
 		std::vector< std::vector<double> > Rd;
 	public:
 		ProximityMutationManager(int const D, ConstraintHandler* const ch): MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -119,6 +119,6 @@ class RankingMutationManager : public MutationManager {
 		Solution* pickRanked(std::vector<Solution*> & possibilities) const;
 	public:
 		RankingMutationManager(int const D, ConstraintHandler* const ch): MutationManager(D, ch){};
-		void preMutation(std::vector<Solution*>const& genomes);
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
