@@ -1,4 +1,5 @@
 #include "differentialevolution.h"
+#include "strategyadaptationmanager.h"
 
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
@@ -21,48 +22,70 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 	}
 
 	ConstraintHandler * const ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
-	CrossoverManager const* const crossoverManager = crossovers.at(config.crossover)(D);
-	MutationManager* const mutationManager = mutations.at(config.mutation)(D, ch);
-	ParameterAdaptationManager* const adaptationManager = deAdaptations.at(config.adaptation)(popSize);
+	ParameterAdaptationManager* const paramAdaptationManager = deAdaptations.at(config.adaptation)(popSize);
+	ConfigurationSpace const* const configSpace = new ConfigurationSpace(
+			std::vector<std::string>({"T1"}), 
+			std::vector<std::string>({"B"}), 
+			D, ch);
+
+	StrategyAdaptationManager* const strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
 
 	std::vector<double> Fs(popSize);
 	std::vector<double> Crs(popSize);
 
 	int iteration = 0;
 
+	std::map<MutationManager*, std::vector<int>> mutationManagers;
+	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; 
+
 	while (problem->IOHprofiler_get_evaluations() < evalBudget && !problem->IOHprofiler_hit_optimal()){
-		adaptationManager->nextParameters(Fs, Crs);
+		paramAdaptationManager->nextParameters(Fs, Crs);
+		strategyAdaptationManager->nextStrategies(mutationManagers, crossoverManagers);
 
-		std::vector<Solution*> const donors = mutationManager->mutate(genomes,Fs);
-		std::vector<Solution*> const trials = crossoverManager->crossover(genomes, donors, Crs);
-
-		for (Solution* m : donors) delete m;
-
-		std::vector<double> parentF(popSize), trialF(popSize);
-		for (int i = 0; i < popSize; i++){
-			parentF[i] = genomes[i]->getFitness();
-			trials[i]->evaluate(problem, iohLogger);
-			ch->penalize(trials[i]); 
-			trialF[i] = trials[i]->getFitness();
-
-			if (trialF[i] < parentF[i])
-				genomes[i]->setX(trials[i]->getX(), trialF[i]);
+		// Mutation step
+		std::vector<Solution*> donors(popSize);
+		for (MutationManager* m : configSpace->mutation){
+			m->preMutation(genomes);
+			for (int i: mutationManagers[m])
+				 donors[i] = m->mutate(genomes, i, Fs[i]);
 		}
 
-		for (Solution* g : trials) delete g;
+		// Crossover step
+		std::vector<double> trialF(popSize);
+		std::vector<Solution*> trials(popSize); 
+		for (CrossoverManager* c : configSpace->crossover){
+			for (int i : crossoverManagers[c]){
+				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
+				delete donors[i];
+				trials[i]->evaluate(problem, iohLogger);
+				ch->penalize(trials[i]); 
+				trialF[i] = trials[i]->getFitness();
+			}
+		}
 
-		adaptationManager->update(parentF, trialF);
+		// Selection step
+		std::vector<double> parentF(popSize);
+		for (int i = 0; i < popSize; i++){
+			parentF[i] = genomes[i]->getFitness();
+			if (trialF[i] < parentF[i]){
+				delete genomes[i];
+				genomes[i] = trials[i];
+			} else {
+				delete trials[i];
+			}
+		}
+
+		// Housekeeping
+		paramAdaptationManager->update(parentF, trialF);
 		iteration++;
 	}
 
-	for (Solution* d : genomes)
-		delete d;
-
-	delete mutationManager;
-	delete crossoverManager;
-	delete adaptationManager;
+	// Clean up
+	for (Solution* d : genomes) delete d;
+	delete configSpace;
+	delete strategyAdaptationManager;
+	delete paramAdaptationManager;
 	delete ch;
-
 	genomes.clear();
 }
 

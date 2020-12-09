@@ -13,4 +13,9 @@ ConfigurationSpace::ConfigurationSpace(std::vector<std::string> const mutation, 
 		this->crossover.push_back(crossovers.at(c)(D));
 }
 
-
+ConfigurationSpace::~ConfigurationSpace(){
+	for (MutationManager* m : mutation)
+		delete m;
+	for (CrossoverManager* c : crossover)
+		delete c;
+}

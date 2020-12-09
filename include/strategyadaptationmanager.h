@@ -6,16 +6,18 @@
 
 class StrategyAdaptationManager {
 	public:
-		StrategyAdaptationManager(ConfigurationSpace const configSpace);
+		StrategyAdaptationManager(ConfigurationSpace const* const configSpace, int const popSize);
 		virtual ~StrategyAdaptationManager(){};
-		virtual void nextStrategies(std::vector<MutationManager*>& mutation, std::vector<CrossoverManager*>& crossover)=0;
+		virtual void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover)=0;
 	protected:
-		ConfigurationSpace const configSpace;
+		ConfigurationSpace const* const configSpace;
+		int const popSize;
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {
 	public:
-		ConstantStrategyManager(ConfigurationSpace const configSpace);
-		void nextStrategies(std::vector<MutationManager*>& mutation, std::vector<CrossoverManager*>& crossover);
-	private:
+		ConstantStrategyManager(ConfigurationSpace const* const configSpace, int const popSize);
+		void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover);
 };

@@ -3,28 +3,21 @@
 
 #define LC(X) [](int const D, ConstraintHandler* const ch){return new X(D,ch);}
 
-std::vector<Solution*> MutationManager::mutate(std::vector<Solution*>const& genomes, std::vector<double>const& Fs){
-	this->genomes = genomes;
-	this->Fs = Fs;
+Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){
+	//preMutation(); // Some mutation managers use this to prepare some stuff
+	//std::vector<Solution*> mutants(genomes.size());
 
-	preMutation(); // Some mutation managers use this to prepare some stuff
-
-	std::vector<Solution*> mutants(genomes.size());
-
-	for (unsigned int i = 0; i < genomes.size(); i++){
-		int resamples = 0;
-		while (true){
-			Solution* m = mutate(i);
-			if (!ch->resample(m, resamples)){
-				ch->repair(m); //generic repair
-				mutants[i] = m; 
-				break;
-			}
-			resamples++;
-			delete m;
+	int resamples = 0;
+	while (true){
+		Solution* m = do_mutation(genomes, i, F);
+		if (!ch->resample(m, resamples)){
+			ch->repair(m); //generic repair
+			return m;
 		}
+		resamples++;
+		delete m;
 	}
-	return mutants;
+	//}
 }
 
 std::map<std::string, std::function<MutationManager* (int const, ConstraintHandler*const)>> const mutations ({
@@ -45,7 +38,7 @@ std::map<std::string, std::function<MutationManager* (int const, ConstraintHandl
 });
 
 // Rand/1
-Solution* Rand1MutationManager::mutate(int const i) const{
+Solution* Rand1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -53,7 +46,7 @@ Solution* Rand1MutationManager::mutate(int const i) const{
 	std::vector<double> mutant = xr[0]->getX();
 	std::vector<double> difference(D);
 	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -62,11 +55,11 @@ Solution* Rand1MutationManager::mutate(int const i) const{
 }
 
 // Target-to-best/1
-void TTB1MutationManager::preMutation(){
+void TTB1MutationManager::preMutation(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
-Solution* TTB1MutationManager::mutate(int const i) const{
+Solution* TTB1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -78,7 +71,7 @@ Solution* TTB1MutationManager::mutate(int const i) const{
 	subtract(best->getX(), genomes[i]->getX(), difference);
 	add(difference, xr[0]->getX(), difference);
 	subtract(difference, xr[1]->getX(), difference);
-	scale(difference,Fs[i]);
+	scale(difference,F);
 
 	add(mutant, difference, mutant);
 	Solution* m = new Solution(mutant);
@@ -87,11 +80,11 @@ Solution* TTB1MutationManager::mutate(int const i) const{
 }
 
 // Target-to-best/2
-void TTB2MutationManager::preMutation(){
+void TTB2MutationManager::preMutation(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
-Solution* TTB2MutationManager::mutate(int const i) const{
+Solution* TTB2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -105,7 +98,7 @@ Solution* TTB2MutationManager::mutate(int const i) const{
 	subtract(difference, xr[1]->getX(), difference);
 	add(difference, xr[2]->getX(), difference);
 	subtract(difference, xr[3]->getX(), difference);
-	scale(difference,Fs[i]);
+	scale(difference,F);
 
 	add(mutant, difference, mutant);
 
@@ -115,7 +108,7 @@ Solution* TTB2MutationManager::mutate(int const i) const{
 }
 
 // Target-to-pbest/1
-Solution* TTPB1MutationManager::mutate(int const i) const{
+Solution* TTPB1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	Solution* pBest = getPBest(genomes); // pBest is sampled for each mutation
 
 	std::vector<Solution*> possibilities = genomes;
@@ -129,7 +122,7 @@ Solution* TTPB1MutationManager::mutate(int const i) const{
 	subtract(pBest->getX(), genomes[i]->getX(), difference);
 	add(difference, xr[0]->getX(), difference);
 	subtract(difference, xr[1]->getX(), difference);
-	scale(difference,Fs[i]);
+	scale(difference,F);
 
 	add(mutant, difference, mutant);
 
@@ -139,11 +132,11 @@ Solution* TTPB1MutationManager::mutate(int const i) const{
 }
 
 // Best/1
-void Best1MutationManager::preMutation(){
+void Best1MutationManager::preMutation(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
-Solution* Best1MutationManager::mutate(int const i) const{
+Solution* Best1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -153,7 +146,7 @@ Solution* Best1MutationManager::mutate(int const i) const{
 	std::vector<Solution*> xr = pickRandom(possibilities, 2);
 	subtract(xr[0]->getX(), xr[1]->getX(), difference);
 
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -162,11 +155,11 @@ Solution* Best1MutationManager::mutate(int const i) const{
 }
 
 // Best/2
-void Best2MutationManager::preMutation(){
+void Best2MutationManager::preMutation(std::vector<Solution*>const& genomes){
 	best = getBest(genomes);
 }
 
-Solution* Best2MutationManager::mutate(int const i) const{
+Solution* Best2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -177,7 +170,7 @@ Solution* Best2MutationManager::mutate(int const i) const{
 	subtract(xr[0]->getX(), xr[1]->getX(), difference);
 	add(difference, xr[2]->getX(), difference);
 	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant, difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -186,7 +179,7 @@ Solution* Best2MutationManager::mutate(int const i) const{
 }
 
 // Rand/2
-Solution* Rand2MutationManager::mutate(int const i) const{
+Solution* Rand2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -197,7 +190,7 @@ Solution* Rand2MutationManager::mutate(int const i) const{
 	subtract(xr[0]->getX(), xr[1]->getX(), difference);
 	add(difference, xr[2]->getX(), difference);
 	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 
 	add(mutant, difference, mutant);
 	Solution* m = new Solution(mutant);
@@ -206,7 +199,7 @@ Solution* Rand2MutationManager::mutate(int const i) const{
 }
 
 // Rand/2/dir
-Solution* Rand2DirMutationManager::mutate(int const i) const{
+Solution* Rand2DirMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -224,7 +217,7 @@ Solution* Rand2DirMutationManager::mutate(int const i) const{
 	subtract(xr[0]->getX(), xr[1]->getX(), difference);
 	add(difference, xr[2]->getX(), difference);
 	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, Fs[i]/2.);
+	scale(difference, F/2.);
 
 	add(mutant, difference, mutant);
 
@@ -234,7 +227,7 @@ Solution* Rand2DirMutationManager::mutate(int const i) const{
 }
 
 // NSDE
-Solution* NSDEMutationManager::mutate(int const i) const {
+Solution* NSDEMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const {
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -260,11 +253,11 @@ Solution* NSDEMutationManager::mutate(int const i) const {
 }
 
 // Trigonometric
-Solution* TrigonometricMutationManager::mutate(int const i) const{
-	return rng.randDouble(0,1) <= gamma ? trigonometricMutation(i) : rand1Mutation(i);
+Solution* TrigonometricMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
+	return rng.randDouble(0,1) <= gamma ? trigonometricMutation(genomes, i, F) : rand1Mutation(genomes, i, F);
 }
 
-Solution* TrigonometricMutationManager::trigonometricMutation(int const i) const{
+Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 	
@@ -303,7 +296,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(int const i) const
 	return m;
 }
 
-Solution* TrigonometricMutationManager::rand1Mutation(int const i) const{
+Solution* TrigonometricMutationManager::rand1Mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 	
@@ -312,7 +305,7 @@ Solution* TrigonometricMutationManager::rand1Mutation(int const i) const{
 	std::vector<double> mutant = xr[0]->getX();
 	std::vector<double> difference(D);
 	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -321,7 +314,7 @@ Solution* TrigonometricMutationManager::rand1Mutation(int const i) const{
 }
 
 // Two-opt/1
-Solution* TwoOpt1MutationManager::mutate(int const i) const{
+Solution* TwoOpt1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -333,7 +326,7 @@ Solution* TwoOpt1MutationManager::mutate(int const i) const{
 	std::vector<double> mutant = xr[0]->getX();
 	std::vector<double> difference(D);
 	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -342,7 +335,7 @@ Solution* TwoOpt1MutationManager::mutate(int const i) const{
 }
 
 // Two-opt/2
-Solution* TwoOpt2MutationManager::mutate(int const i) const{
+Solution* TwoOpt2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -357,7 +350,7 @@ Solution* TwoOpt2MutationManager::mutate(int const i) const{
 	subtract(xr[1]->getX(), xr[2]->getX(), difference);
 	add(difference, xr[3]->getX(), difference);
 	subtract(difference, xr[4]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 
 	add(mutant, difference, mutant);
 
@@ -370,7 +363,7 @@ Solution* TwoOpt2MutationManager::mutate(int const i) const{
 // TODO: currently, this assumes hyperbox constraints by using 
 // eucledian distance.
 // TODO: not implemented correctly I think. Contacted an author.
-void ProximityMutationManager::preMutation(){
+void ProximityMutationManager::preMutation(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	//Initialize the matrices
 	if (Rp.empty()){
@@ -407,7 +400,7 @@ void ProximityMutationManager::preMutation(){
 	}
 }
 
-Solution* ProximityMutationManager::mutate(int const i) const{
+Solution* ProximityMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 
@@ -418,7 +411,7 @@ Solution* ProximityMutationManager::mutate(int const i) const{
 	std::vector<double> mutant = xr[0]->getX();
 	std::vector<double> difference(D);
 	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, Fs[i]);
+	scale(difference, F);
 	add(mutant,difference, mutant);
 
 	Solution* m = new Solution(mutant);
@@ -427,7 +420,7 @@ Solution* ProximityMutationManager::mutate(int const i) const{
 }
 
 // Ranking based
-void RankingMutationManager::preMutation(){
+void RankingMutationManager::preMutation(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	probability.clear();
 
@@ -449,7 +442,7 @@ Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibiliti
 	return pick;
 }
 
-Solution* RankingMutationManager::mutate(int const i) const{
+Solution* RankingMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	Solution* pBest = getPBest(genomes); // pBest is sampled for each mutation
 
 	std::vector<Solution*> possibilities = genomes;
@@ -465,7 +458,7 @@ Solution* RankingMutationManager::mutate(int const i) const{
 	subtract(pBest->getX(), genomes[i]->getX(), difference);
 	add(difference, xr0->getX(), difference);
 	subtract(difference, xr1->getX(), difference);
-	scale(difference,Fs[i]);
+	scale(difference,F);
 
 	add(mutant, difference, mutant);
 
