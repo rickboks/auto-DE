@@ -2,29 +2,31 @@
 #include "rng.h"
 #include <experimental/filesystem>
 
-void scale(std::vector<double> & vec, double const x){
-	std::transform(vec.begin(), vec.end(), vec.begin(),
-           std::bind(std::multiplies<double>(), std::placeholders::_1, x));
+std::vector<double> scale(std::vector<double>const vec, double const scalar){
+	std::vector<double> x = vec;
+	std::transform(x.begin(), x.end(), x.begin(),
+           std::bind(std::multiplies<double>(), std::placeholders::_1, scalar));
+	return x;
 }
 
-void add(std::vector<double>const& lhs, std::vector<double>const& rhs, std::vector<double>& store){
-	std::transform( lhs.begin(), lhs.end(),
-                rhs.begin(), store.begin(), 
-                std::plus<double>());
+std::vector<double> add(std::vector<double>const lhs, std::vector<double>const rhs){
+	std::vector<double> x = lhs;
+	std::transform( x.begin(), x.end(), rhs.begin(), x.begin(), std::plus<double>());
+	return x;
 }
 
-void subtract(std::vector<double>const& lhs, std::vector<double>const& rhs, std::vector<double>& store){
-	std::transform( lhs.begin(), lhs.end(),
-	                rhs.begin(), store.begin(), 
-	                std::minus<double>());
+std::vector<double> subtract(std::vector<double>const lhs, std::vector<double>const rhs){
+	std::vector<double> x = lhs;
+	std::transform( x.begin(), x.end(), rhs.begin(), x.begin(), std::minus<double>());
+	return x;
 }
 
-void randomMult(std::vector<double>& vec, double const min, double const max){
-	for (unsigned int i = 0; i < vec.size(); i++){
-		vec[i] *= rng.randDouble(min, max);
-	}
+std::vector<double> randomMult(std::vector<double>const vec, double const min, double const max){
+	std::vector<double> x = vec;
+	for (unsigned int i = 0; i < vec.size(); i++)
+		x[i] *= rng.randDouble(min, max);
+	return x;
 }
-
 
 bool comparePtrs(Solution const* const a, Solution const *const b){
 	return *a < *b;

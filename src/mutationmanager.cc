@@ -1,12 +1,9 @@
 #include "mutationmanager.h"
 #include "util.h"
 
-#define LC(X) [](int const D, ConstraintHandler* const ch){return new X(D,ch);}
+#define LC(X) [](ConstraintHandler* const ch){return new X(ch);}
 
 Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){
-	//prepare(); // Some mutation managers use this to prepare some stuff
-	//std::vector<Solution*> mutants(genomes.size());
-
 	int resamples = 0;
 	while (true){
 		Solution* m = do_mutation(genomes, i, F);
@@ -17,10 +14,9 @@ Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int cons
 		resamples++;
 		delete m;
 	}
-	//}
 }
 
-std::map<std::string, std::function<MutationManager* (int const, ConstraintHandler*const)>> const mutations ({
+std::map<std::string, std::function<MutationManager* (ConstraintHandler*const)>> const mutations ({
 		{"R1", LC(Rand1MutationManager)},
 		{"T1", LC(TTB1MutationManager)},
 		{"T2", LC(TTB2MutationManager)},
@@ -41,13 +37,12 @@ std::map<std::string, std::function<MutationManager* (int const, ConstraintHandl
 Solution* Rand1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 3);
+
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference(D);
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, F);
-	add(mutant,difference, mutant);
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = scale(difference, F);
+	mutant = add(mutant,difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -62,18 +57,15 @@ void TTB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 Solution* TTB1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
-	std::vector<double> mutant = genomes[i]->getX();
-	std::vector<double> difference(D);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 2);
 
-	subtract(best->getX(), genomes[i]->getX(), difference);
-	add(difference, xr[0]->getX(), difference);
-	subtract(difference, xr[1]->getX(), difference);
-	scale(difference,F);
+	std::vector<double> mutant = genomes[i]->getX();
+	std::vector<double> difference = subtract(best->getX(), genomes[i]->getX());
+	difference = add(difference, xr[0]->getX());
+	difference = subtract(difference, xr[1]->getX());
+	difference = scale(difference,F);
 
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 	Solution* m = new Solution(mutant);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
@@ -87,20 +79,16 @@ void TTB2MutationManager::prepare(std::vector<Solution*>const& genomes){
 Solution* TTB2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
-	std::vector<double> mutant = genomes[i]->getX();
-	std::vector<double> difference(D);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 4);
 
-	subtract(best->getX(), genomes[i]->getX(), difference);
-	add(difference, xr[0]->getX(), difference);
-	subtract(difference, xr[1]->getX(), difference);
-	add(difference, xr[2]->getX(), difference);
-	subtract(difference, xr[3]->getX(), difference);
-	scale(difference,F);
-
-	add(mutant, difference, mutant);
+	std::vector<double> mutant = genomes[i]->getX();
+	std::vector<double> difference = subtract(best->getX(), genomes[i]->getX());
+	difference = add(difference, xr[0]->getX());
+	difference = subtract(difference, xr[1]->getX());
+	difference = add(difference, xr[2]->getX());
+	difference = subtract(difference, xr[3]->getX());
+	difference = scale(difference,F);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, genomes[i], genomes[i]);
@@ -110,21 +98,17 @@ Solution* TTB2MutationManager::do_mutation(std::vector<Solution*>const& genomes,
 // Target-to-pbest/1
 Solution* TTPB1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	Solution* pBest = getPBest(genomes); // pBest is sampled for each mutation
-
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
-	std::vector<double> mutant = genomes[i]->getX();
-	std::vector<double> difference(D);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 2);
 
-	subtract(pBest->getX(), genomes[i]->getX(), difference);
-	add(difference, xr[0]->getX(), difference);
-	subtract(difference, xr[1]->getX(), difference);
-	scale(difference,F);
+	std::vector<double> mutant = genomes[i]->getX();
+	std::vector<double> difference = subtract(pBest->getX(), genomes[i]->getX());
+	difference = add(difference, xr[0]->getX());
+	difference = subtract(difference, xr[1]->getX());
+	difference = scale(difference,F);
 
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, genomes[i], genomes[i]);
@@ -139,15 +123,13 @@ void Best1MutationManager::prepare(std::vector<Solution*>const& genomes){
 Solution* Best1MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
+	std::vector<Solution*> xr = pickRandom(possibilities, 2);
 
 	std::vector<double> mutant = best->getX();
-	std::vector<double> difference(D);
-	
-	std::vector<Solution*> xr = pickRandom(possibilities, 2);
-	subtract(xr[0]->getX(), xr[1]->getX(), difference);
+	std::vector<double> difference = subtract(xr[0]->getX(), xr[1]->getX());
 
-	scale(difference, F);
-	add(mutant, difference, mutant);
+	difference = scale(difference, F);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, best, genomes[i]);
@@ -162,16 +144,15 @@ void Best2MutationManager::prepare(std::vector<Solution*>const& genomes){
 Solution* Best2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
+	std::vector<Solution*> xr = pickRandom(possibilities, 4);
 
 	std::vector<double> mutant = best->getX();
-	std::vector<double> difference(D);
+	std::vector<double> difference = subtract(xr[0]->getX(), xr[1]->getX());
+	difference = add(difference, xr[2]->getX());
+	difference = subtract(difference, xr[3]->getX());
+	difference = scale(difference, F);
 
-	std::vector<Solution*> xr = pickRandom(possibilities, 4);
-	subtract(xr[0]->getX(), xr[1]->getX(), difference);
-	add(difference, xr[2]->getX(), difference);
-	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, F);
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, best, genomes[i]);
@@ -182,17 +163,16 @@ Solution* Best2MutationManager::do_mutation(std::vector<Solution*>const& genomes
 Solution* Rand2MutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 5);
+
 	std::vector<double> mutant = xr[4]->getX();
-	std::vector<double> difference(D);
+	std::vector<double> difference = subtract(xr[0]->getX(), xr[1]->getX());
+	difference = add(difference, xr[2]->getX());
+	difference = subtract(difference, xr[3]->getX());
+	difference = scale(difference, F);
 
-	subtract(xr[0]->getX(), xr[1]->getX(), difference);
-	add(difference, xr[2]->getX(), difference);
-	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, F);
+	mutant = add(mutant, difference);
 
-	add(mutant, difference, mutant);
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[4], genomes[i]);
 	return m;
@@ -213,13 +193,12 @@ Solution* Rand2DirMutationManager::do_mutation(std::vector<Solution*>const& geno
 
 	std::vector<double> mutant = xr[0]->getX();
 
-	std::vector<double> difference(D);
-	subtract(xr[0]->getX(), xr[1]->getX(), difference);
-	add(difference, xr[2]->getX(), difference);
-	subtract(difference, xr[3]->getX(), difference);
-	scale(difference, F/2.);
+	std::vector<double> difference = subtract(xr[0]->getX(), xr[1]->getX());
+	difference = add(difference, xr[2]->getX());
+	difference = subtract(difference, xr[3]->getX());
+	difference = scale(difference, F/2.);
 
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -230,12 +209,10 @@ Solution* Rand2DirMutationManager::do_mutation(std::vector<Solution*>const& geno
 Solution* NSDEMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const {
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-
 	std::vector<Solution*> xr = pickRandom(possibilities, 3);
-	std::vector<double> mutant = xr[0]->getX(); 
 
-	std::vector<double> difference(D);
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
+	std::vector<double> mutant = xr[0]->getX(); 
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
 
 	double randomVar;
 	if (rng.randDouble(0,1) < 0.5)
@@ -243,9 +220,8 @@ Solution* NSDEMutationManager::do_mutation(std::vector<Solution*>const& genomes,
 	else 
 		randomVar = rng.cauchyDistribution(0,1);
 
-	scale(difference, randomVar);
-
-	add(mutant, difference, mutant);
+	difference = scale(difference, randomVar);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -270,26 +246,24 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 	double const p1 = std::abs(xr[1]->getFitness()) / pPrime;
 	double const p2 = std::abs(xr[2]->getFitness()) / pPrime;
 
-	std::vector<double> mutant(D);
-
-	add(xr[0]->getX(), xr[1]->getX(), mutant);
-	add(mutant, xr[2]->getX(), mutant);
-	scale(mutant, 1./3.);
+	std::vector<double> mutant = add(xr[0]->getX(), xr[1]->getX());
+	mutant = add(mutant, xr[2]->getX());
+	mutant = scale(mutant, 1./3.);
 
 	Solution base = Solution(mutant); // only used for correction strategies
 
-	std::vector<double> temp(D);
-	subtract(xr[0]->getX(), xr[1]->getX(), temp);
-	scale(temp, p1-p0);
-	add(temp, mutant, mutant);
+	std::vector<double> temp;
+	temp = subtract(xr[0]->getX(), xr[1]->getX());
+	temp = scale(temp, p1-p0);
+	mutant = add(temp, mutant);
 
-	subtract(xr[1]->getX(), xr[2]->getX(), temp);
-	scale(temp, p2-p1);
-	add(temp, mutant, mutant);
+	temp = subtract(xr[1]->getX(), xr[2]->getX());
+	temp = scale(temp, p2-p1);
+	mutant = add(temp, mutant);
 
-	subtract(xr[2]->getX(), xr[0]->getX(), temp);
-	scale(temp, p0-p2);
-	add(temp, mutant, mutant);
+	temp = subtract(xr[2]->getX(), xr[0]->getX());
+	temp = scale(temp, p0-p2);
+	mutant = add(temp, mutant);
 	
 	Solution* m = new Solution(mutant);
 	ch->repair(m, &base, genomes[i]);
@@ -299,14 +273,12 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 Solution* TrigonometricMutationManager::rand1Mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
-	
 	std::vector<Solution*> xr = pickRandom(possibilities, 3);
 
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference(D);
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, F);
-	add(mutant,difference, mutant);
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = scale(difference, F);
+	mutant = add(mutant,difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -324,10 +296,9 @@ Solution* TwoOpt1MutationManager::do_mutation(std::vector<Solution*>const& genom
 		std::swap(xr[0], xr[1]);
 
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference(D);
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, F);
-	add(mutant,difference, mutant);
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = scale(difference, F);
+	mutant = add(mutant,difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -345,14 +316,14 @@ Solution* TwoOpt2MutationManager::do_mutation(std::vector<Solution*>const& genom
 		std::swap(xr[0], xr[1]);
 
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference(D);
+	std::vector<double> difference;
 
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	add(difference, xr[3]->getX(), difference);
-	subtract(difference, xr[4]->getX(), difference);
-	scale(difference, F);
+	difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = add(difference, xr[3]->getX());
+	difference = subtract(difference, xr[4]->getX());
+	difference = scale(difference, F);
 
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -361,8 +332,6 @@ Solution* TwoOpt2MutationManager::do_mutation(std::vector<Solution*>const& genom
 
 // Proximity-based Rand/1
 // TODO: currently, this assumes hyperbox constraints by using 
-// eucledian distance.
-// TODO: not implemented correctly I think. Contacted an author.
 void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	//Initialize the matrices
@@ -409,10 +378,10 @@ Solution* ProximityMutationManager::do_mutation(std::vector<Solution*>const& gen
 	std::vector<Solution*> xr = rouletteSelect(possibilities, prob, 3);
 
 	std::vector<double> mutant = xr[0]->getX();
-	std::vector<double> difference(D);
-	subtract(xr[1]->getX(), xr[2]->getX(), difference);
-	scale(difference, F);
-	add(mutant,difference, mutant);
+	std::vector<double> difference;
+	difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = scale(difference, F);
+	mutant = add(mutant,difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -449,18 +418,16 @@ Solution* RankingMutationManager::do_mutation(std::vector<Solution*>const& genom
 	possibilities.erase(possibilities.begin() + i);
 
 	std::vector<double> mutant = genomes[i]->getX();
-	std::vector<double> difference(D);
 
 	Solution* xr0 = pickRanked(possibilities); // N.B. Ranked instead of Random
-
 	Solution* xr1 = pickRandom(possibilities);
 
-	subtract(pBest->getX(), genomes[i]->getX(), difference);
-	add(difference, xr0->getX(), difference);
-	subtract(difference, xr1->getX(), difference);
-	scale(difference,F);
+	std::vector<double> difference = subtract(pBest->getX(), genomes[i]->getX());
+	difference = add(difference, xr0->getX());
+	difference = subtract(difference, xr1->getX());
+	difference = scale(difference,F);
 
-	add(mutant, difference, mutant);
+	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
 	ch->repair(m, genomes[i], genomes[i]);

@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
 #include <string>
-#include "constrainthandler.h"
 
 class MutationManager;
 class CrossoverManager;
+class ConstraintHandler;
 
 struct ConfigurationSpace {
-	ConfigurationSpace(std::vector<std::string> const mutation, std::vector<std::string> const crossover, 
-			int const D, ConstraintHandler* const ch);
+	ConfigurationSpace(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
+			ConstraintHandler* const ch);
 
 	virtual ~ConfigurationSpace();
 

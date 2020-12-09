@@ -6,10 +6,10 @@
 #include "rng.h"
 #include "solution.h"
 
-void scale(std::vector<double>& vec, double const x);
-void add(std::vector<double>const& lhs, std::vector<double>const& rhs, std::vector<double>& store);
-void subtract(std::vector<double>const& lhs, std::vector<double>const& rhs, std::vector<double>& store);
-void randomMult(std::vector<double>& vec, double const min, double const max);
+[[nodiscard]] std::vector<double> scale(std::vector<double>const vec, double const x);
+[[nodiscard]] std::vector<double> add(std::vector<double>const lhs, std::vector<double>const rhs);
+[[nodiscard]] std::vector<double> subtract(std::vector<double>const lhs, std::vector<double>const rhs);
+[[nodiscard]] std::vector<double> randomMult(std::vector<double>const vec, double const min, double const max);
 bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const*const s1, Solution const*const s2);
 std::string generateConfig(std::string const templateFile, std::string const name);

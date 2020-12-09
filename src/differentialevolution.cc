@@ -23,7 +23,8 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 
 	ConstraintHandler * const ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
 	ParameterAdaptationManager* const paramAdaptationManager = deAdaptations.at(config.adaptation)(popSize);
-	ConfigurationSpace const* const configSpace = new ConfigurationSpace(config.mutation, config.crossover, D, ch);
+
+	ConfigurationSpace const* const configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
 	StrategyAdaptationManager* const strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
 
 	std::vector<double> Fs(popSize);

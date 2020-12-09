@@ -101,11 +101,10 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const b
 
 	std::vector<double>::iterator alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
-		std::vector<double> midpoint(D);
-		add(lb, ub, midpoint);
-		scale(midpoint, 0.5*(1.- *alpha));
-		scale(x, *alpha);
-		add(x, midpoint, x);
+		std::vector<double> midpoint = add(lb, ub);
+		midpoint = scale(midpoint, 0.5*(1.- *alpha));
+		x = scale(x, *alpha);
+		x = add(x, midpoint);
 		p->setX(x);
 		nCorrected++;
 	}
@@ -128,9 +127,9 @@ void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base,
 	std::vector<double>::iterator alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
 		std::vector<double> b = base->getX();
-		scale(b, (1.-*alpha));
-		scale(x, *alpha);
-		add(x, b, x);
+		b = scale(b, (1.-*alpha));
+		x = scale(x, *alpha);
+		x = add(x, b);
 		p->setX(x);
 		nCorrected++;
 	}

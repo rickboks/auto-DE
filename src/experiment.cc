@@ -1,16 +1,13 @@
 #include "util.h"
 #include "differentialevolution.h"
-
 DifferentialEvolution* de;
 
-void algorithm
-(std::shared_ptr<IOHprofiler_problem<double>> problem,
- std::shared_ptr<IOHprofiler_csv_logger> logger) {
+void algorithm (std::shared_ptr<IOHprofiler_problem<double>> problem, std::shared_ptr<IOHprofiler_csv_logger> logger){
     int const D = problem->IOHprofiler_get_number_of_variables(); 
     de->run(problem, logger, D*10000, 5 * D); 
 }
 
-void _run_experiment(bool const log) {
+void run_experiment(bool const log) {
     de = new DifferentialEvolution(DEConfig({"T2"}, {"B"}, "S", "PM"));
 	std::string templateFile = "./configuration.ini";
     std::string configFile = generateConfig(templateFile, de->getIdString());
@@ -23,5 +20,5 @@ void _run_experiment(bool const log) {
 
 int main(){
     bool const log = false;
-    _run_experiment(log);
+    run_experiment(log);
 }
