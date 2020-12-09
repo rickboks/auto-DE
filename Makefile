@@ -10,7 +10,7 @@ OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 INC = -I $(INC_DIR) -isystem ~/.local/include
 
 CC      = g++
-CFLAGS  = -Wall -Wextra -Wignored-qualifiers -Wunused-result -Wno-unused-parameter -std=c++17 -O2 -g
+CFLAGS  = -Wall -Wextra -std=c++17 -O2 -g
 
 .PHONY: all
 all: $(OBJ_DIR) $(EXE)

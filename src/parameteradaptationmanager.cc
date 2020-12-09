@@ -139,7 +139,7 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 ConstantParameterManager::ConstantParameterManager(int const popSize)
  : ParameterAdaptationManager(popSize), F(0.5), Cr(.9){}
 
-void ConstantParameterManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
+void ConstantParameterManager::update(std::vector<double>const& /*orig*/, std::vector<double>const& /*trials*/){
 	//ignore
 }
 

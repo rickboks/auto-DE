@@ -18,9 +18,9 @@ class ConstraintHandler {
 		ConstraintHandler(std::vector<double> const lb, std::vector<double> const ub): lb(lb), ub(ub), D(lb.size()), nCorrected(0){};
 		virtual ~ConstraintHandler(){};
 		virtual bool resample(Solution* const p, int const resamples);
-		virtual void penalize(Solution* const p){};
-		virtual void repair(Solution* const p, Solution const * const base, Solution const* const target){}; // DE constraint handler
-		virtual void repair(Solution* const p){};// Generic constraint handler
+		virtual void penalize(Solution* const /*p*/){};
+		virtual void repair(Solution* const /*p*/, Solution const * const /*base*/, Solution const* const /*target*/){}; // DE constraint handler
+		virtual void repair(Solution* const /*p*/){};// Generic constraint handler
 		int getCorrections() const;
 };
 

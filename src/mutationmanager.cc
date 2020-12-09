@@ -206,7 +206,7 @@ Solution* Rand2DirMutationManager::do_mutation(std::vector<Solution*>const& geno
 }
 
 // NSDE
-Solution* NSDEMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const {
+Solution* NSDEMutationManager::do_mutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const {
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 	std::vector<Solution*> xr = pickRandom(possibilities, 3);
@@ -233,7 +233,7 @@ Solution* TrigonometricMutationManager::do_mutation(std::vector<Solution*>const&
 	return rng.randDouble(0,1) <= gamma ? trigonometricMutation(genomes, i, F) : rand1Mutation(genomes, i, F);
 }
 
-Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
+Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const{
 	std::vector<Solution*> possibilities = genomes;
 	possibilities.erase(possibilities.begin() + i);
 	

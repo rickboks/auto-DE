@@ -8,7 +8,7 @@ class MutationManager {
 	public:
 		MutationManager(ConstraintHandler * const ch):ch(ch){};
 		virtual ~MutationManager(){};
-		virtual void prepare(std::vector<Solution*>const& genomes){};
+		virtual void prepare(std::vector<Solution*>const& /*genomes*/){};
 		Solution* mutate(std::vector<Solution*>const& genomes, int const i, double const F);
 };
 

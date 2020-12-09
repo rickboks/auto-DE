@@ -7,7 +7,7 @@ void algorithm (std::shared_ptr<IOHprofiler_problem<double>> problem, std::share
     de->run(problem, logger, D*10000, 5 * D); 
 }
 
-void run_experiment(bool const log) {
+void run_experiment(bool const /*log*/) {
     de = new DifferentialEvolution(DEConfig({"T2"}, {"B"}, "S", "PM"));
 	std::string templateFile = "./configuration.ini";
     std::string configFile = generateConfig(templateFile, de->getIdString());

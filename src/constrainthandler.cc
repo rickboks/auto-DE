@@ -13,7 +13,7 @@ bool ConstraintHandler::isFeasible(Solution const * const p) const{
 	return true;
 }
 
-bool ConstraintHandler::resample(Solution * const p, int const resamples){
+bool ConstraintHandler::resample(Solution * const /*p*/, int const /*resamples*/){
 	return false;
 }
 
@@ -43,7 +43,7 @@ std::map<std::string, std::function<ConstraintHandler*(std::vector<double>, std:
 });
 
 // Differential Evolution
-void RandBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const target) {
+void RandBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
 	bool repaired = false;
 	for (int i = 0; i < D; i++){
 		if (p->getX(i) > ub[i]){
@@ -57,7 +57,7 @@ void RandBaseRepair::repair(Solution* const p, Solution const* const base, Solut
 	if (repaired) nCorrected++;
 }
 
-void MidpointBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const target) {
+void MidpointBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
 	bool repaired = false;
 	for (int i = 0; i < D; i++){
 		if (p->getX(i) > ub[i]){
@@ -71,7 +71,7 @@ void MidpointBaseRepair::repair(Solution* const p, Solution const* const base, S
 	if (repaired) nCorrected++;
 }
 
-void MidpointTargetRepair::repair(Solution* const p, Solution const* const base, Solution const* const target) {
+void MidpointTargetRepair::repair(Solution* const p, Solution const* const /*base*/, Solution const* const target) {
 	bool repaired = false;
 	for (int i = 0; i < D; i++){
 		if (p->getX(i) > ub[i]){
@@ -85,7 +85,7 @@ void MidpointTargetRepair::repair(Solution* const p, Solution const* const base,
 	if (repaired) nCorrected++;
 }
 
-void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const base, Solution const* const target) {
+void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /*base*/, Solution const* const /*target*/) {
 	std::vector<double> x = p->getX();
 	std::vector<double>alphas(D+1);
 	alphas[D] = 1.;
@@ -110,7 +110,7 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const b
 	}
 }
 
-void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const target) {
+void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
 	std::vector<double> x = p->getX();
 	std::vector<double> alphas(D+1);
 	alphas[D] = 1.;
@@ -143,7 +143,7 @@ void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base,
 	}
 }
 
-void ConservatismRepair::repair(Solution* const p, Solution const*const base, Solution const*const target){
+void ConservatismRepair::repair(Solution* const p, Solution const*const base, Solution const*const /*target*/){
 	if (!isFeasible(p)){
 		p->copy(base);
 		nCorrected++;

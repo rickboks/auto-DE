@@ -34,7 +34,7 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 	return new Solution(x);
 }
 
-Solution* ArithmeticCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{	
+Solution* ArithmeticCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const /*Cr*/) const{	
 	std::vector<double> x = target->getX();
 	double const k = rng.randDouble(0,1);
 
