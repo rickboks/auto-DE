@@ -11,8 +11,7 @@ protected:
 public:
 	ParameterAdaptationManager(int const popSize); 
 	virtual ~ParameterAdaptationManager(){};
-	virtual void nextF(std::vector<double>& Fs)=0;
-	virtual void nextCr(std::vector<double>& Crs)=0;
+	virtual void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs)=0;
 	virtual void update(std::vector<double>const& targets, std::vector<double>const& trials)=0;
 };
 
@@ -29,8 +28,7 @@ private:
 	double lehmerMean(std::vector<double>const& SF) const;
 public:
 	JADEManager(int const popSize);
-	void nextF(std::vector<double>& Fs);
-	void nextCr(std::vector<double>& Crs);
+	void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
 	void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };
 
@@ -50,8 +48,7 @@ class SHADEManager : public ParameterAdaptationManager {
 		std::vector<double> w(std::vector<double>const& delta) const;
 	public:
 		SHADEManager(int const popSize);
-		void nextF(std::vector<double>& Fs);
-		void nextCr(std::vector<double>& Crs);
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
 		void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };
 
@@ -61,7 +58,6 @@ private:
 	double const Cr;
 public:
 	NoAdaptationManager(int const popSize);
-	void nextF(std::vector<double>& Fs);
-	void nextCr(std::vector<double>& Crs);
+	void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
 	void update(std::vector<double>const& orig, std::vector<double>const& trials);
 };

@@ -35,12 +35,13 @@ void JADEManager::update(std::vector<double>const& orig, std::vector<double>cons
 	}
 }
 
-void JADEManager::nextF(std::vector<double>& Fs){
+void JADEManager::nextParameters(std::vector<double>& Crs, std::vector<double>& Fs){
 	int third = popSize/3;
 	std::vector<double> indices(popSize);
 	std::iota(indices.begin(), indices.end(), 0);
 	rng.shuffle(indices.begin(), indices.end());
 
+	// Update mutation rate
 	for (int i = 0; i < third; i++)
 		Fs[indices[i]] = rng.randDouble(0.0,1.2);
 
@@ -50,14 +51,11 @@ void JADEManager::nextF(std::vector<double>& Fs){
 		} while ( Fs[indices[i]] <= 0. );
 	}
 
-	previousFs = Fs;
-}
-
-void JADEManager::nextCr(std::vector<double>& Crs){
-	for (int i = 0; i < popSize; i++){
+	// Update crossover rate
+	for (int i = 0; i < popSize; i++)
 		Crs[i] = std::min(std::max(rng.normalDistribution(MuCr, 0.1),0.0),1.0);
-	}
 
+	previousFs = Fs;
 	previousCrs = Crs;
 }
 
@@ -124,21 +122,22 @@ void SHADEManager::update(std::vector<double>const& targets, std::vector<double>
 		r[i] = rng.randInt(0, H-1);
 }
 
-void SHADEManager::nextF(std::vector<double>& Fs){
+void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
+	// Update mutation rate
 	for (int i = 0; i < popSize; i++){
 		double const MFr = MF[r[i]];
 		do{
 			Fs[i] = std::min(rng.cauchyDistribution(MFr, 0.1), 1.);
 		} while (Fs[i] <= 0.);
 	}
-	previousFs = Fs;
-}
-
-void SHADEManager::nextCr(std::vector<double>& Crs){
+ 
+	// Update crossover rate
 	for (int i = 0; i < popSize; i++){
 		double const MCrr = MCr[r[i]];
 		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, 0.1),0.),1.);
 	}
+
+	previousFs = Fs;
 	previousCrs = Crs;
 }
 
@@ -150,10 +149,9 @@ void NoAdaptationManager::update(std::vector<double>const& orig, std::vector<dou
 	//ignore
 }
 
-void NoAdaptationManager::nextF(std::vector<double>& Fs){
+void NoAdaptationManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
+	// Update mutation rate
 	std::fill(Fs.begin(), Fs.end(), F);
-}
-
-void NoAdaptationManager::nextCr(std::vector<double>& Crs){
+	// Update crossover rate
 	std::fill(Crs.begin(), Crs.end(), Cr);
 }

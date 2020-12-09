@@ -31,8 +31,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 	int iteration = 0;
 
 	while (problem->IOHprofiler_get_evaluations() < evalBudget && !problem->IOHprofiler_hit_optimal()){
-		adaptationManager->nextF(Fs);
-		adaptationManager->nextCr(Crs);
+		adaptationManager->nextParameters(Fs, Crs);
 
 		std::vector<Solution*> const donors = mutationManager->mutate(genomes,Fs);
 		std::vector<Solution*> const trials = crossoverManager->crossover(genomes, donors, Crs);
