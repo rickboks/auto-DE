@@ -22,10 +22,9 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 	std::vector<double> x = target->getX();
 	unsigned int const start = rng.randInt(0,x.size()-1);
 
-	unsigned int L = 0;
-	do {
+	unsigned int L = 1;
+	while (rng.randDouble(0,1) <= Cr && L <= x.size())
 		L++;
-	} while (rng.randDouble(0,1) <= Cr && L <= x.size());
 
 	unsigned int const end = (start+L-1) % x.size();
 	for (unsigned int i = 0; i < x.size(); i++){
