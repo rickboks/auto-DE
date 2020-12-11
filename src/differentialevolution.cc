@@ -10,11 +10,8 @@ DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 }
 
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
-	if (std::abs((*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness() -
-	   (*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness()) < CONVERGENCE_DELTA){
-		return true;
-	}
-	return false;
+	return (*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness() -
+			(*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness() < CONVERGENCE_DELTA;
 } 
 
 void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBudget, int const popSize) const {

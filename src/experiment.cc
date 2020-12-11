@@ -29,7 +29,6 @@ void experiment(DifferentialEvolution& de,
 			de.run(PROBLEM, budget, 100);
 			restarts++;
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
-		//std::cout << restarts << std::endl;
 	}
 
 	coco_observer_free(observer);
