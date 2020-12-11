@@ -25,5 +25,6 @@ class DifferentialEvolution {
 	public:
 		DifferentialEvolution(DEConfig const config);
 		void run(coco_problem_t* problem, int const evalBudget, int const popSize) const;
+		bool converged(std::vector<Solution*>const& population) const;
 		std::string getIdString() const;
 };

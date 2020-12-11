@@ -16,6 +16,19 @@ static int const BUDGET_MULTIPLIER = 10000;
  * when using the "bbob-biobj-ext" suite).
  * @param observer_options Options of the observer (e.g. "result_folder: folder_name")
  */
+
+std::string gen_instance_indices(std::vector<std::string> instances, int independent_runs){
+  std::string str = "";
+  for (std::string i : instances){
+    for (int j = 0; j < independent_runs; j++){
+      str += i + ",";
+    }
+  }
+  str.pop_back();
+  std::cout << str << std::endl;
+  return str;
+}
+
 void example_experiment(DifferentialEvolution& de,
                         char const *const suite_name,
                         char const *const suite_options,
@@ -29,8 +42,8 @@ void example_experiment(DifferentialEvolution& de,
 
   /* Iterate over all problems in the suite */
   while ((PROBLEM = coco_suite_get_next_problem(suite, observer)) != NULL) {
-    size_t dimension = coco_problem_get_dimension(PROBLEM);
-    de.run(PROBLEM, dimension * BUDGET_MULTIPLIER, 100);
+      size_t dimension = coco_problem_get_dimension(PROBLEM);
+      de.run(PROBLEM, dimension * BUDGET_MULTIPLIER, 100);
   }
 
   coco_observer_free(observer);
@@ -39,7 +52,12 @@ void example_experiment(DifferentialEvolution& de,
 
 int main() {
   coco_set_log_level("info");
-  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "RS"));
-  example_experiment(de, "bbob", "", "bbob", ("result_folder: " + de.getIdString()).c_str());
+  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "MT"));
+  example_experiment(
+      de, 
+      "bbob", 
+      "dimensions: 20 instance_indices: 1" /*+ gen_instance_indices({"1", "2", "3", "4", "5"}, 5)).c_str()*/, 
+      "bbob", 
+      ("result_folder: " + de.getIdString()).c_str());
   return 0;
 }

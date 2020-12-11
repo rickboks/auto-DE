@@ -1,9 +1,18 @@
+#include <algorithm>
 #include "differentialevolution.h"
 #include "strategyadaptationmanager.h"
 #include "util.h"
 
+#define convergence_delta 1e-12
+
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
+}
+
+bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
+	double const maxFitness = (*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness();
+	double const minFitness = (*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness();
+	return maxFitness - minFitness < convergence_delta;
 }
 
 void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBudget, int const popSize) const {
@@ -29,7 +38,11 @@ void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBud
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
 
-	while ((int)coco_problem_get_evaluations(problem) < evalBudget && !coco_problem_final_target_hit(problem)){
+	int iteration = 0;
+	while ((int)coco_problem_get_evaluations(problem) < evalBudget
+			&& !coco_problem_final_target_hit(problem)
+			&& !converged(genomes)){
+
 		paramAdaptationManager->nextParameters(Fs, Crs);
 		strategyAdaptationManager->nextStrategies(mutationManagers, crossoverManagers);
 
@@ -74,6 +87,7 @@ void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBud
 		// Update the adaptation managers
 		paramAdaptationManager->update(parentF, trialF);
 		strategyAdaptationManager->update(parentF, trialF);
+		iteration++;
 	}
 
 	// Clean up

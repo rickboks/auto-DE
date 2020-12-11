@@ -27,7 +27,6 @@ void Solution::setFitness(double const f){
 double Solution::evaluate(coco_problem_t* const problem) {
 	if (!evaluated){
 		evaluated = true;		
-		double fitness;
 		coco_evaluate_function(problem, &x[0], &fitness);
 	} 
 	return fitness;
