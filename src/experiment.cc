@@ -1,24 +1,45 @@
-#include "util.h"
+#include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include <iostream>
+#include "coco.h"
 #include "differentialevolution.h"
-DifferentialEvolution* de;
+static coco_problem_t *PROBLEM;
+static int const BUDGET_MULTIPLIER = 10000;
 
-void algorithm (std::shared_ptr<IOHprofiler_problem<double>> problem, std::shared_ptr<IOHprofiler_csv_logger> logger){
-    int const D = problem->IOHprofiler_get_number_of_variables(); 
-    de->run(problem, logger, D*10000, 5 * D); 
+/**
+ * @param suite_name Name of the suite (e.g. "bbob" or "bbob-biobj").
+ * @param suite_options Options of the suite (e.g. "dimensions: 2,3,5,10,20 instance_indices: 1-5").
+ * @param observer_name Name of the observer matching with the chosen suite (e.g. "bbob-biobj"
+ * when using the "bbob-biobj-ext" suite).
+ * @param observer_options Options of the observer (e.g. "result_folder: folder_name")
+ */
+void example_experiment(char const *const suite_name,
+                        char const *const suite_options,
+                        char const *const observer_name,
+                        char const *const observer_options) {
+  coco_suite_t *suite;
+  coco_observer_t *observer;
+
+  suite = coco_suite(suite_name, "", suite_options);
+  observer = coco_observer(observer_name, observer_options);
+
+  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "RS"));
+
+  /* Iterate over all problems in the suite */
+  while ((PROBLEM = coco_suite_get_next_problem(suite, observer)) != NULL) {
+    size_t dimension = coco_problem_get_dimension(PROBLEM);
+    de.run(PROBLEM, dimension * BUDGET_MULTIPLIER, 100);
+  }
+
+  coco_observer_free(observer);
+  coco_suite_free(suite);
 }
 
-void run_experiment(bool const /*log*/) {
-    de = new DifferentialEvolution(DEConfig({"T2"}, {"B"}, "S", "PM"));
-	std::string templateFile = "./configuration.ini";
-    std::string configFile = generateConfig(templateFile, de->getIdString());
-    IOHprofiler_experimenter<double> experimenter(configFile,algorithm); 
-
-    experimenter._set_independent_runs(5);
-    experimenter._run();
-    delete de;
-}
-
-int main(){
-    bool const log = false;
-    run_experiment(log);
+int main() {
+  coco_set_log_level("info");
+  example_experiment("bbob", "", "bbob", "result_folder: RS_on_bbob");
+  return 0;
 }

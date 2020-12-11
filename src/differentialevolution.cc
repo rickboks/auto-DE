@@ -1,41 +1,35 @@
 #include "differentialevolution.h"
 #include "strategyadaptationmanager.h"
+#include "util.h"
 
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
 }
 
-void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > const problem, 
-    		std::shared_ptr<IOHprofiler_csv_logger> const iohLogger, 
-    		int const evalBudget, int const popSize) const {
-
-	int const D = problem->IOHprofiler_get_number_of_variables();
-	std::vector<double> const lowerBound = problem->IOHprofiler_get_lowerbound();
-	std::vector<double> const upperBound = problem->IOHprofiler_get_upperbound();
+void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBudget, int const popSize) const {
+	int const D = coco_problem_get_dimension(problem);
+	std::vector<double> const lowerBound = vectorize(coco_problem_get_smallest_values_of_interest(problem), D);
+	std::vector<double> const upperBound = vectorize(coco_problem_get_largest_values_of_interest(problem), D);
 
 	// Initialize and evaluate the population
 	std::vector<Solution*> genomes(popSize);
 	for (int i = 0; i < popSize; i++){
 		genomes[i] = new Solution(D);
 		genomes[i]->randomize(lowerBound, upperBound);
-		genomes[i]->evaluate(problem, iohLogger);
+		genomes[i]->evaluate(problem);
 	}
 
 	ConstraintHandler * const ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
-	ParameterAdaptationManager* const paramAdaptationManager = deAdaptations.at(config.adaptation)(popSize);
-
+	ParameterAdaptationManager* const paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
 	ConfigurationSpace const* const configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
 	StrategyAdaptationManager* const strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
 
 	std::vector<double> Fs(popSize);
 	std::vector<double> Crs(popSize);
-
-	int iteration = 0;
-
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
 
-	while (problem->IOHprofiler_get_evaluations() < evalBudget && !problem->IOHprofiler_hit_optimal()){
+	while ((int)coco_problem_get_evaluations(problem) < evalBudget && !coco_problem_final_target_hit(problem)){
 		paramAdaptationManager->nextParameters(Fs, Crs);
 		strategyAdaptationManager->nextStrategies(mutationManagers, crossoverManagers);
 
@@ -43,7 +37,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 		std::vector<Solution*> donors(popSize);
 		for (MutationManager* m : configSpace->mutation){
 			if (mutationManagers.count(m)){
-				std::vector<int> indices = mutationManagers[m];
+				std::vector<int> const indices = mutationManagers[m];
 				if (!indices.empty()){
 					m->prepare(genomes);
 					for (int i : indices)
@@ -59,7 +53,7 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 			for (int i : crossoverManagers[c]){
 				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
 				delete donors[i];
-				trials[i]->evaluate(problem, iohLogger);
+				trials[i]->evaluate(problem);
 				ch->penalize(trials[i]); 
 				trialF[i] = trials[i]->getFitness();
 			}
@@ -77,9 +71,9 @@ void DifferentialEvolution::run(std::shared_ptr<IOHprofiler_problem<double> > co
 			}
 		}
 
-		// Housekeeping
+		// Update the adaptation managers
 		paramAdaptationManager->update(parentF, trialF);
-		iteration++;
+		strategyAdaptationManager->update(parentF, trialF);
 	}
 
 	// Clean up

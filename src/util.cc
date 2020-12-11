@@ -1,6 +1,7 @@
 #include "util.h"
 #include "rng.h"
 #include <experimental/filesystem>
+#include <fstream>
 
 std::vector<double> scale(std::vector<double>const vec, double const scalar){
 	std::vector<double> x = vec;

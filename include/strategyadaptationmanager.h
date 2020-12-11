@@ -10,6 +10,7 @@ class StrategyAdaptationManager {
 		virtual ~StrategyAdaptationManager(){};
 		virtual void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover)=0;
+		virtual void update(std::vector<double>const /*parentF*/, std::vector<double>const /*trialF*/){};
 	protected:
 		ConfigurationSpace const* const configSpace;
 		int const popSize;

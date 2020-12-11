@@ -17,6 +17,14 @@ void printVec(std::vector<double> const v);
 std::string checkFilename(std::string fn);
 
 template <typename T>
+std::vector<T> vectorize(T const * const arr, int const size){
+	std::vector<T> vec(size);
+	for (int i = 0; i < size; i++)
+		vec[i] = arr[i];
+	return vec;
+}
+
+template <typename T>
 void sortOnFitness(std::vector<T*>& genomes){
 	std::sort(genomes.begin(), genomes.end(), comparePtrs);
 }

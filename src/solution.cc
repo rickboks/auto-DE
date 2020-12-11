@@ -24,13 +24,12 @@ void Solution::setFitness(double const f){
 	evaluated=true;
 }
 
-double Solution::evaluate(std::shared_ptr<IOHprofiler_problem<double> > problem, std::shared_ptr<IOHprofiler_csv_logger> logger) {
+double Solution::evaluate(coco_problem_t* const problem) {
 	if (!evaluated){
 		evaluated = true;		
-		fitness = problem->evaluate(x);
-		logger->do_log(problem->loggerCOCOInfo());
+		double fitness;
+		coco_evaluate_function(problem, &x[0], &fitness);
 	} 
-
 	return fitness;
 }
 
@@ -45,7 +44,6 @@ std::string Solution::positionString() const {
 		pos += " ";
 	}
 	pos += std::to_string(x[D-1]);
-
 	return pos;
 }
 

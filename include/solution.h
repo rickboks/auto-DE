@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
-#include <IOHprofiler_experimenter.h>
+#include <string>
+#include "coco.h"
 
 class Solution {
 	protected:
@@ -17,7 +18,7 @@ class Solution {
 		void setX(std::vector<double> x);
 		std::vector<double> getX() const;
 		double getX(int const dim) const;
-		double evaluate (std::shared_ptr<IOHprofiler_problem<double> > problem, std::shared_ptr<IOHprofiler_csv_logger> logger);
+		double evaluate (coco_problem_t* const problem);
 		double getFitness() const;
 		void setFitness(double const d);
 		std::string positionString() const;

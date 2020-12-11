@@ -3,6 +3,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
+#include <map>
 #include "solution.h"
 
 class CrossoverManager {

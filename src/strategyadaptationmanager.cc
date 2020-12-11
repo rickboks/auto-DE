@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <exception>
 #include "strategyadaptationmanager.h"
 

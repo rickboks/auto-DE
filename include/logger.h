@@ -1,8 +1,8 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
-#include "suite_bbob_legacy_code.hpp"
 #include "util.h" 
+
 class Solution;
 
 class Logger { // Used to log arbitrary stuff

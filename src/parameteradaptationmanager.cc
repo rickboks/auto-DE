@@ -3,7 +3,7 @@
 #include "rng.h"
 
 #define LC(X) [](int const popSize){return new X(popSize);}
-std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const deAdaptations({
+std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const parameterAdaptations({
 		{"J", LC(JADEManager)},
 		{"S", LC(SHADEManager)},
 		{"C", LC(ConstantParameterManager)},

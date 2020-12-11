@@ -15,7 +15,7 @@ public:
 	virtual void update(std::vector<double>const& targets, std::vector<double>const& trials)=0;
 };
 
-extern std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const deAdaptations;
+extern std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const parameterAdaptations;
 
 class JADEManager : public ParameterAdaptationManager{
 private:

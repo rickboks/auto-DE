@@ -3,6 +3,7 @@
 #include "crossovermanager.h"
 #include "parameteradaptationmanager.h"
 #include "configurationspace.h"
+#include "coco.h"
 
 template <typename T>
 class IOHprofiler_problem;
@@ -23,9 +24,6 @@ class DifferentialEvolution {
 		DEConfig const config;
 	public:
 		DifferentialEvolution(DEConfig const config);
-
-		void run(std::shared_ptr<IOHprofiler_problem<double> > const problem, 
-    		std::shared_ptr<IOHprofiler_csv_logger> const logger,
-    		int const evalBudget, int const popSize) const;
+		void run(coco_problem_t* problem, int const evalBudget, int const popSize) const;
 		std::string getIdString() const;
 };
