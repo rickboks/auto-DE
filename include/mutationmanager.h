@@ -4,7 +4,7 @@
 class MutationManager {
 	protected:
 		ConstraintHandler* const ch;
-		virtual Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const=0;
+		virtual Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const=0;
 	public:
 		MutationManager(ConstraintHandler * const ch):ch(ch){};
 		virtual ~MutationManager(){};
@@ -17,7 +17,7 @@ extern std::map<std::string, std::function<MutationManager* (ConstraintHandler* 
 class Rand1MutationManager : public MutationManager {
 	public:
 		Rand1MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TTB1MutationManager : public MutationManager {
@@ -26,7 +26,7 @@ class TTB1MutationManager : public MutationManager {
 	public:
 		TTB1MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TTB2MutationManager : public MutationManager {
@@ -35,13 +35,13 @@ class TTB2MutationManager : public MutationManager {
 	public:
 		TTB2MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TTPB1MutationManager : public MutationManager {
 	public:
 		TTPB1MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class Best1MutationManager: public MutationManager {
@@ -50,7 +50,7 @@ class Best1MutationManager: public MutationManager {
 	public:
 		Best1MutationManager(ConstraintHandler* const ch):MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class Best2MutationManager: public MutationManager {
@@ -59,25 +59,25 @@ class Best2MutationManager: public MutationManager {
 	public:
 		Best2MutationManager(ConstraintHandler* const ch):MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class Rand2MutationManager: public MutationManager {
 	public:
 		Rand2MutationManager(ConstraintHandler* const ch):MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class Rand2DirMutationManager : public MutationManager {
 	public:
 		Rand2DirMutationManager(ConstraintHandler* const ch):MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class NSDEMutationManager : public MutationManager {
 	public:
 		NSDEMutationManager(ConstraintHandler* const ch):MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TrigonometricMutationManager : public MutationManager {
@@ -87,19 +87,19 @@ class TrigonometricMutationManager : public MutationManager {
 		Solution* rand1Mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 	public:
 		TrigonometricMutationManager(ConstraintHandler* const ch): MutationManager(ch), gamma(0.05){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TwoOpt1MutationManager : public MutationManager {
 	public:
 		TwoOpt1MutationManager(ConstraintHandler* const ch): MutationManager(ch) {};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class TwoOpt2MutationManager : public MutationManager {
 	public:
 		TwoOpt2MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class ProximityMutationManager : public MutationManager {
@@ -109,7 +109,7 @@ class ProximityMutationManager : public MutationManager {
 	public:
 		ProximityMutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
 class RankingMutationManager : public MutationManager {
@@ -119,5 +119,5 @@ class RankingMutationManager : public MutationManager {
 	public:
 		RankingMutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);
-		Solution* do_mutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
