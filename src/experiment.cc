@@ -7,60 +7,57 @@
 #include "coco.h"
 #include "differentialevolution.h"
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 10000;
+static int const BUDGET_MULTIPLIER = 1000000;
 
-/**
- * @param suite_name Name of the suite (e.g. "bbob" or "bbob-biobj").
- * @param suite_options Options of the suite (e.g. "dimensions: 2,3,5,10,20 instance_indices: 1-5").
- * @param observer_name Name of the observer matching with the chosen suite (e.g. "bbob-biobj"
- * when using the "bbob-biobj-ext" suite).
- * @param observer_options Options of the observer (e.g. "result_folder: folder_name")
- */
+void experiment(DifferentialEvolution& de,
+				char const *const suite_name,
+				char const *const suite_options,
+				char const *const observer_name,
+				char const *const observer_options) {
 
-std::string gen_instance_indices(std::vector<std::string> instances, int independent_runs){
-  std::string str = "";
-  for (std::string i : instances){
-    for (int j = 0; j < independent_runs; j++){
-      str += i + ",";
-    }
-  }
-  str.pop_back();
-  std::cout << str << std::endl;
-  return str;
-}
+	coco_suite_t *suite;
+	coco_observer_t *observer;
+	suite = coco_suite(suite_name, "", suite_options);
+	observer = coco_observer(observer_name, observer_options);
 
-void example_experiment(DifferentialEvolution& de,
-                        char const *const suite_name,
-                        char const *const suite_options,
-                        char const *const observer_name,
-                        char const *const observer_options) {
-  coco_suite_t *suite;
-  coco_observer_t *observer;
-  suite = coco_suite(suite_name, "", suite_options);
-  observer = coco_observer(observer_name, observer_options);
+	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
+		int const dimension = coco_problem_get_dimension(PROBLEM);
+		int const budget =	dimension * BUDGET_MULTIPLIER;
+		int evaluations_remaining = budget;
+		int restarts_needed = 0;
 
-  while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
-    int const dimension = coco_problem_get_dimension(PROBLEM);
-    int const budget =  dimension * BUDGET_MULTIPLIER;
-    int evaluations_remaining;
-	do {
-	  evaluations_remaining = budget - coco_problem_get_evaluations(PROBLEM);
-	  de.run(PROBLEM, evaluations_remaining, 100);
-	} while(!coco_problem_final_target_hit(PROBLEM) && evaluations_remaining > 0);
-  }
+		do {
+			de.run(PROBLEM, evaluations_remaining, 100);
+			evaluations_remaining = budget - coco_problem_get_evaluations(PROBLEM);
+			restarts_needed++;
+		} while (!coco_problem_final_target_hit(PROBLEM) && evaluations_remaining > 0);
+	}
 
-  coco_observer_free(observer);
-  coco_suite_free(suite);
+	coco_observer_free(observer);
+	coco_suite_free(suite);
 }
 
 int main() {
-  coco_set_log_level("info");
-  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "MT"));
-  example_experiment(
-      de, 
-      "bbob", 
-      "dimensions: 10 instance_indices: 1-15" /*+ gen_instance_indices({"1", "2", "3", "4", "5"}, 5)).c_str()*/, 
-      "bbob", 
-      ("result_folder: " + de.getIdString()).c_str());
-  return 0;
+	coco_set_log_level("info");
+	std::string const suite = "bbob";
+	std::string const dimensions = "40";
+	std::string const functions = "3";
+	std::string const instances = "1-15";
+
+	DifferentialEvolution de(DEConfig(
+		{"R1"},  //Mutation
+		{"B"},	 //Crossover
+		"S",		 //Self-adaptation 
+		"MT"		 //Constraint handling
+	));
+
+	experiment(
+		de, 
+		suite.c_str(), 
+		("dimensions: " + dimensions + " instance_indices: " + instances + " function_indices: " + functions).c_str(), 
+		suite.c_str(), 
+		("result_folder: " + de.getIdString()).c_str()
+	);
+
+	return 0;
 }
