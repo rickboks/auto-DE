@@ -7,7 +7,7 @@
 #include "coco.h"
 #include "differentialevolution.h"
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1000000;
+static int const BUDGET_MULTIPLIER = 10000;
 
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
@@ -22,15 +22,14 @@ void experiment(DifferentialEvolution& de,
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
-		int const budget =	dimension * BUDGET_MULTIPLIER;
-		int evaluations_remaining = budget;
-		int restarts_needed = 0;
+		size_t const budget = dimension * BUDGET_MULTIPLIER;
+		int restarts= -1;
 
 		do {
-			de.run(PROBLEM, evaluations_remaining, 100);
-			evaluations_remaining = budget - coco_problem_get_evaluations(PROBLEM);
-			restarts_needed++;
-		} while (!coco_problem_final_target_hit(PROBLEM) && evaluations_remaining > 0);
+			de.run(PROBLEM, budget, 100);
+			restarts++;
+		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
+		//std::cout << restarts << std::endl;
 	}
 
 	coco_observer_free(observer);
@@ -39,16 +38,17 @@ void experiment(DifferentialEvolution& de,
 
 int main() {
 	coco_set_log_level("info");
-	std::string const suite = "bbob";
-	std::string const dimensions = "40";
-	std::string const functions = "3";
-	std::string const instances = "1-15";
+	std::string const 
+		suite = "bbob",
+	  	dimensions = "10",
+	 	functions = "1-5",
+		instances = "1-15";
 
 	DifferentialEvolution de(DEConfig(
-		{"R1"},  //Mutation
-		{"B"},	 //Crossover
-		"S",		 //Self-adaptation 
-		"MT"		 //Constraint handling
+		{"B1"}, // Mutation
+		{"B"},	// Crossover
+		"S",	// Self-adaptation 
+		"MT"	// Constraint handling
 	));
 
 	experiment(

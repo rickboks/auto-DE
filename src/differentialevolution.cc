@@ -3,7 +3,7 @@
 #include "strategyadaptationmanager.h"
 #include "util.h"
 
-#define CONVERGENCE_DELTA 1e-9
+#define CONVERGENCE_DELTA 1e-10
 
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
