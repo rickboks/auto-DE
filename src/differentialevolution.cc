@@ -3,7 +3,7 @@
 #include "strategyadaptationmanager.h"
 #include "util.h"
 
-#define convergence_delta 1e-12
+#define CONVERGENCE_DELTA 1e-10
 
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
@@ -12,7 +12,7 @@ DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
 	double const maxFitness = (*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness();
 	double const minFitness = (*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness();
-	return maxFitness - minFitness < convergence_delta;
+	return maxFitness - minFitness < CONVERGENCE_DELTA;
 }
 
 void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBudget, int const popSize) const {

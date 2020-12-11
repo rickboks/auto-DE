@@ -40,10 +40,20 @@ void example_experiment(DifferentialEvolution& de,
   suite = coco_suite(suite_name, "", suite_options);
   observer = coco_observer(observer_name, observer_options);
 
-  /* Iterate over all problems in the suite */
-  while ((PROBLEM = coco_suite_get_next_problem(suite, observer)) != NULL) {
-      size_t dimension = coco_problem_get_dimension(PROBLEM);
-      de.run(PROBLEM, dimension * BUDGET_MULTIPLIER, 100);
+  while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
+    int const dimension = coco_problem_get_dimension(PROBLEM);
+	while(true){
+	  int const evaluations_done = coco_problem_get_evaluations(PROBLEM);
+	  int const evaluations_remaining = dimension * BUDGET_MULTIPLIER - evaluations_done;
+
+	  if ((coco_problem_final_target_hit(PROBLEM) 
+		&& coco_problem_get_number_of_constraints(PROBLEM) == 0) 
+		|| (evaluations_remaining <= 0))
+		break; 
+
+	  de.run(PROBLEM, evaluations_remaining, 100);
+	}
+
   }
 
   coco_observer_free(observer);
