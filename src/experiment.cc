@@ -16,7 +16,8 @@ static int const BUDGET_MULTIPLIER = 10000;
  * when using the "bbob-biobj-ext" suite).
  * @param observer_options Options of the observer (e.g. "result_folder: folder_name")
  */
-void example_experiment(char const *const suite_name,
+void example_experiment(DifferentialEvolution& de,
+                        char const *const suite_name,
                         char const *const suite_options,
                         char const *const observer_name,
                         char const *const observer_options) {
@@ -25,8 +26,6 @@ void example_experiment(char const *const suite_name,
 
   suite = coco_suite(suite_name, "", suite_options);
   observer = coco_observer(observer_name, observer_options);
-
-  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "RS"));
 
   /* Iterate over all problems in the suite */
   while ((PROBLEM = coco_suite_get_next_problem(suite, observer)) != NULL) {
@@ -40,6 +39,7 @@ void example_experiment(char const *const suite_name,
 
 int main() {
   coco_set_log_level("info");
-  example_experiment("bbob", "", "bbob", "result_folder: RS_on_bbob");
+  DifferentialEvolution de(DEConfig({"B1"}, {"B"}, "S", "RS"));
+  example_experiment(de, "bbob", "", "bbob", ("result_folder: " + de.getIdString()).c_str());
   return 0;
 }
