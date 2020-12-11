@@ -23,11 +23,11 @@ void experiment(DifferentialEvolution& de,
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		int restarts= -1;
+		int runs = 0;
 
 		do {
 			de.run(PROBLEM, budget, 100);
-			restarts++;
+			runs++;
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 	}
 
