@@ -36,24 +36,17 @@ void example_experiment(DifferentialEvolution& de,
                         char const *const observer_options) {
   coco_suite_t *suite;
   coco_observer_t *observer;
-
   suite = coco_suite(suite_name, "", suite_options);
   observer = coco_observer(observer_name, observer_options);
 
   while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
     int const dimension = coco_problem_get_dimension(PROBLEM);
-	while(true){
-	  int const evaluations_done = coco_problem_get_evaluations(PROBLEM);
-	  int const evaluations_remaining = dimension * BUDGET_MULTIPLIER - evaluations_done;
-
-	  if ((coco_problem_final_target_hit(PROBLEM) 
-		&& coco_problem_get_number_of_constraints(PROBLEM) == 0) 
-		|| (evaluations_remaining <= 0))
-		break; 
-
+    int const budget =  dimension * BUDGET_MULTIPLIER;
+    int evaluations_remaining;
+	do {
+	  evaluations_remaining = budget - coco_problem_get_evaluations(PROBLEM);
 	  de.run(PROBLEM, evaluations_remaining, 100);
-	}
-
+	} while(!coco_problem_final_target_hit(PROBLEM) && evaluations_remaining > 0);
   }
 
   coco_observer_free(observer);
@@ -66,7 +59,7 @@ int main() {
   example_experiment(
       de, 
       "bbob", 
-      "dimensions: 20 instance_indices: 1" /*+ gen_instance_indices({"1", "2", "3", "4", "5"}, 5)).c_str()*/, 
+      "dimensions: 10 instance_indices: 1-15" /*+ gen_instance_indices({"1", "2", "3", "4", "5"}, 5)).c_str()*/, 
       "bbob", 
       ("result_folder: " + de.getIdString()).c_str());
   return 0;

@@ -100,5 +100,5 @@ void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBud
 }
 
 std::string DifferentialEvolution::getIdString() const {
-	return "DE"; // + config.mutation + "_" + config.crossover + "_" + config.adaptation + "_" + config.constraintHandler;
+	return "DE_" + config.mutation[0] + "_" + config.crossover[0]; // + "_" + config.adaptation + "_" + config.constraintHandler;
 }
