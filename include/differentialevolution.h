@@ -36,6 +36,7 @@ class DifferentialEvolution {
 		DifferentialEvolution(DEConfig const config);
 		virtual ~DifferentialEvolution();
 		void run(int const evalBudget);
+		void run(coco_problem_t* problem, int const evalBudget, int const popSize);
 		void prepare(coco_problem_t* problem, int const popSize);
 		void reset();
 		bool converged(std::vector<Solution*>const& population) const;

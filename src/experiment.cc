@@ -27,9 +27,7 @@ void experiment(DifferentialEvolution& de,
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
 
 		do {
-			de.prepare(PROBLEM, popSize);
-			de.run(budget);
-			de.reset();
+			de.run(PROBLEM, budget, popSize);
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 	}
 

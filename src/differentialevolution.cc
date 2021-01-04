@@ -40,6 +40,12 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
 }
 
+void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, int const popSize){
+	prepare(problem, popSize);
+	run(evalBudget);
+	reset();
+}
+
 // Optimize the problem for 'evalBudget' evaluations.
 void DifferentialEvolution::run(int const evalBudget){
 	std::vector<double> Fs(popSize), Crs(popSize);
