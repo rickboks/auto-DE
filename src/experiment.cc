@@ -20,14 +20,16 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, "", suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
+	int const popSize = 100;
+
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		int runs = 0;
 
 		do {
-			de.run(PROBLEM, budget, 100);
-			runs++;
+			de.prepare(PROBLEM, popSize);
+			de.run(budget);
+			de.reset();
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 	}
 
@@ -39,9 +41,9 @@ int main() {
 	coco_set_log_level("info");
 	std::string const 
 		suite = "bbob",
-	  	dimensions = "10",
-	 	functions = "1-5",
-		instances = "1-15";
+	  	dimensions = "5",
+	 	functions = "15",
+		instances = "1";
 
 	DifferentialEvolution de(DEConfig(
 		{"B1"}, // Mutation

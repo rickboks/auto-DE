@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "differentialevolution.h"
 #include "strategyadaptationmanager.h"
+#include "parameteradaptationmanager.h"
 #include "util.h"
 
 #define CONVERGENCE_DELTA 1e-10
@@ -9,31 +10,39 @@ DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){
 }
 
+DifferentialEvolution::~DifferentialEvolution(){}
+
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
 	return (*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness() -
 			(*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness() < CONVERGENCE_DELTA;
 } 
 
-void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBudget, int const popSize) const {
-	int const D = coco_problem_get_dimension(problem);
+// Should be called before starting to optimize a problem
+void DifferentialEvolution::prepare(coco_problem_t* const problem, int const popSize) {
+	this->D = coco_problem_get_dimension(problem);
+	this->popSize = popSize;
+	this->problem = problem;
+
 	std::vector<double> const lowerBound = vectorize(coco_problem_get_smallest_values_of_interest(problem), D);
 	std::vector<double> const upperBound = vectorize(coco_problem_get_largest_values_of_interest(problem), D);
 
 	// Initialize and evaluate the population
-	std::vector<Solution*> genomes(popSize);
+	genomes.resize(popSize, NULL);
 	for (int i = 0; i < popSize; i++){
 		genomes[i] = new Solution(D);
 		genomes[i]->randomize(lowerBound, upperBound);
 		genomes[i]->evaluate(problem);
 	}
 
-	ConstraintHandler * const ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
-	ParameterAdaptationManager* const paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
-	ConfigurationSpace const* const configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
-	StrategyAdaptationManager* const strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
+	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
+	paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
+	configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
+	strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
+}
 
-	std::vector<double> Fs(popSize);
-	std::vector<double> Crs(popSize);
+// Optimize the problem for 'evalBudget' evaluations.
+void DifferentialEvolution::run(int const evalBudget){
+	std::vector<double> Fs(popSize), Crs(popSize);
 
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
@@ -87,13 +96,15 @@ void DifferentialEvolution::run(coco_problem_t* const problem, int const evalBud
 		paramAdaptationManager->update(parentF, trialF);
 		strategyAdaptationManager->update(parentF, trialF);
 	}
+}
 
-	// Clean up
-	for (Solution* d : genomes) delete d;
+void DifferentialEvolution::reset(){
+	for (Solution* d : genomes) 
+		delete d;
+	delete ch;
+	delete paramAdaptationManager;
 	delete configSpace;
 	delete strategyAdaptationManager;
-	delete paramAdaptationManager;
-	delete ch;
 	genomes.clear();
 }
 
