@@ -13,7 +13,7 @@ std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> con
 
 	//JADE
 	JADEManager::JADEManager(int const popSize)
- : ParameterAdaptationManager(popSize), MuCr(0.5), MuF(0.6), c(0.1){}
+ : ParameterAdaptationManager(popSize), MuCr(.5), MuF(.6), c(.1){}
 
 void JADEManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
 	std::vector<double> SF, SCr;
@@ -25,13 +25,13 @@ void JADEManager::update(std::vector<double>const& orig, std::vector<double>cons
 	}
 
 	if (!SCr.empty()){
-		MuCr = (1.0-c) * MuCr + c * (std::accumulate(SCr.begin(), SCr.end(), 0.0)/SCr.size());
-		MuCr = std::min(std::max(MuCr, 0.01), 1.0);
+		MuCr = (1.-c) * MuCr + c * (std::accumulate(SCr.begin(), SCr.end(), .0)/SCr.size());
+		MuCr = std::min(std::max(MuCr, .01), 1.);
 	}
 
 	if (!SF.empty()){
-		MuF = (1.0-c) * MuF + c * lehmerMean(SF);
-		MuF = std::min(std::max(MuF, 0.01), 1.2);
+		MuF = (1.-c) * MuF + c * lehmerMean(SF);
+		MuF = std::min(std::max(MuF, .01), 1.2);
 	}
 }
 
@@ -43,32 +43,32 @@ void JADEManager::nextParameters(std::vector<double>& Crs, std::vector<double>& 
 
 	// Update mutation rate
 	for (int i = 0; i < third; i++)
-		Fs[indices[i]] = rng.randDouble(0.0,1.2);
+		Fs[indices[i]] = rng.randDouble(0.,1.2);
 
 	for (int i = third; i < popSize; i++){
 		do {
-			Fs[indices[i]] = std::min(rng.normalDistribution(MuF, 0.1),1.2);	
-		} while ( Fs[indices[i]] <= 0. );
+			Fs[indices[i]] = std::min(rng.normalDistribution(MuF, .1),1.2);	
+		} while ( Fs[indices[i]] <= 0.);
 	}
 
 	// Update crossover rate
 	for (int i = 0; i < popSize; i++)
-		Crs[i] = std::min(std::max(rng.normalDistribution(MuCr, 0.1),0.0),1.0);
+		Crs[i] = std::min(std::max(rng.normalDistribution(MuCr, .1),.0),1.);
 
 	previousFs = Fs;
 	previousCrs = Crs;
 }
 
 double JADEManager::lehmerMean(std::vector<double>const& SF) const {
-	double sumOfSquares = std::inner_product(SF.begin(), SF.end(), SF.begin(), 0.0);
-	double sum = std::accumulate(SF.begin(), SF.end(), 0.0);
+	double sumOfSquares = std::inner_product(SF.begin(), SF.end(), SF.begin(), 0.);
+	double sum = std::accumulate(SF.begin(), SF.end(), 0.);
 	return sumOfSquares/sum;
 }
 
 // SHADE
 SHADEManager::SHADEManager(int const popSize) : ParameterAdaptationManager(popSize), H(popSize), MCr(H), MF(H), k(0){
-	std::fill(MCr.begin(), MCr.end(), 0.5);
-	std::fill(MF.begin(), MF.end(), 0.5);
+	std::fill(MCr.begin(), MCr.end(), .5);
+	std::fill(MF.begin(), MF.end(), .5);
 }
 
 double SHADEManager::weightedMean(std::vector<double>const& x, std::vector<double>const& w)const{
@@ -123,12 +123,12 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 		// Update mutation rate
 		double const MFr = MF[randIndex];
 		do{
-			Fs[i] = std::min(rng.cauchyDistribution(MFr, 0.1), 1.);
+			Fs[i] = std::min(rng.cauchyDistribution(MFr, .1), 1.);
 		} while (Fs[i] <= 0.);
 
 		// Update crossover rate
 		double const MCrr = MCr[randIndex];
-		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, 0.1),0.),1.);
+		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, .1),0.),1.);
 	}
  
 	previousFs = Fs;
@@ -137,7 +137,7 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 
 //NO ADAPTATION
 ConstantParameterManager::ConstantParameterManager(int const popSize)
- : ParameterAdaptationManager(popSize), F(0.5), Cr(.9){}
+ : ParameterAdaptationManager(popSize), F(.5), Cr(.9){}
 
 void ConstantParameterManager::update(std::vector<double>const& /*orig*/, std::vector<double>const& /*trials*/){
 	//ignore

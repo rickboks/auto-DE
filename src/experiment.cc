@@ -39,13 +39,13 @@ int main() {
 	coco_set_log_level("info");
 	std::string const 
 		suite = "bbob",
-	  	dimensions = "5",
-	 	functions = "15",
+	  	dimensions = "40",
+	 	functions = "7",
 		instances = "1";
 
 	DifferentialEvolution de(DEConfig(
-		{"B1"}, // Mutation
-		{"B"},	// Crossover
+		{"R1"}, // Mutation
+		{"E", "B"},	// Crossover
 		"S",	// Self-adaptation 
 		"MT"	// Constraint handling
 	));

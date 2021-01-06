@@ -3,30 +3,25 @@
 #include <experimental/filesystem>
 #include <fstream>
 
-std::vector<double> scale(std::vector<double>const vec, double const scalar){
-	std::vector<double> x = vec;
-	std::transform(x.begin(), x.end(), x.begin(),
-           std::bind(std::multiplies<double>(), std::placeholders::_1, scalar));
+std::vector<double> scale(std::vector<double> x, double const scalar){
+	std::transform(x.begin(), x.end(), x.begin(), [scalar](double const& x){return x*scalar;});
 	return x;
 }
 
-std::vector<double> add(std::vector<double>const lhs, std::vector<double>const rhs){
-	std::vector<double> x = lhs;
-	std::transform( x.begin(), x.end(), rhs.begin(), x.begin(), std::plus<double>());
-	return x;
+std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs){
+	std::transform(lhs.begin(), lhs.end(), rhs.begin(), lhs.begin(), std::plus<double>());
+	return lhs;
 }
 
-std::vector<double> subtract(std::vector<double>const lhs, std::vector<double>const rhs){
-	std::vector<double> x = lhs;
-	std::transform( x.begin(), x.end(), rhs.begin(), x.begin(), std::minus<double>());
-	return x;
+std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const rhs){
+	std::transform( lhs.begin(), lhs.end(), rhs.begin(), lhs.begin(), std::minus<double>());
+	return lhs;
 }
 
-std::vector<double> randomMult(std::vector<double>const vec, double const min, double const max){
-	std::vector<double> x = vec;
+std::vector<double> randomMult(std::vector<double> vec, double const min, double const max){
 	for (unsigned int i = 0; i < vec.size(); i++)
-		x[i] *= rng.randDouble(min, max);
-	return x;
+		vec[i] *= rng.randDouble(min, max);
+	return vec;
 }
 
 bool comparePtrs(Solution const* const a, Solution const *const b){
@@ -50,12 +45,6 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 		<< "algorithm_name = " + name << std::endl;
 
 	return cfgFile;
-}
-
-void printVec(std::vector<double> const v){
-	for (double d : v)
-		std::cout << d << " ";
-	std::cout << std::endl;
 }
 
 double distance(Solution const*const s1, Solution const*const s2) {

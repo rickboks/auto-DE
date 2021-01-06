@@ -37,7 +37,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
 	paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
 	configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
-	strategyAdaptationManager = new ConstantStrategyManager(configSpace, popSize);
+	strategyAdaptationManager = new AdapSSManager(configSpace, popSize);
 }
 
 void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, int const popSize){

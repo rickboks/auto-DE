@@ -13,7 +13,6 @@
 bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const*const s1, Solution const*const s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
-void printVec(std::vector<double> const v);
 std::string checkFilename(std::string fn);
 std::vector<int> range(int const size);
 
@@ -108,3 +107,11 @@ std::vector<T> rouletteSelect(std::vector<T>& possibilities, std::vector<double>
 	}
 	return particles;
 }
+
+template <typename T>
+void printVec(std::vector<T> const v){
+	for (double d : v)
+		std::cout << d << " ";
+	std::cout << std::endl;
+}
+
