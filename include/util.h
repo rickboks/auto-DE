@@ -15,6 +15,7 @@ double distance(Solution const*const s1, Solution const*const s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 void printVec(std::vector<double> const v);
 std::string checkFilename(std::string fn);
+std::vector<int> range(int const size);
 
 template <typename T>
 std::vector<T> vectorize(T const * const arr, int const size){
@@ -82,26 +83,28 @@ std::vector<T*> pickRandom(std::vector<T*>& possibilities, int const n){
 }
 
 template<typename T>
-T* rouletteSelect(std::vector<T*>& possibilities, std::vector<double>& prob){
+T rouletteSelect(std::vector<T>& possibilities, std::vector<double>& prob, bool const replace){
 	double totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
 	double rand = rng.randDouble(0.,totalProb);
 	for (unsigned int i = 0; i < possibilities.size(); i++){
 		rand -= prob[i];
 		if (rand <= 0.){
-			T* selected = possibilities[i];
-			possibilities.erase(possibilities.begin() + i);
-			prob.erase(prob.begin() + i);
+			T selected = possibilities[i];
+			if (!replace){
+				possibilities.erase(possibilities.begin() + i);
+				prob.erase(prob.begin() + i);
+			}
 			return selected;
 		} 
 	}
-	return NULL; //should not happen
+	return possibilities.back(); //should not happen
 }
 
 template<typename T>
-std::vector<T*> rouletteSelect(std::vector<T*>& possibilities, std::vector<double>& prob, int const n){
-	std::vector<T*> particles;
+std::vector<T> rouletteSelect(std::vector<T>& possibilities, std::vector<double>& prob, int const n, bool const replace){
+	std::vector<T> particles;
 	for (int i = 0; i < n; i++){
-		particles.push_back(rouletteSelect(possibilities, prob));
+		particles.push_back(rouletteSelect(possibilities, prob, replace));
 	}
 	return particles;
 }

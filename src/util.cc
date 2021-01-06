@@ -75,3 +75,9 @@ std::string checkFilename(std::string const fn){
 	}
 	return newFn;
 }
+
+std::vector<int> range(int const size){
+	std::vector<int> r(size);
+	std::iota(r.begin(), r.end(), 0);
+	return r;
+}

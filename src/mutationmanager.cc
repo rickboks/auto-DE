@@ -374,7 +374,7 @@ Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& geno
 
 	std::vector<double> prob = Rp[i];
 	prob.erase(prob.begin() + i); // Remove own probability
-	std::vector<Solution*> xr = rouletteSelect(possibilities, prob, 3);
+	std::vector<Solution*> xr = rouletteSelect(possibilities, prob, 3, false);
 
 	std::vector<double> mutant = xr[0]->getX();
 	std::vector<double> difference;

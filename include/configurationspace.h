@@ -11,7 +11,7 @@ struct ConfigurationSpace {
 			ConstraintHandler* const ch);
 
 	virtual ~ConfigurationSpace();
-
+	std::vector<std::tuple<MutationManager*, CrossoverManager*>> getConfigurations() const; // return all combinations
 	std::vector<MutationManager*> mutation;
 	std::vector<CrossoverManager*> crossover;
 };

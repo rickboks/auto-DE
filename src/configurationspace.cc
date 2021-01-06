@@ -17,3 +17,11 @@ ConfigurationSpace::~ConfigurationSpace(){
 	for (CrossoverManager* c : crossover)
 		delete c;
 }
+
+std::vector<std::tuple<MutationManager*, CrossoverManager*>> ConfigurationSpace::getConfigurations() const{
+	std::vector<std::tuple<MutationManager*, CrossoverManager*>> configs;
+	for (MutationManager* m : mutation)
+		for (CrossoverManager* c : crossover)
+			configs.push_back({m,c});
+	return configs;
+};
