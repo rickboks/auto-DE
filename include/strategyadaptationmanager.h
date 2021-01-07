@@ -29,7 +29,7 @@ class StrategyAdaptationManager {
 		std::vector<CrossoverManager*> crossoverManagers; 
 		std::vector<std::tuple<MutationManager*, CrossoverManager*>> configurations;
 		int const popSize;
-		int K;
+		int const K;
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {

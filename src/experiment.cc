@@ -45,8 +45,8 @@ int main() {
 
 	DifferentialEvolution de(DEConfig(
 		{
-			{"B1"}, // Mutation
-			{"B"}, 	// Crossover
+			{"B1", "R1"}, // Mutation
+			{"B", "E"}, 	// Crossover
 			"AN" 	// Reward
 		},
 		"S",	// Parameter self-adaptation 

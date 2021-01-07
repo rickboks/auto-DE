@@ -8,7 +8,7 @@
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, int const popSize)
-	:config(config), popSize(popSize){
+	:config(config), popSize(popSize), K(config.crossover.size() * config.mutation.size()){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(mutations.at(m)(ch));
@@ -17,8 +17,6 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 	for (auto m : mutationManagers)
 		for (auto c : crossoverManagers)
 			configurations.push_back({m,c});
-
-	K = configurations.size();
 }
 
 std::vector<MutationManager*> StrategyAdaptationManager::getMutationManagers() const{
