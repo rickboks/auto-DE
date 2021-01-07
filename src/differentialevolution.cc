@@ -36,8 +36,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 
 	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
 	paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
-	configSpace = new ConfigurationSpace(config.mutation, config.crossover, ch);
-	strategyAdaptationManager = new AdapSSManager(configSpace, popSize);
+	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, popSize);
 }
 
 void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, int const popSize){
@@ -62,7 +61,7 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
-		for (MutationManager* m : configSpace->mutation){
+		for (MutationManager* m : strategyAdaptationManager->getMutationManagers()){
 			if (mutationManagers.count(m)){
 				std::vector<int> const indices = mutationManagers[m];
 				if (!indices.empty()){
@@ -76,7 +75,7 @@ void DifferentialEvolution::run(int const evalBudget){
 		// Crossover step
 		std::vector<double> trialF(popSize);
 		std::vector<Solution*> trials(popSize); 
-		for (CrossoverManager* c : configSpace->crossover){
+		for (CrossoverManager* c : strategyAdaptationManager->getCrossoverManagers()){
 			for (int i : crossoverManagers[c]){
 				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
 				delete donors[i];
@@ -109,11 +108,10 @@ void DifferentialEvolution::reset(){
 		delete d;
 	delete ch;
 	delete paramAdaptationManager;
-	delete configSpace;
 	delete strategyAdaptationManager;
 	genomes.clear();
 }
 
 std::string DifferentialEvolution::getIdString() const {
-	return "DE_" + config.mutation[0] + "_" + config.crossover[0]; // + "_" + config.adaptation + "_" + config.constraintHandler;
+	return "DE_" + config.strategyAdaptationConfig.mutation[0] + "_" + config.strategyAdaptationConfig.crossover[0]; // + "_" + config.adaptation + "_" + config.constraintHandler;
 }

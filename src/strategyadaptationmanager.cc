@@ -4,17 +4,43 @@
 #include <exception>
 #include "strategyadaptationmanager.h"
 #include "util.h"
+#include "rewardmanager.h"
 
-StrategyAdaptationManager::StrategyAdaptationManager(ConfigurationSpace const* const configSpace, int const popSize)
-	:configSpace(configSpace), popSize(popSize){
+StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
+		ConstraintHandler * const ch, int const popSize)
+	:config(config), popSize(popSize){
 
-	configs = configSpace->getConfigurations();
+	for (std::string m : config.mutation)
+		mutationManagers.push_back(mutations.at(m)(ch));
+	for (std::string c : config.crossover)
+		crossoverManagers.push_back(crossovers.at(c)());
+	for (auto m : mutationManagers)
+		for (auto c : crossoverManagers)
+			configurations.push_back({m,c});
+
+	K = configurations.size();
 }
 
-ConstantStrategyManager::ConstantStrategyManager(ConfigurationSpace const* const configSpace, int const popSize)
-	:StrategyAdaptationManager(configSpace, popSize){
+std::vector<MutationManager*> StrategyAdaptationManager::getMutationManagers() const{
+	return mutationManagers;
+}
 
-	if (configs.size() > 1)
+std::vector<CrossoverManager*> StrategyAdaptationManager::getCrossoverManagers() const{
+	return crossoverManagers;
+}
+
+StrategyAdaptationManager::~StrategyAdaptationManager(){
+	for (auto m : mutationManagers)
+		delete m;
+	for (auto c : crossoverManagers)
+		delete c;
+}
+
+ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration const config, 
+		ConstraintHandler*const ch, int const popSize)
+	:StrategyAdaptationManager(config, ch, popSize){
+
+	if (configurations.size() > 1)
 		throw std::invalid_argument("ConstantStrategyManager needs exactly 1 configuration");
 }
 
@@ -23,27 +49,31 @@ void ConstantStrategyManager::nextStrategies(std::map<MutationManager*, std::vec
 	std::vector<int> key(popSize);
 	std::iota(key.begin(), key.end(), 0); // All indices [0,M-1]
 
-	mutation[std::get<0>(configs.front())] = key;
-	crossover[std::get<1>(configs.front())] = key;
+	mutation[std::get<0>(configurations.front())] = key;
+	crossover[std::get<1>(configurations.front())] = key;
 }
 
-AdapSSManager::AdapSSManager(ConfigurationSpace const* const configSpace, int const popSize)
-	: StrategyAdaptationManager(configSpace, popSize), alpha(.4), beta(.6), pMin(.2/configs.size()), 
-	pMax(pMin + 1. - configs.size() * pMin), p(configs.size(), 1./configs.size()), q(configs.size(), 0.), 
+AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
+		ConstraintHandler*const ch, int const popSize)
+	: StrategyAdaptationManager(config, ch, popSize), rewardManager(rewardManagers.at(config.reward)()),
+			alpha(.4), beta(.6), pMin(.2/K), pMax(pMin + 1. - K * pMin), p(K, 1./K), q(K, 0.), 
 	previousStrategies(popSize), indices(range(popSize)){
 }
 
-void AdapSSManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
+AdaptiveStrategyManager::~AdaptiveStrategyManager(){
+	delete rewardManager;
+}
+
+void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 		std::map<CrossoverManager*, std::vector<int>>& crossover){
 	mutation.clear(); 
 	crossover.clear();
 
-	printVec(p);
 	std::vector<int> assignment = rouletteSelect<int>(indices, p, popSize, true);
 	previousStrategies = assignment;
 
 	for (int i = 0; i < popSize; i++){
-		auto [m, c] = configs[assignment[i]];
+		auto [m, c] = configurations[assignment[i]];
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};
 		mutation[m].push_back(i); 
@@ -51,8 +81,8 @@ void AdapSSManager::nextStrategies(std::map<MutationManager*, std::vector<int>>&
 	}
 }
 
-void AdapSSManager::update(std::vector<double>const& parentF, std::vector<double>const& trialF){
-	std::vector<std::vector<double>> deltas(configs.size(), std::vector<double>());
+void AdaptiveStrategyManager::update(std::vector<double>const& parentF, std::vector<double>const& trialF){
+	std::vector<std::vector<double>> deltas(K, std::vector<double>());
 	double const bestF = *std::min_element(trialF.begin(), trialF.end());
 
 	for (int i = 0; i < popSize; i++){
@@ -60,38 +90,20 @@ void AdapSSManager::update(std::vector<double>const& parentF, std::vector<double
 		deltas[previousStrategies[i]].push_back(delta);
 	}
 
-	std::vector<double> const r = reward(deltas);
+	std::vector<double> const r = rewardManager->getReward(deltas);
 	updateQuality(r);
 	updateProbability();
 }
 
-// Average Normalized Reward
-std::vector<double> AdapSSManager::reward(std::vector<std::vector<double>>const& deltas) const{
-	std::vector<double> r(configs.size());
-
-	for (unsigned int i = 0; i < configs.size(); i++){
-		if (!deltas.empty())
-			r[i] = std::accumulate(deltas[i].begin(), deltas[i].end(), 0.) / deltas[i].size();
-		else 
-			r[i] = 0.;
-	}
-
-	double const maxR = *std::max_element(r.begin(), r.end());
-	if (maxR > 0.)
-		std::transform(r.begin(), r.end(), r.begin(), [maxR](double const& x){return x/maxR;});
-
-	return r;
-}
-
-void AdapSSManager::updateQuality(std::vector<double>const& r){
-	for (unsigned int i = 0; i < configs.size(); i++)
+void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
+	for (int i = 0; i < K; i++)
 		q[i] += alpha * (r[i] - q[i]);
 }
 
 // Adaptive Pursuit
-void AdapSSManager::updateProbability(){
-	unsigned int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
-	for (unsigned int i = 0; i < configs.size(); i++){
+void AdaptiveStrategyManager::updateProbability(){
+	int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
+	for (int i = 0; i < K; i++){
 		if (i == bestIdx)
 			p[i] += beta * (pMax - p[i]);
 		else 

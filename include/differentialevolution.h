@@ -1,5 +1,6 @@
 #pragma once
 #include "coco.h"
+#include "strategyadaptationmanager.h"
 #include <vector>
 #include <string>
 
@@ -9,16 +10,16 @@ class IOHprofiler_csv_logger;
 class ParameterAdaptationManager;
 class StrategyAdaptationManager;
 class Solution;
-class ConfigurationSpace;
 class ConstraintHandler;
 
 struct DEConfig {
-	DEConfig(std::vector<std::string> mutation, std::vector<std::string> crossover, 
+	DEConfig(StrategyAdaptationConfiguration const strategyAdaptationConfig,
 			std::string const adaptation, std::string const constraintHandler)
-			: mutation(mutation), crossover(crossover), adaptation(adaptation), constraintHandler(constraintHandler){}
+			: adaptation(adaptation), constraintHandler(constraintHandler), 
+			  strategyAdaptationConfig(strategyAdaptationConfig){}
 
-	std::vector<std::string> const mutation, crossover;
 	std::string const adaptation, constraintHandler;
+	StrategyAdaptationConfiguration const strategyAdaptationConfig;
 };
 
 class DifferentialEvolution {
@@ -27,7 +28,6 @@ class DifferentialEvolution {
 		std::vector<Solution*> genomes;
 		ConstraintHandler* ch;
 		ParameterAdaptationManager* paramAdaptationManager;
-		ConfigurationSpace const* configSpace;
 		StrategyAdaptationManager* strategyAdaptationManager;
 		int popSize;
 		int D;
