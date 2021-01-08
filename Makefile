@@ -1,4 +1,4 @@
-EXE  = experiment
+EXE = experiment
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = include
@@ -8,15 +8,13 @@ SRC:= $(shell find src/ ! -name "experiment.cc" -name "*.cc")
 OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 INC = -I $(INC_DIR)
 
-CC      = g++
+CC = g++
 CC_COCO = gcc
 CFLAGS  = -Wall -Wextra -std=c++17 -O2 -g
 CFLAGS_COCO = -g -ggdb -std=c89 -pedantic -Wall -Wextra -Wstrict-prototypes -Wshadow -Wno-sign-compare -Wno-sign-conversion
 
-.PHONY: all
 all: $(OBJ_DIR) $(EXE)
 
-.PHONY:  clean
 clean:
 	rm -rf $(OBJ_DIR)/*.o $(EXE) $(MPI_EXE) configurations
 
@@ -31,3 +29,6 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/*
 
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
+
+.PHONY: all
+.PHONY: clean

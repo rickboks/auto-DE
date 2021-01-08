@@ -54,12 +54,13 @@ void ConstantStrategyManager::nextStrategies(std::map<MutationManager*, std::vec
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, int const popSize)
 	: StrategyAdaptationManager(config, ch, popSize), rewardManager(rewardManagers.at(config.reward)()),
-			alpha(.4), beta(.6), pMin(.2/K), pMax(pMin + 1. - K * pMin), p(K, 1./K), q(K, 0.), 
+	probabilityManager(probabilityManagers.at(config.probability)(K)), alpha(.4), p(K, 1./K), q(K, 0.), 
 	previousStrategies(popSize), indices(range(popSize)){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 	delete rewardManager;
+	delete probabilityManager;
 }
 
 void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
@@ -88,23 +89,11 @@ void AdaptiveStrategyManager::update(std::vector<double>const& parentF, std::vec
 		deltas[previousStrategies[i]].push_back(delta);
 	}
 
-	std::vector<double> const r = rewardManager->getReward(deltas);
-	updateQuality(r);
-	updateProbability();
+	updateQuality(rewardManager->getReward(deltas));
+	probabilityManager->updateProbability(q, p);
 }
 
-void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
+void AdaptiveStrategyManager::updateQuality(std::vector<double>const r){
 	for (int i = 0; i < K; i++)
 		q[i] += alpha * (r[i] - q[i]);
-}
-
-// Adaptive Pursuit
-void AdaptiveStrategyManager::updateProbability(){
-	int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
-	for (int i = 0; i < K; i++){
-		if (i == bestIdx)
-			p[i] += beta * (pMax - p[i]);
-		else 
-			p[i] += beta * (pMin - p[i]);
-	}
 }

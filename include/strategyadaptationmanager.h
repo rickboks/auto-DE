@@ -2,14 +2,15 @@
 #include <vector>
 #include "mutationmanager.h"
 #include "crossovermanager.h"
+#include "probabilitymanager.h"
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
-									std::string const reward)
-	: mutation(mutation), crossover(crossover), reward(reward){};
+									std::string const reward, std::string const probability)
+	: mutation(mutation), crossover(crossover), reward(reward), probability(probability){};
 
 	std::vector<std::string> const mutation, crossover;
-	std::string const reward;
+	std::string const reward, probability;
 };
 
 class RewardManager;
@@ -42,16 +43,13 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
 		RewardManager const* const rewardManager;
+		ProbabilityManager const* const probabilityManager;
 		double const alpha;
-		double const beta;
-		double const pMin;
-		double const pMax;
 		std::vector<double> p; 
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
 		std::vector<int> indices; // simply a list from 0 .. M-1
-		void updateQuality(std::vector<double> const& r);
-		void updateProbability();
+		void updateQuality(std::vector<double> const r);
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, int const popSize);
 		~AdaptiveStrategyManager();
