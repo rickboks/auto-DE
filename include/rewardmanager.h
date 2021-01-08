@@ -16,3 +16,18 @@ class AverageNormalizedReward : public RewardManager {
 	public:
 		std::vector<double> getReward(std::vector<std::vector<double>>const& deltas) const;
 };
+
+class AverageAbsoluteReward : public RewardManager {
+	public:
+		std::vector<double> getReward(std::vector<std::vector<double>>const& deltas) const;
+};
+
+class ExtremeAbsoluteReward : public RewardManager {
+	public:
+		std::vector<double> getReward(std::vector<std::vector<double>>const& deltas) const;
+};
+
+class ExtremeNormalizedReward : public RewardManager {
+	public:
+		std::vector<double> getReward(std::vector<std::vector<double>>const& deltas) const;
+};

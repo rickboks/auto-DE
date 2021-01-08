@@ -1,12 +1,14 @@
 #include "probabilitymanager.h"
 #include <algorithm>
+#include <numeric>
 
 #define LC(X) [](int const K){return new X(K);}
 std::map<std::string, std::function<ProbabilityManager*(int const)>> const probabilityManagers ({
-	{"AP", LC(AdaptivePursuitManager)}	
+	{"AP", LC(AdaptivePursuitManager)},
+	{"PM", LC(ProbabilityMatchingManager)},
 });
 
-void AdaptivePursuitManager::updateProbability(std::vector<double>const& q, std::vector<double>& p) const{
+void AdaptivePursuitManager::updateProbability(std::vector<double>const& q, std::vector<double>& p) const {
 	int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
 	for (int i = 0; i < K; i++){
 		if (i == bestIdx)
@@ -14,4 +16,9 @@ void AdaptivePursuitManager::updateProbability(std::vector<double>const& q, std:
 		else 
 			p[i] += beta * (pMin - p[i]);
 	}
+}
+
+void ProbabilityMatchingManager::updateProbability(std::vector<double>const& q, std::vector<double>& p) const {
+	for (int i = 0; i < K; i++)
+		p[i] = pMin + (1. - K * pMin) + (q[i] / std::accumulate(q.begin(), q.end(), 0.));
 }

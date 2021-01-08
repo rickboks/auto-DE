@@ -22,3 +22,9 @@ class AdaptivePursuitManager : public ProbabilityManager {
 		AdaptivePursuitManager (int const K): ProbabilityManager(K){};
 		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
 };
+
+class ProbabilityMatchingManager : public ProbabilityManager {
+	public:
+		ProbabilityMatchingManager (int const K): ProbabilityManager(K){};
+		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
+};

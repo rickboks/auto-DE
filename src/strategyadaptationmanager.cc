@@ -9,7 +9,6 @@
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, int const popSize)
 	:config(config), popSize(popSize), K(config.crossover.size() * config.mutation.size()){
-
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(mutations.at(m)(ch));
 	for (std::string c : config.crossover)
@@ -55,7 +54,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 		ConstraintHandler*const ch, int const popSize)
 	: StrategyAdaptationManager(config, ch, popSize), rewardManager(rewardManagers.at(config.reward)()),
 	probabilityManager(probabilityManagers.at(config.probability)(K)), alpha(.4), p(K, 1./K), q(K, 0.), 
-	previousStrategies(popSize), indices(range(popSize)){
+	previousStrategies(popSize){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -65,14 +64,13 @@ AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 
 void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 		std::map<CrossoverManager*, std::vector<int>>& crossover){
-	mutation.clear(); 
-	crossover.clear();
-
-	std::vector<int> assignment = rouletteSelect<int>(indices, p, popSize, true);
+	mutation.clear(); crossover.clear();
+	std::vector<int> indices = range(K); // Range [0,K-1]
+	std::vector<int> const assignment = rouletteSelect<int>(indices, p, popSize, true);
 	previousStrategies = assignment;
 
 	for (int i = 0; i < popSize; i++){
-		auto [m, c] = configurations[assignment[i]];
+		auto const [m, c] = configurations[assignment[i]];
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};
 		mutation[m].push_back(i); 

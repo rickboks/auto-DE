@@ -48,7 +48,6 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<double> p; 
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
-		std::vector<int> indices; // simply a list from 0 .. M-1
 		void updateQuality(std::vector<double> const r);
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, int const popSize);

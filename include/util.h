@@ -32,10 +32,9 @@ void sortOnFitness(std::vector<T*>& genomes){
 template<typename T>
 T* getPBest(std::vector<T*> genomes){
 	double const p = std::max(0.05, 3./genomes.size());
-	//double const p = 0.1;
-
 	sortOnFitness(genomes);
 	std::vector<T*> bestP = std::vector<T*>(genomes.begin(), genomes.begin() + (genomes.size() * p));
+
 	if (bestP.empty())
 		return genomes[0];
 	else
@@ -83,7 +82,7 @@ std::vector<T*> pickRandom(std::vector<T*>& possibilities, int const n){
 
 template<typename T>
 T rouletteSelect(std::vector<T>& possibilities, std::vector<double>& prob, bool const replace){
-	double totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
+	double const totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
 	double rand = rng.randDouble(0.,totalProb);
 	for (unsigned int i = 0; i < possibilities.size(); i++){
 		rand -= prob[i];
