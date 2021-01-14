@@ -11,60 +11,6 @@ std::map<std::string, std::function<ParameterAdaptationManager*(int const, int c
 
 ParameterAdaptationManager::ParameterAdaptationManager(int const popSize, int const K): popSize(popSize), K(K){}
 
-////JADE
-//JADEManager::JADEManager(int const popSize)
-//: ParameterAdaptationManager(popSize), MuCr(.5), MuF(.6), c(.1){}
-
-//void JADEManager::update(std::vector<double>const& orig, std::vector<double>const& trials){
-	//std::vector<double> SF, SCr;
-	//for (int i = 0; i < popSize; i++){
-		//if (trials[i] < orig[i]){
-			//SF.push_back(previousFs[i]); 
-			//SCr.push_back(previousCrs[i]);
-		//}
-	//}
-
-	//if (!SCr.empty()){
-		//MuCr = (1.-c) * MuCr + c * (std::accumulate(SCr.begin(), SCr.end(), .0)/SCr.size());
-		//MuCr = std::min(std::max(MuCr, .01), 1.);
-	//}
-
-	//if (!SF.empty()){
-		//MuF = (1.-c) * MuF + c * lehmerMean(SF);
-		//MuF = std::min(std::max(MuF, .01), 1.2);
-	//}
-//}
-
-//void JADEManager::nextParameters(std::vector<double>& Crs, std::vector<double>& Fs){
-	//int third = popSize/3;
-	//std::vector<double> indices(popSize);
-	//std::iota(indices.begin(), indices.end(), 0);
-	//rng.shuffle(indices.begin(), indices.end());
-
-	//// Update mutation rate
-	//for (int i = 0; i < third; i++)
-		//Fs[indices[i]] = rng.randDouble(0.,1.2);
-
-	//for (int i = third; i < popSize; i++){
-		//do {
-			//Fs[indices[i]] = std::min(rng.normalDistribution(MuF, .1),1.2);	
-		//} while ( Fs[indices[i]] <= 0.);
-	//}
-
-	//// Update crossover rate
-	//for (int i = 0; i < popSize; i++)
-		//Crs[i] = std::min(std::max(rng.normalDistribution(MuCr, .1),.0),1.);
-
-	//previousFs = Fs;
-	//previousCrs = Crs;
-//}
-
-//double JADEManager::lehmerMean(std::vector<double>const& SF) const {
-	//double sumOfSquares = std::inner_product(SF.begin(), SF.end(), SF.begin(), 0.);
-	//double sum = std::accumulate(SF.begin(), SF.end(), 0.);
-	//return sumOfSquares/sum;
-//}
-
 // SHADE
 SHADEManager::SHADEManager(int const popSize, int const K) : 
 	ParameterAdaptationManager(popSize, K), H(popSize), MCr(K, std::vector<double>(H)), MF(K, std::vector<double>(H)), 
@@ -124,36 +70,40 @@ void SHADEManager::update(std::vector<std::vector<double>>const& targets, std::v
 	}
 }
 
-void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int> const assignment){
+void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment){
+	previousFs = std::vector<std::vector<double>>(K);
+	previousCrs = std::vector<std::vector<double>>(K);
+
 	for (int i = 0; i < popSize; i++){
 		int const randIndex = rng.randInt(0, H-1);
+		int const config = assignment[i];
+
+		previousFs[config].push_back(Fs[i]);
+		previousCrs[config].push_back(Crs[i]);
 
 		// Update mutation rate
-		double const MFr = MF[assignment[i]][randIndex];
+		double const MFr = MF[config][randIndex];
 		do{
 			Fs[i] = std::min(rng.cauchyDistribution(MFr, .1), 1.);
 		} while (Fs[i] <= 0.);
 
 		// Update crossover rate
-		double const MCrr = MCr[assignment[i]][randIndex];
+		double const MCrr = MCr[config][randIndex];
 		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, .1),0.),1.);
 	}
- 
-	previousFs = Fs;
-	previousCrs = Crs;
 }
 
 //NO ADAPTATION
-ConstantParameterManager::ConstantParameterManager(int const popSize)
- : ParameterAdaptationManager(popSize), F(.5), Cr(.9){}
+ConstantParameterManager::ConstantParameterManager(int const popSize, int const K)
+ : ParameterAdaptationManager(popSize, K), F(.5), Cr(.9){}
 
-void ConstantParameterManager::update(std::vector<double>const& /*orig*/, std::vector<double>const& /*trials*/){
+void ConstantParameterManager::update(std::vector<std::vector<double>>const& /*targets*/, 
+		std::vector<std::vector<double>>const& /*trials*/){
 	//ignore
 }
 
-void ConstantParameterManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs){
-	// Update mutation rate
+void ConstantParameterManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, 
+		std::vector<int>const& /*assignment*/){
 	std::fill(Fs.begin(), Fs.end(), F);
-	// Update crossover rate
 	std::fill(Crs.begin(), Crs.end(), Cr);
 }

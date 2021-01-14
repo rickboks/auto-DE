@@ -12,26 +12,11 @@ protected:
 public:
 	ParameterAdaptationManager(int const popSize, int const K); 
 	virtual ~ParameterAdaptationManager(){};
-	virtual void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment)=0; 
+	virtual void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int>const& assignment)=0; 
 	virtual void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials)=0;
 };
 
 extern std::map<std::string, std::function<ParameterAdaptationManager*(int const, int const)>> const parameterAdaptations;
-
-//class JADEManager : public ParameterAdaptationManager{
-//private:
-	//std::vector<double> previousFs;
-	//std::vector<double> previousCrs;
-
-	//double MuCr;
-	//double MuF;
-	//double const c;
-	//double lehmerMean(std::vector<double>const& SF) const;
-//public:
-	//JADEManager(int const popSize);
-	//void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
-	//void update(std::vector<double>const& orig, std::vector<double>const& trials);
-//};
 
 class SHADEManager : public ParameterAdaptationManager {
 	private:
@@ -48,7 +33,7 @@ class SHADEManager : public ParameterAdaptationManager {
 		std::vector<double> w(std::vector<double>const& delta) const;
 	public:
 		SHADEManager(int const popSize, int const K);
-		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment); 
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int>const& assignment); 
 		void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials);
 };
 
@@ -58,6 +43,6 @@ class ConstantParameterManager : public ParameterAdaptationManager {
 		double const Cr;
 	public:
 		ConstantParameterManager(int const popSize, int const K);
-		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment); 
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int>const& assignment); 
 		void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials);
 };
