@@ -8,47 +8,48 @@
 class ParameterAdaptationManager {
 protected:
 	int const popSize;
+	int const K;
 public:
-	ParameterAdaptationManager(int const popSize); 
+	ParameterAdaptationManager(int const popSize, int const K); 
 	virtual ~ParameterAdaptationManager(){};
-	virtual void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs)=0;
-	virtual void update(std::vector<double>const& targets, std::vector<double>const& trials)=0;
+	virtual void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment)=0; 
+	virtual void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials)=0;
 };
 
-extern std::map<std::string, std::function<ParameterAdaptationManager*(int const)>> const parameterAdaptations;
+extern std::map<std::string, std::function<ParameterAdaptationManager*(int const, int const)>> const parameterAdaptations;
 
-class JADEManager : public ParameterAdaptationManager{
-private:
-	std::vector<double> previousFs;
-	std::vector<double> previousCrs;
+//class JADEManager : public ParameterAdaptationManager{
+//private:
+	//std::vector<double> previousFs;
+	//std::vector<double> previousCrs;
 
-	double MuCr;
-	double MuF;
-	double const c;
-	double lehmerMean(std::vector<double>const& SF) const;
-public:
-	JADEManager(int const popSize);
-	void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
-	void update(std::vector<double>const& orig, std::vector<double>const& trials);
-};
+	//double MuCr;
+	//double MuF;
+	//double const c;
+	//double lehmerMean(std::vector<double>const& SF) const;
+//public:
+	//JADEManager(int const popSize);
+	//void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
+	//void update(std::vector<double>const& orig, std::vector<double>const& trials);
+//};
 
 class SHADEManager : public ParameterAdaptationManager {
 	private:
-		std::vector<double> previousFs;
-		std::vector<double> previousCrs;
-
 		int const H;
-		std::vector<double> MCr;
-		std::vector<double> MF;
+		
+		std::vector<std::vector<double>> previousFs;
+		std::vector<std::vector<double>> previousCrs;
+		std::vector<std::vector<double>> MCr;
+		std::vector<std::vector<double>> MF;
+		std::vector<int> k; 
 
-		int k;
 		double weightedLehmerMean(std::vector<double>const& x, std::vector<double>const& w) const;
 		double weightedMean(std::vector<double>const& x, std::vector<double>const& w) const;
 		std::vector<double> w(std::vector<double>const& delta) const;
 	public:
-		SHADEManager(int const popSize);
-		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
-		void update(std::vector<double>const& orig, std::vector<double>const& trials);
+		SHADEManager(int const popSize, int const K);
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment); 
+		void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials);
 };
 
 class ConstantParameterManager : public ParameterAdaptationManager {
@@ -56,7 +57,7 @@ class ConstantParameterManager : public ParameterAdaptationManager {
 		double const F;
 		double const Cr;
 	public:
-		ConstantParameterManager(int const popSize);
-		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs);
-		void update(std::vector<double>const& orig, std::vector<double>const& trials);
+		ConstantParameterManager(int const popSize, int const K);
+		void nextParameters(std::vector<double>& Crs, std::vector<double>& Fs, std::vector<int> const assignment); 
+		void update(std::vector<std::vector<double>>const& orig, std::vector<std::vector<double>>const& trials);
 };
