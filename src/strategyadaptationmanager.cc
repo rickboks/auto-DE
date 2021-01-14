@@ -7,8 +7,8 @@
 #include "rewardmanager.h"
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
-		ConstraintHandler * const ch, int const popSize)
-	:config(config), popSize(popSize), K(config.crossover.size() * config.mutation.size()){
+		ConstraintHandler * const ch, std::vector<Solution*>const& population)
+	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()){
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(mutations.at(m)(ch));
 	for (std::string c : config.crossover)
@@ -34,8 +34,8 @@ StrategyAdaptationManager::~StrategyAdaptationManager(){
 }
 
 ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration const config, 
-		ConstraintHandler*const ch, int const popSize)
-	:StrategyAdaptationManager(config, ch, popSize){
+		ConstraintHandler*const ch, std::vector<Solution*>const& population)
+	:StrategyAdaptationManager(config, ch, population){
 
 	if (configurations.size() > 1)
 		throw std::invalid_argument("ConstantStrategyManager needs exactly 1 configuration");
@@ -51,10 +51,14 @@ void ConstantStrategyManager::nextStrategies(std::map<MutationManager*, std::vec
 }
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
-		ConstraintHandler*const ch, int const popSize)
-	: StrategyAdaptationManager(config, ch, popSize), rewardManager(rewardManagers.at(config.reward)()),
+		ConstraintHandler*const ch, std::vector<Solution*>const& population)
+	: StrategyAdaptationManager(config, ch, population), rewardManager(rewardManagers.at(config.reward)()),
 	probabilityManager(probabilityManagers.at(config.probability)(K)), alpha(.4), p(K, 1./K), q(K, 0.), 
 	previousStrategies(popSize){
+	
+	previousF.reserve(popSize);
+	for (Solution* s : population)
+		previousF.push_back(s->getFitness());
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -78,17 +82,23 @@ void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vec
 	}
 }
 
-void AdaptiveStrategyManager::update(std::vector<double>const& parentF, std::vector<double>const& trialF){
+void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 	std::vector<std::vector<double>> deltas(K, std::vector<double>());
+
+	std::vector<double> trialF(popSize);
+	for (int i = 0; i < popSize; i++)
+		trialF[i] = population[i]->getFitness();
+
 	double const bestF = *std::min_element(trialF.begin(), trialF.end());
 
 	for (int i = 0; i < popSize; i++){
-		double const delta = (trialF <= parentF ? (bestF / trialF[i]) * std::abs(parentF[i] - trialF[i]) : 0.);
+		double const delta = (trialF <= previousF ? (bestF / trialF[i]) * std::abs(previousF[i] - trialF[i]) : 0.);
 		deltas[previousStrategies[i]].push_back(delta);
 	}
 
 	updateQuality(rewardManager->getReward(deltas));
 	probabilityManager->updateProbability(q, p);
+	previousF = trialF;
 }
 
 void AdaptiveStrategyManager::updateQuality(std::vector<double>const r){

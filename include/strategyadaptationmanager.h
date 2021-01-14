@@ -17,11 +17,12 @@ class RewardManager;
 
 class StrategyAdaptationManager {
 	public:
-		StrategyAdaptationManager(StrategyAdaptationConfiguration const config, ConstraintHandler *const ch, int const popSize);
+		StrategyAdaptationManager(StrategyAdaptationConfiguration const config, ConstraintHandler *const ch, 
+				std::vector<Solution*>const& population);
 		virtual ~StrategyAdaptationManager();
 		virtual void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover)=0;
-		virtual void update(std::vector<double>const& /*parentF*/, std::vector<double>const& /*trialF*/){};
+		virtual void update(std::vector<Solution*>const& /*population*/){};
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 	protected:
@@ -35,7 +36,8 @@ class StrategyAdaptationManager {
 
 class ConstantStrategyManager : public StrategyAdaptationManager {
 	public:
-		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, int const popSize);
+		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
+				std::vector<Solution*>const& population);
 		void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover);
 };
@@ -48,11 +50,13 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<double> p; 
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
+		std::vector<double> previousF; 
 		void updateQuality(std::vector<double> const r);
 	public:
-		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, int const popSize);
+		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
+				std::vector<Solution*>const& population);
 		~AdaptiveStrategyManager();
 		void nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover);
-		void update(std::vector<double>const& parentF, std::vector<double>const& trialF);
+		void update(std::vector<Solution*>const& population);
 };

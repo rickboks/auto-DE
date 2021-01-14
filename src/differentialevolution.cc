@@ -36,7 +36,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 
 	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
 	paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
-	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, popSize);
+	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, genomes);
 }
 
 void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, int const popSize){
@@ -99,7 +99,7 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		// Update the adaptation managers
 		paramAdaptationManager->update(parentF, trialF);
-		strategyAdaptationManager->update(parentF, trialF);
+		strategyAdaptationManager->update(genomes);
 	}
 }
 
