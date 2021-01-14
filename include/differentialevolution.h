@@ -14,11 +14,10 @@ class ConstraintHandler;
 
 struct DEConfig {
 	DEConfig(StrategyAdaptationConfiguration const strategyAdaptationConfig,
-			std::string const adaptation, std::string const constraintHandler)
-			: adaptation(adaptation), constraintHandler(constraintHandler), 
-			  strategyAdaptationConfig(strategyAdaptationConfig){}
+			std::string const constraintHandler)
+			: constraintHandler(constraintHandler), strategyAdaptationConfig(strategyAdaptationConfig){}
 
-	std::string const adaptation, constraintHandler;
+	std::string const constraintHandler;
 	StrategyAdaptationConfiguration const strategyAdaptationConfig;
 };
 
@@ -27,7 +26,6 @@ class DifferentialEvolution {
 		DEConfig const config;
 		std::vector<Solution*> genomes;
 		ConstraintHandler* ch;
-		ParameterAdaptationManager* paramAdaptationManager;
 		StrategyAdaptationManager* strategyAdaptationManager;
 		int popSize;
 		int D;

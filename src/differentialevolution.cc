@@ -35,7 +35,6 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	}
 
 	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
-	paramAdaptationManager = parameterAdaptations.at(config.adaptation)(popSize);
 	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, genomes);
 }
 
@@ -56,8 +55,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			&& !coco_problem_final_target_hit(problem)
 			&& !converged(genomes)){
 
-		paramAdaptationManager->nextParameters(Fs, Crs);
-		strategyAdaptationManager->nextStrategies(mutationManagers, crossoverManagers);
+		strategyAdaptationManager->next(mutationManagers, crossoverManagers, Fs, Crs);
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -98,7 +96,6 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		// Update the adaptation managers
-		paramAdaptationManager->update(parentF, trialF);
 		strategyAdaptationManager->update(genomes);
 	}
 }
@@ -107,7 +104,6 @@ void DifferentialEvolution::reset(){
 	for (Solution* d : genomes) 
 		delete d;
 	delete ch;
-	delete paramAdaptationManager;
 	delete strategyAdaptationManager;
 	genomes.clear();
 }

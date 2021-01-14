@@ -41,16 +41,16 @@ int main() {
 		{ /* -- Strategy self-adaptation configuration -- */
 			{"B1", "R1"}, 		/* Mutation */ 
 			{"B", "E"},			/* Crossover */	
+			"S",
 			"AN", 		 		/* Reward */
 			"AP" 		 		/* Probability */
 		},
-		"S",					/* Parameter self-adaptation */
-		"MT" 					/* Constraint handling */
+		"MT"					/* Constraint handling */
 	});
 
 	std::string const 
 		suite = "bbob",
-	  	dimensions = "5",
+	  	dimensions = "20",
 	 	functions = "7",
 		instances = "1";
 

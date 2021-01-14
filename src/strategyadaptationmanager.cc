@@ -8,7 +8,10 @@
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
-	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()){
+	:config(config), 
+	popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
+	parameterAdaptationManager(parameterAdaptations.at(config.param)(popSize,K)){
+
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(mutations.at(m)(ch));
 	for (std::string c : config.crossover)
@@ -31,6 +34,7 @@ StrategyAdaptationManager::~StrategyAdaptationManager(){
 		delete m;
 	for (auto c : crossoverManagers)
 		delete c;
+	delete parameterAdaptationManager;
 }
 
 ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -41,13 +45,17 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 		throw std::invalid_argument("ConstantStrategyManager needs exactly 1 configuration");
 }
 
-void ConstantStrategyManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
-		std::map<CrossoverManager*, std::vector<int>>& crossover){
+void ConstantStrategyManager::next(std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				std::vector<double>& Fs, std::vector<double>& Crs){
+
 	std::vector<int> key(popSize);
 	std::iota(key.begin(), key.end(), 0); // All indices [0,M-1]
-
 	mutation[std::get<0>(configurations.front())] = key;
 	crossover[std::get<1>(configurations.front())] = key;
+
+	std::vector<int> assignment(popSize, 0);
+	parameterAdaptationManager->nextParameters(Fs, Crs, assignment);
 }
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -66,8 +74,9 @@ AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 	delete probabilityManager;
 }
 
-void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vector<int>>& mutation, 
-		std::map<CrossoverManager*, std::vector<int>>& crossover){
+void AdaptiveStrategyManager::next(std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				std::vector<double>& Fs, std::vector<double>& Crs){
 	mutation.clear(); crossover.clear();
 	std::vector<int> indices = range(K); // Range [0,K-1]
 	std::vector<int> const assignment = rouletteSelect<int>(indices, p, popSize, true);
@@ -80,6 +89,8 @@ void AdaptiveStrategyManager::nextStrategies(std::map<MutationManager*, std::vec
 		mutation[m].push_back(i); 
 		crossover[c].push_back(i);
 	}
+
+	parameterAdaptationManager->nextParameters(Fs, Crs, assignment);
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
@@ -90,7 +101,6 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 		trialF[i] = population[i]->getFitness();
 
 	double const bestF = *std::min_element(trialF.begin(), trialF.end());
-
 	for (int i = 0; i < popSize; i++){
 		double const delta = (trialF <= previousF ? (bestF / trialF[i]) * std::abs(previousF[i] - trialF[i]) : 0.);
 		deltas[previousStrategies[i]].push_back(delta);
