@@ -8,9 +8,8 @@
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
-	:config(config), 
-	popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
-	parameterAdaptationManager(parameterAdaptations.at(config.param)(popSize,K)){
+	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
+	parameterAdaptationManager(parameterAdaptations.at(config.param)(population,K)){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(mutations.at(m)(ch));
@@ -19,6 +18,13 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 	for (auto m : mutationManagers)
 		for (auto c : crossoverManagers)
 			configurations.push_back({m,c});
+}
+
+void StrategyAdaptationManager::update(std::vector<Solution*>const& population){
+	std::vector<double> trialF(popSize);
+	for (int i = 0; i < popSize; i++)
+		trialF[i] = population[i]->getFitness();
+	parameterAdaptationManager->update(trialF);
 }
 
 std::vector<MutationManager*> StrategyAdaptationManager::getMutationManagers() const{
@@ -79,7 +85,9 @@ void AdaptiveStrategyManager::next(std::map<MutationManager*, std::vector<int>>&
 				std::vector<double>& Fs, std::vector<double>& Crs){
 	mutation.clear(); crossover.clear();
 	std::vector<int> indices = range(K); // Range [0,K-1]
-	std::vector<int> const assignment = rouletteSelect<int>(indices, p, popSize, true);
+	std::vector<int> const assignment = rouletteSelect(indices, p, popSize, true);
+
+	printVec(assignment);
 	previousStrategies = assignment;
 
 	for (int i = 0; i < popSize; i++){
@@ -94,7 +102,7 @@ void AdaptiveStrategyManager::next(std::map<MutationManager*, std::vector<int>>&
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
-	std::vector<std::vector<double>> deltas(K, std::vector<double>());
+	std::vector<std::vector<double>> deltas(K);
 
 	std::vector<double> trialF(popSize);
 	for (int i = 0; i < popSize; i++)
@@ -102,12 +110,15 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 
 	double const bestF = *std::min_element(trialF.begin(), trialF.end());
 	for (int i = 0; i < popSize; i++){
-		double const delta = (trialF <= previousF ? (bestF / trialF[i]) * std::abs(previousF[i] - trialF[i]) : 0.);
+		double delta = 0.;
+		if (trialF[i] <= previousF[i])
+			delta = (bestF / trialF[i]) * std::abs(previousF[i] - trialF[i]);
 		deltas[previousStrategies[i]].push_back(delta);
 	}
 
 	updateQuality(rewardManager->getReward(deltas));
 	probabilityManager->updateProbability(q, p);
+	parameterAdaptationManager->update(trialF);
 	previousF = trialF;
 }
 

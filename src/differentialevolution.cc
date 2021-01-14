@@ -38,6 +38,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, genomes);
 }
 
+// Wrapper of prepare -> run -> reset
 void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, int const popSize){
 	prepare(problem, popSize);
 	run(evalBudget);
@@ -77,6 +78,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			for (int i : crossoverManagers[c]){
 				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
 				delete donors[i];
+
 				trials[i]->evaluate(problem);
 				ch->penalize(trials[i]); 
 				trialF[i] = trials[i]->getFitness();
@@ -84,10 +86,8 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		// Selection step
-		std::vector<double> parentF(popSize);
 		for (int i = 0; i < popSize; i++){
-			parentF[i] = genomes[i]->getFitness();
-			if (trialF[i] < parentF[i]){
+			if (trialF[i] < genomes[i]->getFitness()){
 				delete genomes[i];
 				genomes[i] = trials[i];
 			} else {
@@ -95,7 +95,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 
-		// Update the adaptation managers
+		// Update the adaptation manager
 		strategyAdaptationManager->update(genomes);
 	}
 }

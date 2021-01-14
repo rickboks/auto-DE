@@ -2,18 +2,19 @@
 #include "parameteradaptationmanager.h"
 #include "rng.h"
 
-#define LC(X) [](int const popSize, int const K){return new X(popSize, K);}
-std::map<std::string, std::function<ParameterAdaptationManager*(int const, int const)>> const parameterAdaptations({
-		//{"J", LC(JADEManager)},
+#define LC(X) [](std::vector<Solution*>const& population, int const K){return new X(population, K);}
+std::map<std::string, std::function<ParameterAdaptationManager*(std::vector<Solution*>const&, int const)>> const parameterAdaptations({
 		{"S", LC(SHADEManager)},
 		{"C", LC(ConstantParameterManager)},
 	});
 
-ParameterAdaptationManager::ParameterAdaptationManager(int const popSize, int const K): popSize(popSize), K(K){}
+ParameterAdaptationManager::ParameterAdaptationManager(std::vector<Solution*>const& population, int const K)
+	: popSize(population.size()), K(K){
+}
 
 // SHADE
-SHADEManager::SHADEManager(int const popSize, int const K) : 
-	ParameterAdaptationManager(popSize, K), H(popSize), MCr(K, std::vector<double>(H)), MF(K, std::vector<double>(H)), 
+SHADEManager::SHADEManager(std::vector<Solution*>const& population, int const K) : 
+	ParameterAdaptationManager(population, K), H(popSize/K), MCr(K, std::vector<double>(H)), MF(K, std::vector<double>(H)), 
 	k(K, 0){
 
 	for (std::vector<double>& v : MCr)
@@ -21,6 +22,10 @@ SHADEManager::SHADEManager(int const popSize, int const K) :
 
 	for (std::vector<double>& v : MF)
 		std::fill(v.begin(), v.end(), .5);
+
+	previousFitness.reserve(popSize);
+	for (int i = 0; i < popSize; i++)
+		previousFitness.push_back(population[i]->getFitness());
 }
 
 double SHADEManager::weightedMean(std::vector<double>const& x, std::vector<double>const& w) const{
@@ -31,8 +36,7 @@ double SHADEManager::weightedMean(std::vector<double>const& x, std::vector<doubl
 }
 
 double SHADEManager::weightedLehmerMean(std::vector<double>const& x, std::vector<double>const& w) const{
-	double wSqSum=0;
-	double wSum=0;
+	double wSqSum=0, wSum=0;
 
 	for (unsigned int i = 0; i < x.size(); i++){
 		wSqSum += w[i]*(x[i]*x[i]);
@@ -50,36 +54,34 @@ std::vector<double> SHADEManager::w(std::vector<double>const& delta) const {
 	return w;
 }
 
-void SHADEManager::update(std::vector<std::vector<double>>const& targets, std::vector<std::vector<double>>const& trials){
-	for (int i = 0; i < K; i++){
-		std::vector<double> SF, SCr, delta;
-		for (unsigned int j = 0; j < targets[i].size(); j++){
-			if (trials[i][j] < targets[i][j]){
-				SF.push_back(previousFs[i][j]); 
-				SCr.push_back(previousCrs[i][j]);
-				delta.push_back(std::abs(trials[i][j] - targets[i][j]));
-			}
-		}
+void SHADEManager::update(std::vector<double>const& trialF){
+	std::vector<std::vector<double>> SF(K), SCr(K), delta(K);
 
-		if (!SF.empty() && !SCr.empty()){
-			std::vector<double> const _w = w(delta);
-			MF[i][k[i]] = weightedLehmerMean(SF, _w);
-			MCr[i][k[i]] = weightedMean(SCr, _w);
-			k[i] = (k[i]+1)%H;
+	for (int i = 0; i < popSize; i++){
+		int const c = previousAssignment[i];
+		if (trialF[i] < previousFitness[i]){
+			SF[c].push_back(previousFs[i]); 
+			SCr[c].push_back(previousCrs[i]);
+			delta[c].push_back(std::abs(trialF[i] - previousFitness[i]));
 		}
 	}
+	
+	for (int c = 0; c < K; c++){
+		if (!SF[c].empty()){
+			std::vector<double> const _w = w(delta[c]);
+			MF[c][k[c]] = weightedLehmerMean(SF[c], _w);
+			MCr[c][k[c]] = weightedMean(SCr[c], _w);
+			k[c] = (k[c]+1)%H;
+		}
+	}
+
+	previousFitness = trialF;
 }
 
 void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment){
-	previousFs = std::vector<std::vector<double>>(K);
-	previousCrs = std::vector<std::vector<double>>(K);
-
 	for (int i = 0; i < popSize; i++){
 		int const randIndex = rng.randInt(0, H-1);
-		int const config = assignment[i];
-
-		previousFs[config].push_back(Fs[i]);
-		previousCrs[config].push_back(Crs[i]);
+		int const config = assignment[i]; // The configuration that this individual will use
 
 		// Update mutation rate
 		double const MFr = MF[config][randIndex];
@@ -91,14 +93,17 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 		double const MCrr = MCr[config][randIndex];
 		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, .1),0.),1.);
 	}
+
+	previousFs = Fs;
+	previousCrs = Crs;
+	previousAssignment = assignment;
 }
 
 //NO ADAPTATION
-ConstantParameterManager::ConstantParameterManager(int const popSize, int const K)
- : ParameterAdaptationManager(popSize, K), F(.5), Cr(.9){}
+ConstantParameterManager::ConstantParameterManager(std::vector<Solution*>const& population, int const K)
+ : ParameterAdaptationManager(population, K), F(.5), Cr(.9){}
 
-void ConstantParameterManager::update(std::vector<std::vector<double>>const& /*targets*/, 
-		std::vector<std::vector<double>>const& /*trials*/){
+void ConstantParameterManager::update(std::vector<double>const& /*trials*/){
 	//ignore
 }
 

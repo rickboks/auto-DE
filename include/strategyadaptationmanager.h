@@ -23,7 +23,7 @@ class StrategyAdaptationManager {
 		virtual void next(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
 				std::vector<double>& Fs, std::vector<double>& Crs)=0;
-		virtual void update(std::vector<Solution*>const& /*population*/){};
+		virtual void update(std::vector<Solution*>const& population);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 	protected:
@@ -33,7 +33,7 @@ class StrategyAdaptationManager {
 		std::vector<std::tuple<MutationManager*, CrossoverManager*>> configurations;
 		int const popSize;
 		int const K;
-		ParameterAdaptationManager* const parameterAdaptationManager;
+		ParameterAdaptationManager* parameterAdaptationManager;
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {

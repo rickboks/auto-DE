@@ -6,6 +6,7 @@
 #include <iostream>
 #include "coco.h"
 #include "differentialevolution.h"
+#include "rng.h"
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 10000;
 
@@ -20,11 +21,11 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, "", suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-	int const popSize = 100;
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
+		int const popSize = dimension * 5;
 
 		do {
 			de.run(PROBLEM, budget, popSize);
@@ -39,8 +40,8 @@ int main() {
 	coco_set_log_level("info");
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"B1", "R1"}, 		/* Mutation */ 
-			{"B", "E"},			/* Crossover */	
+			{"B1", 	"R1"}, 		/* Mutation */ 
+			{"B", 	"E"},		/* Crossover */	
 			"S",
 			"AN", 		 		/* Reward */
 			"AP" 		 		/* Probability */
@@ -50,7 +51,7 @@ int main() {
 
 	std::string const 
 		suite = "bbob",
-	  	dimensions = "20",
+	  	dimensions = "3",
 	 	functions = "7",
 		instances = "1";
 

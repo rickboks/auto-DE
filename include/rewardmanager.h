@@ -4,6 +4,10 @@
 #include <string>
 
 class RewardManager {
+	protected:
+		std::vector<double> average(std::vector<std::vector<double>>const& deltas) const;
+		std::vector<double> extreme(std::vector<std::vector<double>>const& deltas) const;
+		std::vector<double> normalized(std::vector<double> r) const;
 	public:
 		//RewardManager ();
 		virtual ~RewardManager (){};

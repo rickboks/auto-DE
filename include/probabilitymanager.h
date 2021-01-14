@@ -7,10 +7,8 @@ class ProbabilityManager {
 	protected:
 		int const K;
 		double const pMin;
-		double const pMax;
-		double const beta;
 	public:
-		ProbabilityManager(int const K): K(K), pMin(.2/K), pMax(pMin + 1. - K * pMin), beta(.6){};
+		ProbabilityManager(int const K): K(K), pMin(.2/K){};
 		virtual ~ProbabilityManager (){};
 		virtual void updateProbability(std::vector<double>const& q, std::vector<double>& p) const=0;
 };
@@ -18,8 +16,11 @@ class ProbabilityManager {
 extern std::map<std::string, std::function<ProbabilityManager*(int const)>> const probabilityManagers;
 
 class AdaptivePursuitManager : public ProbabilityManager {
+	private:
+		double const beta;
+		double const pMax;
 	public:
-		AdaptivePursuitManager (int const K): ProbabilityManager(K){};
+		AdaptivePursuitManager (int const K): ProbabilityManager(K), beta(.6), pMax(pMin + 1. - K * pMin){};
 		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
 };
 
