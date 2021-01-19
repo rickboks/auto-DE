@@ -20,7 +20,7 @@ class AdaptivePursuitManager : public ProbabilityManager {
 		double const beta;
 		double const pMax;
 	public:
-		AdaptivePursuitManager (int const K): ProbabilityManager(K), beta(.6), pMax(pMin + 1. - K * pMin){};
+		AdaptivePursuitManager (int const K): ProbabilityManager(K), beta(.8), pMax(pMin + 1. - K * pMin){};
 		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
 };
 
