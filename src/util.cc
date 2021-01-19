@@ -1,7 +1,9 @@
 #include "util.h"
 #include "rng.h"
+#include <algorithm>
 #include <experimental/filesystem>
 #include <fstream>
+#include <numeric>
 
 std::vector<double> scale(std::vector<double> x, double const scalar){
 	std::transform(x.begin(), x.end(), x.begin(), [scalar](double const& x){return x*scalar;});
@@ -22,6 +24,19 @@ std::vector<double> randomMult(std::vector<double> vec, double const min, double
 	for (unsigned int i = 0; i < vec.size(); i++)
 		vec[i] *= rng.randDouble(min, max);
 	return vec;
+}
+
+std::vector<double> normalize(std::vector<double>vec){
+	double const absMax = std::abs(*std::max_element(vec.begin(), vec.end(), 
+			[](double const& x, double const& y){return std::abs(x) < std::abs(y);}));
+
+	if (absMax != 0.)
+		std::for_each(vec.begin(), vec.end(), [absMax](double& x){x/=absMax;});
+	return vec;
+}
+
+double mean (std::vector<double>const& vec){
+	return std::accumulate(vec.begin(), vec.end(), 0.) / vec.size();
 }
 
 bool comparePtrs(Solution const* const a, Solution const *const b){

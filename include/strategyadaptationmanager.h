@@ -7,13 +7,13 @@
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
-									std::string const param, std::string const reward, std::string const probability)
-	: mutation(mutation), crossover(crossover), param(param), reward(reward), probability(probability){};
+									std::string const param, std::string const fitnessReward, std::string const probability)
+	: mutation(mutation), crossover(crossover), param(param), fitnessReward(fitnessReward), probability(probability){};
 	std::vector<std::string> const mutation, crossover;
-	std::string const param, reward, probability;
+	std::string const param, fitnessReward, probability;
 };
 
-class RewardManager;
+class FitnessRewardManager;
 
 class StrategyAdaptationManager {
 	public:
@@ -48,18 +48,18 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
-		RewardManager const* const rewardManager;
+		FitnessRewardManager const* const fitnessRewardManager;
 		ProbabilityManager const* const probabilityManager;
 		double const alpha;
 		std::vector<double> p; 
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
 		std::vector<double> previousFitness; 
-		std::vector<double> diversityBefore;
+		std::vector<std::vector<double>> diversityBefore; // Diversity of all K configs on D dimensions
 
-
-		std::vector<double> diversity(std::vector<Solution*>const& population, std::vector<int> const& assignment) const;
-		void updateQuality(std::vector<double> const r);
+		std::vector<std::vector<double>> getDiversity(std::vector<Solution*>const& population, 
+				std::vector<int> const& assignment) const;
+		void updateQuality(std::vector<double> const& r);
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);

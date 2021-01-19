@@ -1,4 +1,5 @@
 #include "logger.h"
+#include "util.h"
 #include <numeric>
 
 void Logger::log(int const function, int const D, std::vector<double> const percCorrected, 
@@ -19,8 +20,8 @@ void Logger::start(int const function, int const D){
 
 void Logger::log(std::vector<double> F, std::vector<double> Cr){
 	out.precision(3);
-	double const avgF = std::accumulate(F.begin(), F.end(), 0.) / double(F.size());
-	double const avgCr = std::accumulate(Cr.begin(), Cr.end(), 0.) / double(Cr.size());
+	double const avgF = mean(F);
+	double const avgCr = mean(Cr);
 	out << avgF << " " << avgCr << ","; 
 }
 

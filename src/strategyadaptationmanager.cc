@@ -4,7 +4,7 @@
 #include <exception>
 #include "strategyadaptationmanager.h"
 #include "util.h"
-#include "rewardmanager.h"
+#include "fitnessrewardmanager.h"
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
@@ -66,7 +66,8 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& /*population*/, 
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
-	: StrategyAdaptationManager(config, ch, population), rewardManager(rewardManagers.at(config.reward)()),
+	: StrategyAdaptationManager(config, ch, population), 
+	fitnessRewardManager(fitnessRewardManagers.at(config.fitnessReward)(K)),
 	probabilityManager(probabilityManagers.at(config.probability)(K)), alpha(.8), p(K, 1./K), q(K, 0.), 
 	previousStrategies(popSize){
 	
@@ -77,7 +78,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
-	delete rewardManager;
+	delete fitnessRewardManager;
 	delete probabilityManager;
 }
 
@@ -89,7 +90,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 	std::vector<int> const assignment = rouletteSelect(indices, p, popSize, true);
 	previousStrategies = assignment;
 
-	diversityBefore = diversity(population, assignment);
+	diversityBefore = getDiversity(population, assignment);
 
 	for (int i = 0; i < popSize; i++){
 		auto const [m, c] = configurations[assignment[i]];
@@ -103,37 +104,39 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
-	std::vector<std::vector<double>> fitnessImprovement(K);
+	std::vector<double> fitnessImprovement(popSize);
 	std::vector<double> trialF(popSize);
-	for (int i = 0; i < popSize; i++)
-		trialF[i] = population[i]->getFitness();
 
-	double const bestF = *std::min_element(trialF.begin(), trialF.end());
 	for (int i = 0; i < popSize; i++){
-		double delta = 0.;
-		if (trialF[i] <= previousFitness[i])
-			delta = (bestF / trialF[i]) * std::abs(previousFitness[i] - trialF[i]);
-		fitnessImprovement[previousStrategies[i]].push_back(delta);
+		trialF[i] = population[i]->getFitness();
+		// No negative values; there is no difference between a large decrease in fitness and a small one
+		fitnessImprovement[i] = (trialF[i] < previousFitness[i] ? previousFitness[i] - trialF[i] : 0.);
 	}
 
-	std::vector<double> const diversityAfter = diversity(population, previousStrategies);
+	std::vector<std::vector<double>> const diversityAfter = getDiversity(population, previousStrategies);
+	std::vector<double> diversityReward(K);
+	for (int i = 0; i < K; i++)
+		diversityReward[i] = mean(subtract(diversityAfter[i], diversityBefore[i])); // mean improvement
+	diversityReward = normalize(diversityReward); // normalize in [-1, 1]
 
-	updateQuality(rewardManager->getReward(fitnessImprovement));
+	std::vector<double> const fitnessReward = fitnessRewardManager->getReward(fitnessImprovement, previousStrategies);
+
+	updateQuality(fitnessReward);
 	probabilityManager->updateProbability(q, p);
 	parameterAdaptationManager->update(trialF);
 	previousFitness = trialF;
 }
 
-void AdaptiveStrategyManager::updateQuality(std::vector<double>const r){
+void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
 	for (int i = 0; i < K; i++)
 		q[i] += alpha * (r[i] - q[i]);
 }
 
-std::vector<double> AdaptiveStrategyManager::diversity(std::vector<Solution*>const& population, 
+std::vector<std::vector<double>> AdaptiveStrategyManager::getDiversity(std::vector<Solution*>const& population, 
 		std::vector<int>const& assignment) const{
 
 	std::vector<std::vector<std::vector<double>>> positions(K); // For each configuration, a vector of positions
-	std::vector<double> div(K, 0.); // Diversity for each configuration
+	std::vector<std::vector<double>> stdDev(K, std::vector<double>(D, 0.)); // Diversity for each configuration+dimension
 
 	for (int i = 0; i < popSize; i++)
 		positions[assignment[i]].push_back(population[i]->getX()); // Get positions per configuration
@@ -141,27 +144,23 @@ std::vector<double> AdaptiveStrategyManager::diversity(std::vector<Solution*>con
 	for (int i = 0; i < K; i++){
 		if (!positions[i].empty()){
 			int const numPositions = positions[i].size();
-
 			// Calculate the mean
-			std::vector<double> mean = positions[i][0];
-			for (int j = 1; j < numPositions; j++)
+			std::vector<double> mean(D, 0.);
+			for (int j = 0; j < numPositions; j++){
 				mean = add(mean, positions[i][j]);
-			mean = scale(mean, 1./numPositions);
-			
+			}			
+			std::transform(mean.begin(), mean.end(), mean.begin(), 
+					[numPositions](double const& x){return x/numPositions;});
 
 			// Calculate the standard deviation
-			std::vector<double> stDev(D);
 			for (int j = 0; j < numPositions; j++){
 				for (int k = 0; k < D; k++)
-					stDev[k] += pow(positions[i][j][k] - mean[k], 2.);
+					stdDev[i][k] += pow(positions[i][j][k] - mean[k], 2.);
 			}
-			std::for_each(stDev.begin(), stDev.end(), [numPositions](double& x){x = sqrt(x / numPositions);});
-
-			// Compute average standard deviation
-			div[i] = std::accumulate(stDev.begin(), stDev.end(), 0.) / D;
+			std::transform(stdDev[i].begin(), stdDev[i].end(), stdDev[i].begin(), 
+					[numPositions](double const& x){return sqrt(x/numPositions);});
 		}
 	}
 
-	//printVec(div);
-	return div; 
+	return stdDev; 
 }

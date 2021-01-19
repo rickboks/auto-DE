@@ -41,7 +41,7 @@ int main() {
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
 			{"B1", 	"R1"}, 		/* Mutation */ 
-			{"B", 	"E"},		/* Crossover */	
+			{"B"},		/* Crossover */	
 			"S",
 			"AN", 		 		/* Reward */
 			"AP" 		 		/* Probability */
