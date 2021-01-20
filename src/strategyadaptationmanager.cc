@@ -113,12 +113,8 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 		fitnessImprovement[i] = (trialF[i] < previousFitness[i] ? previousFitness[i] - trialF[i] : 0.);
 	}
 
-	std::vector<std::vector<double>> const diversityAfter = getDiversity(population, previousStrategies);
-	std::vector<double> diversityReward(K);
-	for (int i = 0; i < K; i++)
-		diversityReward[i] = mean(subtract(diversityAfter[i], diversityBefore[i])); // mean improvement
-	diversityReward = normalize(diversityReward); // normalize in [-1, 1]
-
+	std::vector<double> const diversityReward = 
+		normalize(subtract(getDiversity(population, previousStrategies), diversityBefore)); 
 	std::vector<double> const fitnessReward = fitnessRewardManager->getReward(fitnessImprovement, previousStrategies);
 
 	updateQuality(fitnessReward);
@@ -132,35 +128,31 @@ void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
 		q[i] += alpha * (r[i] - q[i]);
 }
 
-std::vector<std::vector<double>> AdaptiveStrategyManager::getDiversity(std::vector<Solution*>const& population, 
+std::vector<double> AdaptiveStrategyManager::getDiversity(std::vector<Solution*>const& population, 
 		std::vector<int>const& assignment) const{
 
 	std::vector<std::vector<std::vector<double>>> positions(K); // For each configuration, a vector of positions
-	std::vector<std::vector<double>> stdDev(K, std::vector<double>(D, 0.)); // Diversity for each configuration+dimension
+	std::vector<double> stdDev(K, 0.); // standard deviation for each config
+	std::vector<double> mean(D, 0.); // Mean position of the *entire* population
 
-	for (int i = 0; i < popSize; i++)
-		positions[assignment[i]].push_back(population[i]->getX()); // Get positions per configuration
+	for (int i = 0; i < popSize; i++){
+		std::vector<double> const position = population[i]->getX();
+		positions[assignment[i]].push_back(position); // Get positions per configuration
+		mean = add(mean, position);
+	}
+	std::transform(mean.begin(), mean.end(), mean.begin(), 
+			[popSize = population.size()](double const& x){return x/popSize;});
 
 	for (int i = 0; i < K; i++){
-		if (!positions[i].empty()){
-			int const numPositions = positions[i].size();
-			// Calculate the mean
-			std::vector<double> mean(D, 0.);
-			for (int j = 0; j < numPositions; j++){
-				mean = add(mean, positions[i][j]);
-			}			
-			std::transform(mean.begin(), mean.end(), mean.begin(), 
-					[numPositions](double const& x){return x/numPositions;});
-
-			// Calculate the standard deviation
-			for (int j = 0; j < numPositions; j++){
+		if (!positions[i].empty()){ // Calculate the standard deviation
+			for (unsigned int j = 0; j < positions[i].size(); j++){ 
+				double dist = 0; // Calulate distance of one position to mean
 				for (int k = 0; k < D; k++)
-					stdDev[i][k] += pow(positions[i][j][k] - mean[k], 2.);
+					dist += pow(positions[i][j][k] - mean[k], 2.);
+				stdDev[i] += sqrt(dist);
 			}
-			std::transform(stdDev[i].begin(), stdDev[i].end(), stdDev[i].begin(), 
-					[numPositions](double const& x){return sqrt(x/numPositions);});
+			stdDev[i] /= positions[i].size(); // average over all positions of this config
 		}
 	}
-
 	return stdDev; 
 }

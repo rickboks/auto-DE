@@ -55,9 +55,9 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
 		std::vector<double> previousFitness; 
-		std::vector<std::vector<double>> diversityBefore; // Diversity of all K configs on D dimensions
+		std::vector<double> diversityBefore; // Diversity of all K configs
 
-		std::vector<std::vector<double>> getDiversity(std::vector<Solution*>const& population, 
+		std::vector<double> getDiversity(std::vector<Solution*>const& population, 
 				std::vector<int> const& assignment) const;
 		void updateQuality(std::vector<double> const& r);
 	public:
