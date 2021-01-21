@@ -68,13 +68,11 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
 	fitnessRewardManager(fitnessRewardManagers.at(config.fitnessReward)(K)),
-	probabilityManager(probabilityManagers.at(config.probability)(K)), alpha(.8), p(K, 1./K), q(K, 0.), 
-	previousStrategies(popSize){
+	probabilityManager(probabilityManagers.at(config.probability)(K)), 
+	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize){
 	
-	previousFitness.reserve(popSize);
-	for (Solution* s : population)
-		previousFitness.push_back(s->getFitness());
-
+	for (int i = 0; i < popSize; i++)
+		previousFitness[i] = population[i]->getFitness();
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -109,7 +107,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 
 	for (int i = 0; i < popSize; i++){
 		trialF[i] = population[i]->getFitness();
-		// No negative values; there is no difference between a large decrease in fitness and a small one
+		// No negative values; there is no difference between a large fitness deterioration and a small one
 		fitnessImprovement[i] = (trialF[i] < previousFitness[i] ? previousFitness[i] - trialF[i] : 0.);
 	}
 
@@ -132,7 +130,7 @@ std::vector<double> AdaptiveStrategyManager::getDiversity(std::vector<Solution*>
 		std::vector<int>const& assignment) const{
 
 	std::vector<std::vector<std::vector<double>>> positions(K); // For each configuration, a vector of positions
-	std::vector<double> stdDev(K, 0.); // standard deviation for each config
+	std::vector<double> stdDev(K, 0.); // Standard deviation for each config
 	std::vector<double> mean(D, 0.); // Mean position of the *entire* population
 
 	for (int i = 0; i < popSize; i++){
