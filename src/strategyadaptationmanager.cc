@@ -51,8 +51,9 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 		throw std::invalid_argument("ConstantStrategyManager needs exactly 1 configuration");
 }
 
-void ConstantStrategyManager::next(std::map<MutationManager*, std::vector<int>>& mutation, std::map<CrossoverManager*, 
-		std::vector<int>>& crossover, std::vector<double>& Fs, std::vector<double>& Crs){
+void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/, std::map<MutationManager*, 
+		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, std::vector<double>& Fs, 
+		std::vector<double>& Crs){
 
 	std::vector<int> key(popSize);
 	std::iota(key.begin(), key.end(), 0); // All indices [0,M-1]
@@ -72,7 +73,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	
 	std::transform(population.begin(), population.end(), previousFitness.begin(), 
 			[](Solution const* const s){return s->getFitness();});
-	previousDiversity = getDiversity(population);
+	previousDistances = getDistances(population, getMean(population));
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -80,14 +81,21 @@ AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 	delete probabilityManager;
 }
 
-void AdaptiveStrategyManager::next(std::map<MutationManager*, std::vector<int>>& mutation, std::map<CrossoverManager*, 
-		std::vector<int>>& crossover, std::vector<double>& Fs, std::vector<double>& Crs){
-	mutation.clear(); crossover.clear();
+void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
+		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
+		std::vector<double>& Fs, std::vector<double>& Crs){
 	std::vector<int> indices = range(K); // Range [0,K-1]
 	std::vector<int> const assignment = rouletteSelect(indices, p, popSize, true);
-	previousStrategies = assignment;
 
+	printVec(p);
+
+	previousStrategies = assignment;
+	previousMean = getMean(population);
+	previousDistances = getDistances(population, previousMean);
+
+	mutation.clear(); crossover.clear();
 	for (int i = 0; i < popSize; i++){
+		previousFitness[i] = population[i]->getFitness();
 		auto const [m, c] = configurations[assignment[i]];
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};
@@ -98,25 +106,22 @@ void AdaptiveStrategyManager::next(std::map<MutationManager*, std::vector<int>>&
 	parameterAdaptationManager->nextParameters(Fs, Crs, assignment);
 }
 
-void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
+void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	std::vector<double> improvement(popSize);
-	std::vector<double> trialF(popSize);
 
 	for (int i = 0; i < popSize; i++){
-		trialF[i] = population[i]->getFitness();
-		// No negative values; there is no difference between a large fitness deterioration and a small one
-		improvement[i] = (trialF[i] < previousFitness[i] ? previousFitness[i] - trialF[i] : 0.);
+		double const f = trials[i]->getFitness();
+		improvement[i] = (f < previousFitness[i] ? previousFitness[i] - f : 0.);
 	}
 
-	std::vector<double> const currentDiversity = getDiversity(population); // distance to mean for each individual
-	double const stdDev = mean(currentDiversity); // average distance to mean of the entire population
-	std::vector<double> diversityFactor = divide(subtract(currentDiversity, previousDiversity), stdDev);
+	std::vector<double> const currentDistances = getDistances(trials, previousMean); // distance to mean for each individual
+	double const stdDev = mean(previousDistances); // average distance to mean of the previous population
+	std::vector<double> diversityFactor = divide(subtract(currentDistances, previousDistances), stdDev);
 	
 	// Don't punish exploitation, only reward exploration
 	std::transform(diversityFactor.begin(), diversityFactor.end(), diversityFactor.begin(), 
-			[](double const& x){return std::max(1.+x, 1.);}); 
+			[](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);}); 
 
-	// pairwise multiply 
 	std::transform(improvement.begin(), improvement.end(), diversityFactor.begin(), 
 			improvement.begin(), [](double const& x, double const& y){return x*y;}); 
 
@@ -125,8 +130,6 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& population){
 	updateQuality(reward);
 	probabilityManager->updateProbability(q, p);
 	parameterAdaptationManager->update(improvement);
-	previousFitness = trialF;
-	previousDiversity = currentDiversity;
 }
 
 void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
@@ -134,15 +137,19 @@ void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
 		q[i] += alpha * (r[i] - q[i]);
 }
 
-std::vector<double> AdaptiveStrategyManager::getDiversity(std::vector<Solution*>const& population) const{
-	std::vector<double> distances(popSize, 0.); //  Deviation for each population member
+std::vector<double>AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
 	std::vector<double> mean(D, 0.); // Mean position of the entire population
-
 	for (Solution* s : population) 
 		mean = add(mean, s->getX());
+
 	std::transform(mean.begin(), mean.end(), mean.begin(), 
 			[popSize = population.size()](double const& x){return x/popSize;});
+	return mean;
+}
 
+std::vector<double> AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, 
+		std::vector<double>const& mean) const{
+	std::vector<double> distances(popSize, 0.); //  Deviation for each population member
 	for (unsigned int i = 0; i < population.size(); i++){ 
 		std::vector<double> const pos = population[i]->getX();
 		for (int k = 0; k < D; k++)

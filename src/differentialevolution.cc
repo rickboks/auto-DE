@@ -56,7 +56,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			&& !coco_problem_final_target_hit(problem)
 			&& !converged(genomes)){
 
-		strategyAdaptationManager->next(mutationManagers, crossoverManagers, Fs, Crs);
+		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -85,6 +85,9 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 
+		// Update the adaptation manager
+		strategyAdaptationManager->update(trials);
+
 		// Selection step
 		for (int i = 0; i < popSize; i++){
 			if (trialF[i] < genomes[i]->getFitness()){
@@ -94,9 +97,6 @@ void DifferentialEvolution::run(int const evalBudget){
 				delete trials[i];
 			}
 		}
-
-		// Update the adaptation manager
-		strategyAdaptationManager->update(genomes);
 	}
 }
 

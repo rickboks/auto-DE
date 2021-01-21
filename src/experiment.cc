@@ -43,18 +43,18 @@ int main() {
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
 			{"B1", 	"R1"}, 		/* Mutation */ 
-			{"B"},		/* Crossover */	
+			{"B"},				/* Crossover */	
 			"S",
 			"AN", 		 		/* Reward */
 			"PM" 		 		/* Probability */
 		},
-		"MT"					/* Constraint handling */
+		"RS"					/* Constraint handling */
 	});
 
 	std::string const 
 		suite = "bbob",
 	  	dimensions = "20",
-	 	functions = "7",
+	 	functions = "3",
 		instances = "1";
 
 	experiment(

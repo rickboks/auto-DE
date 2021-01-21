@@ -20,10 +20,10 @@ class StrategyAdaptationManager {
 		StrategyAdaptationManager(StrategyAdaptationConfiguration const config, ConstraintHandler *const ch, 
 				std::vector<Solution*>const& population);
 		virtual ~StrategyAdaptationManager();
-		virtual void next(std::map<MutationManager*, std::vector<int>>& mutation, 
+		virtual void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
 				std::vector<double>& Fs, std::vector<double>& Crs)=0;
-		virtual void update(std::vector<Solution*>const& population);
+		virtual void update(std::vector<Solution*>const& trials);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 	protected:
@@ -41,7 +41,7 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 	public:
 		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
-		void next(std::map<MutationManager*, std::vector<int>>& mutation, 
+		void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
 				std::vector<double>& Fs, std::vector<double>& Crs);
 };
@@ -55,16 +55,17 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<double> q; 
 		std::vector<int> previousStrategies;
 		std::vector<double> previousFitness; 
-		std::vector<double> previousDiversity; // Diversity of all K configs
-
-		std::vector<double> getDiversity(std::vector<Solution*>const& population) const;
+		std::vector<double> previousDistances; // Distances of all K configs
+		std::vector<double> previousMean;
+		std::vector<double> getMean(std::vector<Solution*>const& population) const;
+		std::vector<double> getDistances(std::vector<Solution*>const& population, std::vector<double>const& mean) const;
 		void updateQuality(std::vector<double> const& r);
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
 		~AdaptiveStrategyManager();
-		void next(std::map<MutationManager*, std::vector<int>>& mutation, 
+		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
 				std::vector<double>& Fs, std::vector<double>& Crs);
-		void update(std::vector<Solution*>const& population);
+		void update(std::vector<Solution*>const& trials);
 };
