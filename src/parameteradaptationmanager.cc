@@ -22,10 +22,6 @@ SHADEManager::SHADEManager(std::vector<Solution*>const& population, int const K)
 
 	for (std::vector<double>& v : MF)
 		std::fill(v.begin(), v.end(), .5);
-
-	previousFitness.reserve(popSize);
-	for (int i = 0; i < popSize; i++)
-		previousFitness.push_back(population[i]->getFitness());
 }
 
 double SHADEManager::weightedMean(std::vector<double>const& x, std::vector<double>const& w) const{
@@ -46,36 +42,34 @@ double SHADEManager::weightedLehmerMean(std::vector<double>const& x, std::vector
 	return wSqSum / wSum;
 }
 
-std::vector<double> SHADEManager::w(std::vector<double>const& delta) const {
-	std::vector<double> w(delta.size());
-	double sum = std::accumulate(delta.begin(), delta.end(), 0.);
-	for (unsigned int i = 0; i < delta.size(); i++)
-		w[i] = delta[i]/sum;
+std::vector<double> SHADEManager::w(std::vector<double>const& improvements) const {
+	std::vector<double> w(improvements.size());
+	double sum = std::accumulate(improvements.begin(), improvements.end(), 0.);
+	for (unsigned int i = 0; i < improvements.size(); i++)
+		w[i] = improvements[i]/sum;
 	return w;
 }
 
-void SHADEManager::update(std::vector<double>const& trialF){
-	std::vector<std::vector<double>> SF(K), SCr(K), delta(K);
+void SHADEManager::update(std::vector<double>const& improvement){
+	std::vector<std::vector<double>> SF(K), SCr(K), improvements(K);
 
 	for (int i = 0; i < popSize; i++){
 		int const c = previousAssignment[i];
-		if (trialF[i] < previousFitness[i]){
+		if (improvement[i] > 0.){
 			SF[c].push_back(previousFs[i]); 
 			SCr[c].push_back(previousCrs[i]);
-			delta[c].push_back(std::abs(trialF[i] - previousFitness[i]));
+			improvements[c].push_back(improvement[i]);
 		}
 	}
 	
 	for (int c = 0; c < K; c++){
 		if (!SF[c].empty()){
-			std::vector<double> const _w = w(delta[c]);
+			std::vector<double> const _w = w(improvements[c]);
 			MF[c][k[c]] = weightedLehmerMean(SF[c], _w);
 			MCr[c][k[c]] = weightedMean(SCr[c], _w);
 			k[c] = (k[c]+1)%H;
 		}
 	}
-
-	previousFitness = trialF;
 }
 
 void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment){
@@ -91,7 +85,7 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 
 		// Update crossover rate
 		double const MCrr = MCr[config][randIndex];
-		Crs[i] = std::min(std::max(rng.normalDistribution(MCrr, .1),0.),1.);
+		Crs[i] = std::clamp(rng.normalDistribution(MCrr, .1),0.,1.);
 	}
 
 	previousFs = Fs;

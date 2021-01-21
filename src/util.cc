@@ -10,6 +10,11 @@ std::vector<double> scale(std::vector<double> x, double const scalar){
 	return x;
 }
 
+std::vector<double> divide(std::vector<double> x, double const val){
+	std::transform(x.begin(), x.end(), x.begin(), [val](double const& x){return x/val;});
+	return x;
+}
+
 std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs){
 	std::transform(lhs.begin(), lhs.end(), rhs.begin(), lhs.begin(), std::plus<double>());
 	return lhs;
@@ -21,12 +26,11 @@ std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const r
 }
 
 std::vector<double> randomMult(std::vector<double> vec, double const min, double const max){
-	for (unsigned int i = 0; i < vec.size(); i++)
-		vec[i] *= rng.randDouble(min, max);
+	std::transform(vec.begin(), vec.end(), vec.begin(), [min, max](double const& x){return x*rng.randDouble(min, max);});
 	return vec;
 }
 
-std::vector<double> normalize(std::vector<double>vec){
+std::vector<double> normalize(std::vector<double> vec){
 	double const absMax = std::abs(*std::max_element(vec.begin(), vec.end(), 
 			[](double const& x, double const& y){return std::abs(x) < std::abs(y);}));
 

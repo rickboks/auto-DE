@@ -6,16 +6,17 @@
 #include "rng.h"
 #include "solution.h"
 
-[[nodiscard]] std::vector<double> scale(std::vector<double>const vec, double const x);
-[[nodiscard]] std::vector<double> add(std::vector<double>const lhs, std::vector<double>const rhs);
-[[nodiscard]] std::vector<double> subtract(std::vector<double>const lhs, std::vector<double>const rhs);
-[[nodiscard]] std::vector<double> randomMult(std::vector<double>const vec, double const min, double const max);
+[[nodiscard]] std::vector<double> scale(std::vector<double> vec, double const x);
+[[nodiscard]] std::vector<double> divide(std::vector<double> vec, double const x);
+[[nodiscard]] std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs);
+[[nodiscard]] std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const rhs);
+[[nodiscard]] std::vector<double> randomMult(std::vector<double> vec, double const min, double const max);
 [[nodiscard]] std::vector<double> normalize(std::vector<double> vec);
 [[nodiscard]] double mean(std::vector<double>const& vec);
 bool comparePtrs(Solution const* const a, Solution const* const b);
-double distance(Solution const*const s1, Solution const*const s2);
+double distance(Solution const* const s1, Solution const* const s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
-std::string checkFilename(std::string fn);
+std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
 
 template <typename T>

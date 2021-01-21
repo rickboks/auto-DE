@@ -22,7 +22,6 @@ extern std::map<std::string, std::function<ParameterAdaptationManager*(std::vect
 class SHADEManager : public ParameterAdaptationManager {
 	private:
 		int const H;
-		std::vector<double> previousFitness; 
 		std::vector<double> previousFs;
 		std::vector<double> previousCrs;
 		std::vector<int> previousAssignment;
@@ -36,7 +35,7 @@ class SHADEManager : public ParameterAdaptationManager {
 	public:
 		SHADEManager(std::vector<Solution*>const& population, int const K);
 		void nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment); 
-		void update(std::vector<double>const& trialF);
+		void update(std::vector<double>const& improvement);
 };
 
 class ConstantParameterManager : public ParameterAdaptationManager {
@@ -46,5 +45,5 @@ class ConstantParameterManager : public ParameterAdaptationManager {
 	public:
 		ConstantParameterManager(std::vector<Solution*>const& population, int const K);
 		void nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment); 
-		void update(std::vector<double>const& trialF);
+		void update(std::vector<double>const& improvement);
 };

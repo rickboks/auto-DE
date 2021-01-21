@@ -56,7 +56,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			&& !coco_problem_final_target_hit(problem)
 			&& !converged(genomes)){
 
-		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
+		strategyAdaptationManager->next(mutationManagers, crossoverManagers, Fs, Crs);
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);

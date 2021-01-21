@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -7,6 +8,7 @@
 #include "coco.h"
 #include "differentialevolution.h"
 #include "rng.h"
+#include "util.h"
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 10000;
 
@@ -44,7 +46,7 @@ int main() {
 			{"B"},		/* Crossover */	
 			"S",
 			"AN", 		 		/* Reward */
-			"AP" 		 		/* Probability */
+			"PM" 		 		/* Probability */
 		},
 		"MT"					/* Constraint handling */
 	});
