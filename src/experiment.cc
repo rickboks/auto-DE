@@ -43,13 +43,13 @@ int main() {
 	DifferentialEvolution de({
 
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"B1", "R1", "T1", "P1"}, 		/* Mutation */ 
-			{"X", "E"},				/* Crossover */	
-			"S",
-			"AN", 		 		/* Reward */
-			"PM" 		 		/* Probability */
+			{"B1", "R1", "T2", "P1"}, 		/* Mutation */ 
+			{"B"},							/* Crossover */	
+			"S",							/* Parameter self-adaptation */
+			"EA", 		 					/* Reward */
+			"PM" 		 					/* Probability */
 		},
-		"RS"					/* Constraint handling */
+		"RS"								/* Constraint handling */
 	});
 
 	std::string const 
