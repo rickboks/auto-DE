@@ -70,10 +70,6 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(rewardManagers.at(config.reward)(K)),
 	probabilityManager(probabilityManagers.at(config.probability)(K)), 
 	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize){
-	
-	std::transform(population.begin(), population.end(), previousFitness.begin(), 
-			[](Solution const* const s){return s->getFitness();});
-	previousDistances = getDistances(population, getMean(population));
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -86,8 +82,6 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		std::vector<double>& Fs, std::vector<double>& Crs){
 	std::vector<int> indices = range(K); // Range [0,K-1]
 	std::vector<int> const assignment = rouletteSelect(indices, p, popSize, true);
-
-	printVec(p);
 
 	previousStrategies = assignment;
 	previousMean = getMean(population);

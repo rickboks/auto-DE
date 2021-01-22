@@ -165,16 +165,16 @@ Solution* Rand2MutationManager::doMutation(std::vector<Solution*>const& genomes,
 	possibilities.erase(possibilities.begin() + i);
 	std::vector<Solution*> xr = pickRandom(possibilities, 5);
 
-	std::vector<double> mutant = xr[4]->getX();
-	std::vector<double> difference = subtract(xr[0]->getX(), xr[1]->getX());
-	difference = add(difference, xr[2]->getX());
-	difference = subtract(difference, xr[3]->getX());
+	std::vector<double> mutant = xr[0]->getX();
+	std::vector<double> difference = subtract(xr[1]->getX(), xr[2]->getX());
+	difference = add(difference, xr[3]->getX());
+	difference = subtract(difference, xr[4]->getX());
 	difference = scale(difference, F);
 
 	mutant = add(mutant, difference);
 
 	Solution* m = new Solution(mutant);
-	ch->repair(m, xr[4], genomes[i]);
+	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
 
@@ -239,9 +239,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 	
 	std::vector<Solution*> xr = pickRandom(possibilities, 3);
 
-	double const pPrime = std::abs(xr[0]->getFitness()) + std::abs(xr[1]->getFitness()) 
-					+ std::abs(xr[2]->getFitness());
-
+	double const pPrime = std::abs(xr[0]->getFitness()) + std::abs(xr[1]->getFitness()) + std::abs(xr[2]->getFitness());
 	double const p0 = std::abs(xr[0]->getFitness()) / pPrime;
 	double const p1 = std::abs(xr[1]->getFitness()) / pPrime;
 	double const p2 = std::abs(xr[2]->getFitness()) / pPrime;
@@ -252,8 +250,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 
 	Solution const base = Solution(mutant); // only used for correction strategies
 
-	std::vector<double> temp;
-	temp = subtract(xr[0]->getX(), xr[1]->getX());
+	std::vector<double> temp = subtract(xr[0]->getX(), xr[1]->getX());
 	temp = scale(temp, p1-p0);
 	mutant = add(temp, mutant);
 
