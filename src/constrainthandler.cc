@@ -1,6 +1,7 @@
 #include "constrainthandler.h"
 #include "util.h"
 #include "solution.h"
+#include <stdexcept>
 
 std::function<ConstraintHandler* (std::vector<double> const, std::vector<double> const)> 
 ConstraintHandler::create(std::string const id){
@@ -23,7 +24,7 @@ ConstraintHandler::create(std::string const id){
 	if (id == "PM") return LC(ProjectionMidpointRepair);
 	if (id == "PB") return LC(ProjectionBaseRepair);
 	if (id == "CO") return LC(ConservatismRepair);
-	return NULL;
+	throw std::invalid_argument("no such ConstraintHandler: " + id);
 }
 
 bool ConstraintHandler::isFeasible(Solution const * const p) const{

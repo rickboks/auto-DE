@@ -8,12 +8,11 @@ class ProbabilityManager {
 		int const K;
 		double const pMin;
 	public:
+		static std::function<ProbabilityManager* (int const)> create(std::string const id);
 		ProbabilityManager(int const K): K(K), pMin(.2/K){};
 		virtual ~ProbabilityManager (){};
 		virtual void updateProbability(std::vector<double>const& q, std::vector<double>& p) const=0;
 };
-
-extern std::map<std::string, std::function<ProbabilityManager*(int const)>> const probabilityManagers;
 
 class AdaptivePursuitManager : public ProbabilityManager {
 	private:

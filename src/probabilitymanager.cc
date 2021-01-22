@@ -4,12 +4,12 @@
 #include <numeric>
 #include <ostream>
 
+std::function<ProbabilityManager* (int const)> ProbabilityManager::create(std::string const id){
 #define LC(X) [](int const K){return new X(K);}
-std::map<std::string, std::function<ProbabilityManager*(int const)>> const probabilityManagers ({
-	{"AP", LC(AdaptivePursuitManager)},
-	{"PM", LC(ProbabilityMatchingManager)},
-});
-
+	if (id == "AP") return LC(AdaptivePursuitManager);
+	if (id == "PM") return LC(ProbabilityMatchingManager);
+	throw std::invalid_argument("no such ProbabilityManager: " + id);
+}
 void AdaptivePursuitManager::updateProbability(std::vector<double>const& q, std::vector<double>& p) const {
 	int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
 	for (int i = 0; i < K; i++){

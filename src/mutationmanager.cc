@@ -17,7 +17,7 @@ std::function<MutationManager* (ConstraintHandler* const)> MutationManager::crea
 	if (id == "O2") return LC(TwoOpt2MutationManager);
 	if (id == "PX") return LC(ProximityMutationManager);
 	if (id == "RA") return LC(RankingMutationManager);
-	return NULL;
+	throw std::invalid_argument("no such MutationManager: " + id);
 }
 
 Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){

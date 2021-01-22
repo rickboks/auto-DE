@@ -6,7 +6,7 @@ std::function<CrossoverManager* ()> CrossoverManager::create(std::string const i
 	if (id == "B") return LC(BinomialCrossoverManager);
 	if (id == "E") return LC(ExponentialCrossoverManager);
 	if (id == "A") return LC(ArithmeticCrossoverManager);
-	return NULL;
+	throw std::invalid_argument("no such CrossoverManager: " + id);
 }
 
 Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{

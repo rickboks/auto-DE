@@ -44,7 +44,7 @@ int main() {
 
 		{ /* -- Strategy self-adaptation configuration -- */
 			{"B1", "R1", "T1", "P1"}, 		/* Mutation */ 
-			{"B", "E"},				/* Crossover */	
+			{"X", "E"},				/* Crossover */	
 			"S",
 			"AN", 		 		/* Reward */
 			"PM" 		 		/* Probability */

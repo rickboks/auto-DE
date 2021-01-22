@@ -68,7 +68,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
 	rewardManager(RewardManager::create(config.reward)(K)),
-	probabilityManager(probabilityManagers.at(config.probability)(K)), 
+	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
 	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize){
 }
 

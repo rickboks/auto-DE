@@ -1,4 +1,5 @@
 #include <numeric>
+#include <stdexcept>
 #include "parameteradaptationmanager.h"
 #include "rng.h"
 
@@ -6,7 +7,7 @@ std::function<ParameterAdaptationManager*(std::vector<Solution*>, int const)> Pa
 #define LC(X) [](std::vector<Solution*>const& population, int const K){return new X(population, K);}
 	if (id == "S") return LC(SHADEManager);
 	if (id == "C") return LC(ConstantParameterManager);
-	return NULL;
+	throw std::invalid_argument("no such ParameterAdaptationManager: " + id);
 }
 
 ParameterAdaptationManager::ParameterAdaptationManager(std::vector<Solution*>const& population, int const K)
