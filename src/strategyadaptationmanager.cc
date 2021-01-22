@@ -120,8 +120,6 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	std::transform(diversityFactor.begin(), diversityFactor.end(), diversityFactor.begin(), 
 			[](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);}); 
 
-	printVec(diversityFactor);
-
 	std::transform(improvement.begin(), improvement.end(), diversityFactor.begin(), 
 			improvement.begin(), [](double const& x, double const& y){return x*y;}); 
 
