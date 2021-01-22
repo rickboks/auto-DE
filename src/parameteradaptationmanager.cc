@@ -2,11 +2,12 @@
 #include "parameteradaptationmanager.h"
 #include "rng.h"
 
+std::function<ParameterAdaptationManager*(std::vector<Solution*>, int const)> ParameterAdaptationManager::create(std::string const id){
 #define LC(X) [](std::vector<Solution*>const& population, int const K){return new X(population, K);}
-std::map<std::string, std::function<ParameterAdaptationManager*(std::vector<Solution*>const&, int const)>> const parameterAdaptations({
-		{"S", LC(SHADEManager)},
-		{"C", LC(ConstantParameterManager)},
-	});
+	if (id == "S") return LC(SHADEManager);
+	if (id == "C") return LC(ConstantParameterManager);
+	return NULL;
+}
 
 ParameterAdaptationManager::ParameterAdaptationManager(std::vector<Solution*>const& population, int const K)
 	: popSize(population.size()), K(K){

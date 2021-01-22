@@ -2,7 +2,29 @@
 #include "util.h"
 #include "solution.h"
 
-#define LC(X) [](std::vector<double>lb, std::vector<double>ub){return new X(lb,ub);}
+std::function<ConstraintHandler* (std::vector<double> const, std::vector<double> const)> 
+ConstraintHandler::create(std::string const id){
+#define LC(X) [](std::vector<double> const lb, std::vector<double> const ub){return new X(lb,ub);}
+	// Generic
+	if (id == "DP") return LC(DeathPenalty);
+	if (id == "RS") return LC(ResamplingRepair);
+
+	// Almost generic
+	if (id == "RI") return LC(ReinitializationRepair);
+	if (id == "PR") return LC(ProjectionRepair);
+	if (id == "RF") return LC(ReflectionRepair);
+	if (id == "WR") return LC(WrappingRepair);
+	if (id == "TR") return LC(TransformationRepair);
+
+	//// DE
+	if (id == "RB") return LC(RandBaseRepair);
+	if (id == "MB") return LC(MidpointBaseRepair);
+	if (id == "MT") return LC(MidpointTargetRepair);
+	if (id == "PM") return LC(ProjectionMidpointRepair);
+	if (id == "PB") return LC(ProjectionBaseRepair);
+	if (id == "CO") return LC(ConservatismRepair);
+	return NULL;
+}
 
 bool ConstraintHandler::isFeasible(Solution const * const p) const{
 	for (int i = 0; i < D; i++){
@@ -20,27 +42,6 @@ bool ConstraintHandler::resample(Solution * const /*p*/, int const /*resamples*/
 int ConstraintHandler::getCorrections() const {
 	return nCorrected;
 }
-
-std::map<std::string, std::function<ConstraintHandler*(std::vector<double>, std::vector<double>)>> const constraintHandlers ({
-	// Generic
-	{"DP", LC(DeathPenalty)},
-	{"RS", LC(ResamplingRepair)},
-
-	// Almost generic
-	{"RI", LC(ReinitializationRepair)},
-	{"PR", LC(ProjectionRepair)},
-	{"RF", LC(ReflectionRepair)},
-	{"WR", LC(WrappingRepair)},
-	{"TR", LC(TransformationRepair)},
-
-	//// DE
-	{"RB", LC(RandBaseRepair)},
-	{"MB", LC(MidpointBaseRepair)},
-	{"MT", LC(MidpointTargetRepair)},
-	{"PM", LC(ProjectionMidpointRepair)},
-	{"PB", LC(ProjectionBaseRepair)},
-	{"CO", LC(ConservatismRepair)}
-});
 
 // Differential Evolution
 void RandBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {

@@ -53,17 +53,17 @@ int main() {
 	});
 
 	std::string const 
-		suite = "bbob",
-	  	dimensions = "20",
-	 	functions = "1-24",
-		instances = "1-5";
+		suite 		=	"bbob",
+	  	dimensions 	= 	"5",
+	 	functions 	= 	"3",
+		instances 	= 	"1";
 
 	experiment(
 		de, 
-		suite.c_str(), 
+		"bbob", 
 		("dimensions: " + dimensions + " instance_indices: " + instances + " function_indices: " + functions).c_str(), 
-		suite.c_str(), 
-		("result_folder: AP_" + de.getIdString()).c_str()
+		"bbob", 
+		("result_folder: " + de.getIdString()).c_str()
 	);
 
 	return 0;

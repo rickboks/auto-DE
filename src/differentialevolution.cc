@@ -34,7 +34,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 		genomes[i]->evaluate(problem);
 	}
 
-	ch = constraintHandlers.at(config.constraintHandler)(lowerBound, upperBound);
+	ch = ConstraintHandler::create(config.constraintHandler)(lowerBound, upperBound);
 	strategyAdaptationManager = new AdaptiveStrategyManager(config.strategyAdaptationConfig, ch, genomes);
 }
 

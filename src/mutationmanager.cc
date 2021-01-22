@@ -1,7 +1,24 @@
 #include "mutationmanager.h"
 #include "util.h"
 
+std::function<MutationManager* (ConstraintHandler* const)> MutationManager::create(std::string const id){
 #define LC(X) [](ConstraintHandler* const ch){return new X(ch);}
+	if (id == "R1") return LC(Rand1MutationManager);
+	if (id == "T1") return LC(TTB1MutationManager);
+	if (id == "T2") return LC(TTB2MutationManager);
+	if (id == "P1") return LC(TTPB1MutationManager);
+	if (id == "B1") return LC(Best1MutationManager);
+	if (id == "B2") return LC(Best2MutationManager);
+	if (id == "R2") return LC(Rand2MutationManager);
+	if (id == "RD") return LC(Rand2DirMutationManager);
+	if (id == "NS") return LC(NSDEMutationManager);
+	if (id == "TR") return LC(TrigonometricMutationManager);
+	if (id == "O1") return LC(TwoOpt1MutationManager);
+	if (id == "O2") return LC(TwoOpt2MutationManager);
+	if (id == "PX") return LC(ProximityMutationManager);
+	if (id == "RA") return LC(RankingMutationManager);
+	return NULL;
+}
 
 Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){
 	int resamples = 0;
@@ -16,22 +33,6 @@ Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int cons
 	}
 }
 
-std::map<std::string, std::function<MutationManager* (ConstraintHandler*const)>> const mutations ({
-		{"R1", LC(Rand1MutationManager)},
-		{"T1", LC(TTB1MutationManager)},
-		{"T2", LC(TTB2MutationManager)},
-		{"P1", LC(TTPB1MutationManager)},
-		{"B1", LC(Best1MutationManager)},
-		{"B2", LC(Best2MutationManager)},
-		{"R2", LC(Rand2MutationManager)},
-		{"RD", LC(Rand2DirMutationManager)},
-		{"NS", LC(NSDEMutationManager)},
-		{"TR", LC(TrigonometricMutationManager)},
-		{"O1", LC(TwoOpt1MutationManager)},
-		{"O2", LC(TwoOpt2MutationManager)},
-		{"PX", LC(ProximityMutationManager)},
-		{"RA", LC(RankingMutationManager)},
-});
 
 // Rand/1
 Solution* Rand1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{

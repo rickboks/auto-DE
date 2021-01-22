@@ -9,12 +9,12 @@
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
 	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
-	D(population[0]->D), parameterAdaptationManager(parameterAdaptations.at(config.param)(population,K)){
+	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(population,K)){
 
 	for (std::string m : config.mutation)
-		mutationManagers.push_back(mutations.at(m)(ch));
+		mutationManagers.push_back(MutationManager::create(m)(ch));
 	for (std::string c : config.crossover)
-		crossoverManagers.push_back(crossovers.at(c)());
+		crossoverManagers.push_back(CrossoverManager::create(c)());
 	for (auto m : mutationManagers)
 		for (auto c : crossoverManagers)
 			configurations.push_back({m,c});
@@ -67,7 +67,7 @@ void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/,
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
-	rewardManager(rewardManagers.at(config.reward)(K)),
+	rewardManager(RewardManager::create(config.reward)(K)),
 	probabilityManager(probabilityManagers.at(config.probability)(K)), 
 	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize){
 }
@@ -115,6 +115,8 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	// Don't punish exploitation, only reward exploration
 	std::transform(diversityFactor.begin(), diversityFactor.end(), diversityFactor.begin(), 
 			[](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);}); 
+
+	printVec(diversityFactor);
 
 	std::transform(improvement.begin(), improvement.end(), diversityFactor.begin(), 
 			improvement.begin(), [](double const& x, double const& y){return x*y;}); 

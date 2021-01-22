@@ -1,12 +1,13 @@
 #include "util.h"
 #include "crossovermanager.h"
 
+std::function<CrossoverManager* ()> CrossoverManager::create(std::string const id){
 #define LC(X) [](){return new X();}
-std::map<std::string, std::function<CrossoverManager* ()>> const crossovers({
-		{"B", LC(BinomialCrossoverManager)},
-		{"E", LC(ExponentialCrossoverManager)},
-		{"A", LC(ArithmeticCrossoverManager)},
-});
+	if (id == "B") return LC(BinomialCrossoverManager);
+	if (id == "E") return LC(ExponentialCrossoverManager);
+	if (id == "A") return LC(ArithmeticCrossoverManager);
+	return NULL;
+}
 
 Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{
 	std::vector<double> x = target->getX();

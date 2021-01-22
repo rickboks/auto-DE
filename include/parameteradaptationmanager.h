@@ -10,14 +10,12 @@ protected:
 	int const popSize;
 	int const K;
 public:
+	static std::function<ParameterAdaptationManager*(std::vector<Solution*>, int const)> create(std::string const id);
 	ParameterAdaptationManager(std::vector<Solution*>const& population, int const K); 
 	virtual ~ParameterAdaptationManager(){};
 	virtual void nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment)=0; 
 	virtual void update(std::vector<double>const& trialF)=0;
 };
-
-extern std::map<std::string, std::function<ParameterAdaptationManager*(std::vector<Solution*>const&, int const)>> 
-	const parameterAdaptations;
 
 class SHADEManager : public ParameterAdaptationManager {
 	private:

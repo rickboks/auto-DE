@@ -15,6 +15,8 @@ class ConstraintHandler {
 		int nCorrected;
 		bool isFeasible(Solution const * const p) const;
 	public:
+		static std::function<ConstraintHandler* (std::vector<double> const, std::vector<double> const)> 
+			create(std::string const id);
 		ConstraintHandler(std::vector<double> const lb, std::vector<double> const ub): lb(lb), ub(ub), D(lb.size()), nCorrected(0){};
 		virtual ~ConstraintHandler(){};
 		virtual bool resample(Solution* const p, int const resamples);
@@ -23,9 +25,6 @@ class ConstraintHandler {
 		virtual void repair(Solution* const /*p*/){};// Generic constraint handler
 		int getCorrections() const;
 };
-
-extern std::map<std::string, std::function<ConstraintHandler* 
-	(std::vector<double>, std::vector<double>)>> const constraintHandlers;
 
 // Differential Evolution
 class RandBaseRepair : public ConstraintHandler {

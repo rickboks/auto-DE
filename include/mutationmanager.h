@@ -6,13 +6,12 @@ class MutationManager {
 		ConstraintHandler* const ch;
 		virtual Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const=0;
 	public:
+		static std::function<MutationManager* (ConstraintHandler* const)> create(std::string const id);
 		MutationManager(ConstraintHandler * const ch):ch(ch){};
 		virtual ~MutationManager(){};
 		virtual void prepare(std::vector<Solution*>const& /*genomes*/){};
 		Solution* mutate(std::vector<Solution*>const& genomes, int const i, double const F);
 };
-
-extern std::map<std::string, std::function<MutationManager* (ConstraintHandler* const)>> const mutations;
 
 class Rand1MutationManager : public MutationManager {
 	public:

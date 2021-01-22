@@ -8,14 +8,12 @@
 
 class CrossoverManager {
 	public:
+		static std::function<CrossoverManager* ()> create(std::string const id);
 		CrossoverManager(){};
 		virtual ~CrossoverManager(){};
-
 		virtual Solution* crossover(Solution const* const target, 
 				Solution const* const donor, double const Cr) const = 0;
 };
-
-extern std::map<std::string, std::function<CrossoverManager* ()>> const crossovers;
 
 class BinomialCrossoverManager : public CrossoverManager {
 	public:
