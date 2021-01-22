@@ -57,6 +57,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<double> previousFitness; 
 		std::vector<double> previousDistances; // Distances of all K configs
 		std::vector<double> previousMean;
+		std::vector<bool> used;
 		std::vector<double> getMean(std::vector<Solution*>const& population) const;
 		std::vector<double> getDistances(std::vector<Solution*>const& population, std::vector<double>const& mean) const;
 		void updateQuality(std::vector<double> const& r);

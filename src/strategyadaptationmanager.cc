@@ -69,7 +69,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	: StrategyAdaptationManager(config, ch, population), 
 	rewardManager(RewardManager::create(config.reward)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize){
+	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize), used(K){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -82,6 +82,10 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		std::vector<double>& Fs, std::vector<double>& Crs){
 	std::vector<int> indices = range(K); // Range [0,K-1]
 	std::vector<int> const assignment = rouletteSelect(indices, p, popSize, true);
+
+	// Update which strategies are used in this iteration
+	std::fill(used.begin(), used.end(), false);
+	for (int a : assignment) used[a] = true;
 
 	previousStrategies = assignment;
 	previousMean = getMean(population);
@@ -129,8 +133,10 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 }
 
 void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
-	for (int i = 0; i < K; i++)
-		q[i] += alpha * (r[i] - q[i]);
+	for (int i = 0; i < K; i++){
+		if (used[i]) // Only update if the strategy was used in the last iteration by at least 1 individual
+			q[i] += alpha * (r[i] - q[i]);
+	}
 }
 
 std::vector<double>AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{

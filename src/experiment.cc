@@ -54,7 +54,7 @@ int main() {
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"5",
+	  	dimensions 	= 	"20",
 	 	functions 	= 	"3",
 		instances 	= 	"1";
 
