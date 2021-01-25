@@ -17,14 +17,13 @@ RewardManager::RewardManager(int const K): K(K){}
 std::vector<std::vector<double>> RewardManager::group(VectorXd const& improvements, 
 		VectorXi const& assignment) const{
 	std::vector<std::vector<double>> groups(K);
-	for (unsigned int i = 0; i < improvements.size(); i++){
+	for (unsigned int i = 0; i < improvements.size(); i++)
 		groups[assignment[i]].push_back(improvements[i]);
-	}
 	return groups;
 }
 
 VectorXd RewardManager::average(std::vector<std::vector<double>>const& deltas) const {
-	VectorXd r = VectorXd::Zero(K, 0.);
+	VectorXd r = VectorXd::Zero(K);
 	for (int i = 0; i < K; i++){
 		if (!deltas[i].empty())
 			r[i] = mean(deltas[i]);
@@ -33,7 +32,7 @@ VectorXd RewardManager::average(std::vector<std::vector<double>>const& deltas) c
 }
 
 VectorXd RewardManager::extreme(std::vector<std::vector<double>>const& deltas) const {
-	VectorXd r = VectorXd::Zero(deltas.size());
+	VectorXd r = VectorXd::Zero(K);
 	for (int i = 0; i < K; i++){
 		if (!deltas[i].empty())
 			r[i] = *std::max_element(deltas[i].begin(), deltas[i].end());

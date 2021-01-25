@@ -6,110 +6,111 @@
 #include <functional>
 #include "Eigen/Dense"
 
+using Eigen::VectorXd;
 class Solution;
 
 class ConstraintHandler {
 	protected:
-		Eigen::VectorXd const lb;
-		Eigen::VectorXd const ub;
+		VectorXd const lb;
+		VectorXd const ub;
 		int const D;
 		int nCorrected;
-		bool isFeasible(Solution const * const p) const;
 	public:
-		static std::function<ConstraintHandler* (Eigen::VectorXd const, Eigen::VectorXd const)> 
+		static std::function<ConstraintHandler* (VectorXd const, VectorXd const)> 
 			create(std::string const id);
-		ConstraintHandler(Eigen::VectorXd const lb, Eigen::VectorXd const ub): lb(lb), ub(ub), D(lb.size()), nCorrected(0){};
+		ConstraintHandler(VectorXd const lb, VectorXd const ub): lb(lb), ub(ub), D(lb.size()), nCorrected(0){};
 		virtual ~ConstraintHandler(){};
 		virtual bool resample(Solution* const p, int const resamples);
 		virtual void penalize(Solution* const /*p*/){};
 		virtual void repair(Solution* const /*p*/, Solution const * const /*base*/, Solution const* const /*target*/){}; // DE constraint handler
 		virtual void repair(Solution* const /*p*/){};// Generic constraint handler
 		int getCorrections() const;
+		bool isFeasible(Solution const * const p) const;
 };
 
 // Differential Evolution
 class RandBaseRepair : public ConstraintHandler {
 	public:
-		RandBaseRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		RandBaseRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
 class MidpointBaseRepair : public ConstraintHandler{
 	public:
-		MidpointBaseRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub): ConstraintHandler(lb,ub) {};
+		MidpointBaseRepair(VectorXd const lb, VectorXd const ub): ConstraintHandler(lb,ub) {};
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
 class MidpointTargetRepair : public ConstraintHandler {
 	public:
-		MidpointTargetRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		MidpointTargetRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p, Solution const * const base, Solution const* const target);
 };
 
 class ProjectionMidpointRepair : public ConstraintHandler {
 	public:
-		ProjectionMidpointRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		ProjectionMidpointRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
 class ProjectionBaseRepair: public ConstraintHandler {
 	public:
-		ProjectionBaseRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		ProjectionBaseRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
 class ConservatismRepair : public ConstraintHandler {
 	public:
-		ConservatismRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		ConservatismRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
 // Generic
 class ResamplingRepair : public ConstraintHandler {
 	public:
-		ResamplingRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub)
+		ResamplingRepair(VectorXd const lb, VectorXd const ub)
 			:ConstraintHandler(lb,ub){};
 		bool resample(Solution * const p, int const resamples);
 };
 
 class DeathPenalty : public ConstraintHandler {
 	public:
-		DeathPenalty(Eigen::VectorXd const lb,Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		DeathPenalty(VectorXd const lb,VectorXd const ub):ConstraintHandler(lb,ub){};
 		void penalize(Solution* const p);
 };
 
 class ReinitializationRepair : public ConstraintHandler {
 	public:
-		ReinitializationRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub)
+		ReinitializationRepair(VectorXd const lb, VectorXd const ub)
 			:ConstraintHandler(lb,ub){}; 
 		void repair(Solution* const p);
 };
 
 class ProjectionRepair : public ConstraintHandler {
 	public:
-		ProjectionRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub)
+		ProjectionRepair(VectorXd const lb, VectorXd const ub)
 			:ConstraintHandler(lb,ub){};
 		void repair(Solution* const p);
 };
 
 class ReflectionRepair : public ConstraintHandler{
 	public:
-		ReflectionRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub)
+		ReflectionRepair(VectorXd const lb, VectorXd const ub)
 			:ConstraintHandler(lb,ub){}; 
 		void repair(Solution* const p);
 };
 
 class WrappingRepair : public ConstraintHandler {
 	public:
-		WrappingRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub):ConstraintHandler(lb,ub){};
+		WrappingRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
 		void repair(Solution* const p);
 };
 
 class TransformationRepair : public ConstraintHandler { //Adapted from https://github.com/psbiomech/c-cmaes
 	private:
-		Eigen::VectorXd al, au, xlo, xhi, r;
+		VectorXd al, au, xlo, xhi, r;
 		bool shift(Solution* const p);
 	public:
-		TransformationRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub);
+		TransformationRepair(VectorXd const lb, VectorXd const ub);
 		void repair(Solution* const p);
 };

@@ -149,7 +149,8 @@ Solution* TrigonometricMutationManager::doMutation(std::vector<Solution*>const& 
 	return rng.randDouble(0,1) <= gamma ? trigonometricMutation(genomes, i, F) : rand1Mutation(genomes, i, F);
 }
 
-Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const{
+Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, 
+		double const /*F*/) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
 
 	double const pPrime = std::abs(xr[0]->getFitness()) + std::abs(xr[1]->getFitness()) + std::abs(xr[2]->getFitness());

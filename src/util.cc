@@ -5,31 +5,6 @@
 #include <fstream>
 #include <numeric>
 
-std::vector<double> scale(std::vector<double> x, double const scalar){
-	std::transform(x.begin(), x.end(), x.begin(), [scalar](double const& x){return x*scalar;});
-	return x;
-}
-
-std::vector<double> divide(std::vector<double> x, double const val){
-	std::transform(x.begin(), x.end(), x.begin(), [val](double const& x){return x/val;});
-	return x;
-}
-
-std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs){
-	std::transform(lhs.begin(), lhs.end(), rhs.begin(), lhs.begin(), std::plus<double>());
-	return lhs;
-}
-
-std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const rhs){
-	std::transform( lhs.begin(), lhs.end(), rhs.begin(), lhs.begin(), std::minus<double>());
-	return lhs;
-}
-
-std::vector<double> randomMult(std::vector<double> vec, double const min, double const max){
-	std::transform(vec.begin(), vec.end(), vec.begin(), [min, max](double const& x){return x*rng.randDouble(min, max);});
-	return vec;
-}
-
 VectorXd normalize(VectorXd vec){
 	double const absMax = vec.cwiseAbs().maxCoeff();
 	if (absMax != 0.)

@@ -71,6 +71,12 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 
+		for (Solution* s: donors){
+			if (!ch->isFeasible(s)){
+				std::cout << s->getX().transpose() << std::endl;
+			}
+		}
+
 		// Crossover step
 		std::vector<double> trialF(popSize);
 		std::vector<Solution*> trials(popSize); 

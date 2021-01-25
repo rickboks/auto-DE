@@ -2,6 +2,8 @@
 #include "constrainthandler.h"
 #include "Eigen/Dense"
 
+using Eigen::ArrayXXd;
+
 class MutationManager {
 	protected:
 		ConstraintHandler* const ch;
@@ -104,7 +106,7 @@ class TwoOpt2MutationManager : public MutationManager {
 
 class ProximityMutationManager : public MutationManager {
 	private:
-		Eigen::ArrayXXd Rp;
+		ArrayXXd Rp;
 	public:
 		ProximityMutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);

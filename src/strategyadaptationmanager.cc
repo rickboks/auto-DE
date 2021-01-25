@@ -61,8 +61,7 @@ void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/,
 	mutation[std::get<0>(configurations.front())] = key;
 	crossover[std::get<1>(configurations.front())] = key;
 
-	VectorXi assignment(popSize, 0);
-	parameterAdaptationManager->nextParameters(Fs, Crs, assignment);
+	parameterAdaptationManager->nextParameters(Fs, Crs, VectorXi::Zero(popSize));
 }
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -76,6 +75,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 	delete rewardManager;
+	delete qualityManager;
 	delete probabilityManager;
 }
 
@@ -118,8 +118,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	std::transform(diversityFactor.begin(), diversityFactor.end(), diversityFactor.begin(), 
 			[](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);}); 
 
-	std::transform(improvement.begin(), improvement.end(), diversityFactor.begin(), 
-			improvement.begin(), [](double const& x, double const& y){return x*y;}); 
+	improvement = improvement.array() * diversityFactor.array();
 
 	VectorXd const r = rewardManager->getReward(improvement, VectorXi::Map(previousStrategies.data(), 
 				previousStrategies.size()));

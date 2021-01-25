@@ -3,9 +3,9 @@
 #include "solution.h"
 #include <stdexcept>
 
-std::function<ConstraintHandler* (Eigen::VectorXd const, Eigen::VectorXd const)> 
+std::function<ConstraintHandler* (VectorXd const, VectorXd const)> 
 ConstraintHandler::create(std::string const id){
-#define LC(X) [](Eigen::VectorXd const lb, Eigen::VectorXd const ub){return new X(lb,ub);}
+#define LC(X) [](VectorXd const lb, VectorXd const ub){return new X(lb,ub);}
 	// Generic
 	if (id == "DP") return LC(DeathPenalty);
 	if (id == "RS") return LC(ResamplingRepair);
@@ -29,7 +29,7 @@ ConstraintHandler::create(std::string const id){
 
 bool ConstraintHandler::isFeasible(Solution const * const p) const{
 	for (int i = 0; i < D; i++){
-		if (p->getX(i) < lb[i] - 1.0e-12 || p->getX(i) > ub[i] + 1.0e-12){
+		if (p->getX(i) < lb[i]  || p->getX(i) > ub[i] ){
 			return false;
 		}
 	}
@@ -88,7 +88,7 @@ void MidpointTargetRepair::repair(Solution* const p, Solution const* const /*bas
 }
 
 void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /*base*/, Solution const* const /*target*/) {
-	Eigen::VectorXd x = p->getX();
+	VectorXd x = p->getX();
 	std::vector<double>alphas(D+1);
 	alphas[D] = 1.;
 
@@ -101,16 +101,18 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /
 			alphas[i] = std::numeric_limits<double>::max(); 
 	}
 
-	std::vector<double>::iterator alpha=std::min_element(alphas.begin(), alphas.end());
+	auto alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
-		x = (1. - *alpha) * (lb + ub) / 2 + *alpha * x;
+		x = (1. - *alpha) * (lb + ub) / 2. + *alpha * x;
 		p->setX(x);
 		nCorrected++;
 	}
+
+	p->setX(p->getX().cwiseMax(lb).cwiseMin(ub)); // clamp
 }
 
 void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
-	Eigen::VectorXd const x = p->getX();
+	VectorXd const x = p->getX();
 	std::vector<double> alphas(D+1);
 	alphas[D] = 1.;
 
@@ -123,13 +125,13 @@ void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base,
 			alphas[i] = std::numeric_limits<double>::max(); 
 	}
 
-	std::vector<double>::iterator alpha=std::min_element(alphas.begin(), alphas.end());
+	auto alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
 		p->setX((1.- *alpha) * base->getX() + *alpha * x);
 		nCorrected++;
 	}
 
-	p->setX(p->getX().cwiseMax(lb).cwiseMin(ub));
+	p->setX(p->getX().cwiseMax(lb).cwiseMin(ub)); // clamp
 }
 
 void ConservatismRepair::repair(Solution* const p, Solution const*const base, Solution const*const /*target*/){
@@ -139,13 +141,12 @@ void ConservatismRepair::repair(Solution* const p, Solution const*const base, So
 	}
 }
 
-//Adapted from https://github.com/psbiomech/c-cmaes
 // Generic
 bool ResamplingRepair::resample(Solution * const p, int const resamples) {
 	if (isFeasible(p)){
 		return false;
 	} else if (resamples >= 100){
-		p->setX(p->getX().cwiseMax(lb).cwiseMin(ub));
+		p->setX(p->getX().cwiseMax(lb).cwiseMin(ub)); // clamp
 		return false;
 	}
 
@@ -224,7 +225,7 @@ void WrappingRepair::repair(Solution* const p) {
 }
 
 // Transformation, adapted from https://github.com/psbiomech/c-cmaes
-TransformationRepair::TransformationRepair(Eigen::VectorXd const lb, Eigen::VectorXd const ub) 
+TransformationRepair::TransformationRepair(VectorXd const lb, VectorXd const ub) 
 	:ConstraintHandler(lb,ub), al(D), au(D), xlo(D), xhi(D), r(D){
 	for (int i = 0; i < D; i++){
 		al[i] = std::min( (ub[i]-lb[i])/2., (1.+std::abs(lb[i]))/20. );

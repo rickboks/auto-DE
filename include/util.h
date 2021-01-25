@@ -6,16 +6,11 @@
 #include "rng.h"
 #include "solution.h"
 
-[[nodiscard]] std::vector<double> scale(std::vector<double> vec, double const x);
-[[nodiscard]] std::vector<double> divide(std::vector<double> vec, double const x);
-[[nodiscard]] std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs);
-[[nodiscard]] std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const rhs);
-[[nodiscard]] std::vector<double> randomMult(std::vector<double> vec, double const min, double const max);
 [[nodiscard]] VectorXd normalize(VectorXd vec);
 [[nodiscard]] double mean(std::vector<double>const& vec);
 bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const* const s1, Solution const* const s2);
-double distance(Eigen::VectorXd const& s1, Eigen::VectorXd const& s2);
+double distance(VectorXd const& s1, VectorXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
@@ -74,11 +69,11 @@ T* getWorst(std::vector<T*>const& genomes){
 }
 
 template<typename T>
-std::vector<T*> pickRandom(std::vector<T*> possibilities, int const n){
-	std::vector<T*> picked;
+std::vector<T> pickRandom(std::vector<T> possibilities, int const n){
+	std::vector<T> picked;
 	for (int i = 0; i < n; i++){
 		int const r = rng.randInt(0,possibilities.size()-1);
-		T* x = possibilities[r];
+		T x = possibilities[r];
 		possibilities.erase(possibilities.begin() + r);
 		picked.push_back(x);
 	}
@@ -87,9 +82,9 @@ std::vector<T*> pickRandom(std::vector<T*> possibilities, int const n){
 
 template<typename T>
 std::vector<T> rouletteSelect(std::vector<T> possibilities, std::vector<double> prob, int const n, bool const replace){
+	assert(possibilities.size() == prob.size());
 	std::vector<T> particles;
 	double totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
-
 
 	for (int i = 0; i < n; i++){
 		double rand = rng.randDouble(0.,totalProb);

@@ -9,17 +9,17 @@ std::function<QualityManager* (int const)> QualityManager::create(std::string co
 	throw std::invalid_argument("no such QualityManager: " + id);
 }
 
-void WeightedSumQuality::updateQuality(Eigen::VectorXd&q, Eigen::VectorXd const& r, 
-		Eigen::VectorXd const& /*p*/) const{
+void WeightedSumQuality::updateQuality(VectorXd&q, VectorXd const& r, 
+		VectorXd const& /*p*/) const{
 	q += alpha * (r - q);
 }
 
-void RecPMQuality::updateQuality(Eigen::VectorXd&q, Eigen::VectorXd const& r, 
-		Eigen::VectorXd const& p) const{
-	//Eigen::MatrixXd P (K, K);
+void RecPMQuality::updateQuality(VectorXd&q, VectorXd const& r, 
+		VectorXd const& p) const{
+	//MatrixXd P (K, K);
 	//for (int i = 0; i < K; i++)
 		//for (int j = 0; j < K; j++)
 			//P(i,j)= 1 - gamma*(p[i] + p[j]);
 
-	//q = P.inverse() * Eigen::VectorXd(r);
+	//q = P.inverse() * VectorXd(r);
 }

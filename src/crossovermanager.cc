@@ -36,6 +36,5 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 }
 
 Solution* ArithmeticCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const /*Cr*/) const{	
-	VectorXd const x = target->getX() + rng.randDouble(0,1) * (donor->getX() - target->getX());
-	return new Solution(x);
+	return new Solution(target->getX() + rng.randDouble(0,1) * (donor->getX() - target->getX()));
 }
