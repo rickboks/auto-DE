@@ -35,7 +35,6 @@ Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int cons
 	}
 }
 
-
 // Rand/1
 Solution* Rand1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
@@ -91,7 +90,7 @@ void Best1MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 Solution* Best1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
-	VectorXd const mutant =  best->getX() + F * (xr[0]->getX() - xr[1]->getX());
+	VectorXd const mutant = best->getX() + F * (xr[0]->getX() - xr[1]->getX());
 	Solution* const m = new Solution(mutant);
 	ch->repair(m, best, genomes[i]);
 	return m;
@@ -215,7 +214,7 @@ void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 		}
 	}
 
-	Rp = ArrayXXd::Constant(size, size, 1.) / (Rd.colwise() / Rd.rowwise().sum());
+	Rp = 1. / (Rd.colwise() / Rd.rowwise().sum());
 }
 
 Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
