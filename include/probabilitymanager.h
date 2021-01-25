@@ -1,3 +1,4 @@
+#pragma once
 #include <functional>
 #include <string>
 #include <vector>
@@ -11,7 +12,7 @@ class ProbabilityManager {
 		static std::function<ProbabilityManager* (int const)> create(std::string const id);
 		ProbabilityManager(int const K): K(K), pMin(.2/K){};
 		virtual ~ProbabilityManager (){};
-		virtual void updateProbability(std::vector<double>const& q, std::vector<double>& p) const=0;
+		virtual void updateProbability(std::vector<double>& p, std::vector<double>const& q) const=0;
 };
 
 class AdaptivePursuitManager : public ProbabilityManager {
@@ -20,11 +21,11 @@ class AdaptivePursuitManager : public ProbabilityManager {
 		double const pMax;
 	public:
 		AdaptivePursuitManager (int const K): ProbabilityManager(K), beta(.8), pMax(pMin + 1. - K * pMin){};
-		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
+		void updateProbability(std::vector<double>& p, std::vector<double>const& q) const;
 };
 
 class ProbabilityMatchingManager : public ProbabilityManager {
 	public:
 		ProbabilityMatchingManager (int const K): ProbabilityManager(K){};
-		void updateProbability(std::vector<double>const& q, std::vector<double>& p) const;
+		void updateProbability(std::vector<double>& p, std::vector<double>const& q) const;
 };

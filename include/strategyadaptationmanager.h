@@ -7,13 +7,15 @@
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
-									std::string const param, std::string const reward, std::string const probability)
-	: mutation(mutation), crossover(crossover), param(param), reward(reward), probability(probability){};
+									std::string const param, std::string const reward, std::string const quality,
+									std::string const probability)
+	: mutation(mutation), crossover(crossover), param(param), reward(reward), quality(quality), probability(probability){};
 	std::vector<std::string> const mutation, crossover;
-	std::string const param, reward, probability;
+	std::string const param, reward, quality, probability;
 };
 
-class RewardManager;
+class RewardManager; 
+class QualityManager;
 
 class StrategyAdaptationManager {
 	public:
@@ -49,6 +51,7 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
 		RewardManager const* const rewardManager;
+		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;
 		double const alpha;
 		std::vector<double> p; 
@@ -60,7 +63,6 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		std::vector<bool> used;
 		std::vector<double> getMean(std::vector<Solution*>const& population) const;
 		std::vector<double> getDistances(std::vector<Solution*>const& population, std::vector<double>const& mean) const;
-		void updateQuality(std::vector<double> const& r);
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);

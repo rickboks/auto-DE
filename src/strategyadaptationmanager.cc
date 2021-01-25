@@ -5,6 +5,7 @@
 #include "strategyadaptationmanager.h"
 #include "rewardmanager.h"
 #include "util.h"
+#include "qualitymanager.h"
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
@@ -68,6 +69,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
 	rewardManager(RewardManager::create(config.reward)(K)),
+	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
 	alpha(.8), p(K, 1./K), q(K, 0.), previousStrategies(popSize), previousFitness(popSize), used(K){
 }
@@ -123,18 +125,11 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	std::transform(improvement.begin(), improvement.end(), diversityFactor.begin(), 
 			improvement.begin(), [](double const& x, double const& y){return x*y;}); 
 
-	std::vector<double> const reward = rewardManager->getReward(improvement, previousStrategies);
+	std::vector<double> const r = rewardManager->getReward(improvement, previousStrategies);
 
-	updateQuality(reward);
-	probabilityManager->updateProbability(q, p);
+	qualityManager->updateQuality(q, r, p);
+	probabilityManager->updateProbability(p, q);
 	parameterAdaptationManager->update(improvement);
-}
-
-void AdaptiveStrategyManager::updateQuality(std::vector<double>const& r){
-	for (int i = 0; i < K; i++){
-		if (used[i]) // Only update if the strategy was used in the last iteration by at least 1 individual
-			q[i] += alpha * (r[i] - q[i]);
-	}
 }
 
 std::vector<double>AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
