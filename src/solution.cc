@@ -2,15 +2,15 @@
 #include "rng.h"
 
 Solution::Solution(int const D) : x(D),  evaluated(false), fitness(std::numeric_limits<double>::max()), D(D){}
-Solution::Solution(std::vector<double> const x): x(x), evaluated(false), fitness(std::numeric_limits<double>::max()), D(x.size()){}
+Solution::Solution(Eigen::VectorXd const x): x(x), evaluated(false), fitness(std::numeric_limits<double>::max()), D(x.size()){}
 Solution::~Solution(){};
 
-void Solution::setX(std::vector<double> x, double fitness){
+void Solution::setX(Eigen::VectorXd x, double fitness){
 	this->x = x;
 	this->fitness = fitness;
 }
 
-void Solution::setX(std::vector<double> x){
+void Solution::setX(Eigen::VectorXd x){
 	this->x = x;
 	evaluated=false;
 }
@@ -32,7 +32,7 @@ double Solution::evaluate(coco_problem_t* const problem) {
 	return fitness;
 }
 
-std::vector<double> Solution::getX() const {
+Eigen::VectorXd Solution::getX() const {
 	return x;
 }
 
@@ -46,7 +46,7 @@ std::string Solution::positionString() const {
 	return pos;
 }
 
-void Solution::randomize(std::vector<double> const lowerBounds, std::vector<double> const upperBounds){
+void Solution::randomize(Eigen::VectorXd const lowerBounds, Eigen::VectorXd const upperBounds){
 	for (int i = 0; i < D; i++){
 		x[i] = rng.randDouble(lowerBounds[i], upperBounds[i]);
 	}

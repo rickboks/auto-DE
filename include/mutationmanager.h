@@ -1,5 +1,6 @@
 #pragma once
 #include "constrainthandler.h"
+#include "Eigen/Dense"
 
 class MutationManager {
 	protected:
@@ -103,8 +104,7 @@ class TwoOpt2MutationManager : public MutationManager {
 
 class ProximityMutationManager : public MutationManager {
 	private:
-		std::vector< std::vector<double> > Rp;
-		std::vector< std::vector<double> > Rd;
+		Eigen::ArrayXd Rp;
 	public:
 		ProximityMutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);

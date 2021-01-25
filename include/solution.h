@@ -1,28 +1,29 @@
 #pragma once
 #include <vector>
 #include <string>
+#include "Eigen/Dense"
 #include "coco.h"
 
 class Solution {
 	protected:
-		std::vector<double> x;
+		Eigen::VectorXd x;
 		bool evaluated;
 		double fitness;
 	public:
 		Solution(int const D);
 		virtual ~Solution();
-		Solution(std::vector<double> const mutant);
+		Solution(Eigen::VectorXd const mutant);
 		int const D;
-		virtual void setX(std::vector<double> const x, double const fitness);
+		virtual void setX(Eigen::VectorXd const x, double const fitness);
 		void setX(int const dim, double const val);
-		void setX(std::vector<double> x);
-		std::vector<double> getX() const;
+		void setX(Eigen::VectorXd x);
+		Eigen::VectorXd getX() const;
 		double getX(int const dim) const;
 		double evaluate (coco_problem_t* const problem);
 		double getFitness() const;
 		void setFitness(double const d);
 		std::string positionString() const;
-		void randomize(std::vector<double> const lowerBounds, std::vector<double> const upperBounds);
+		void randomize(Eigen::VectorXd const lowerBounds, Eigen::VectorXd const upperBounds);
 		bool operator < (Solution const& s) const;
 		void copy (Solution const * const other);
 };

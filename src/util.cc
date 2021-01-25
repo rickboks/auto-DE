@@ -67,11 +67,13 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 }
 
 double distance(Solution const*const s1, Solution const*const s2) {
-	double d=0;
-	for (int i = 0; i < s1->D; i++){
-		d += std::pow(s1->getX(i) - s2->getX(i), 2.); 
-	}
-	return std::sqrt(d);
+	Eigen::VectorXd const diff = (s1->getX() - s2->getX());
+	return std::sqrt(std::sqrt((diff * diff).sum())); 
+}
+
+double distance(Eigen::VectorXd const& s1, Eigen::VectorXd const& s2){
+	Eigen::VectorXd const diff = (s1 - s2);
+	return std::sqrt(std::sqrt((diff * diff).sum())); 
 }
 
 std::string checkFilename(std::string const fn){
