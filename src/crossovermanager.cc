@@ -10,7 +10,7 @@ std::function<CrossoverManager* ()> CrossoverManager::create(std::string const i
 }
 
 Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{
-	std::vector<double> x = target->getX();
+	VectorXd x = target->getX();
 	unsigned int const jrand = rng.randInt(0,x.size()-1);
 	for (unsigned int j = 0; j < x.size(); j++){
 		if (j == jrand || rng.randDouble(0,1) < Cr)
@@ -20,7 +20,7 @@ Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solu
 }
 
 Solution* ExponentialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{
-	std::vector<double> x = target->getX();
+	VectorXd x = target->getX();
 	unsigned int const start = rng.randInt(0,x.size()-1);
 
 	unsigned int L = 1;
@@ -36,11 +36,6 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 }
 
 Solution* ArithmeticCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const /*Cr*/) const{	
-	std::vector<double> x = target->getX();
-	double const k = rng.randDouble(0,1);
-
-	std::vector<double> subtraction = subtract(donor->getX(), target->getX());
-	subtraction = scale(subtraction, k);
-	x = add(x, subtraction);
+	VectorXd const x = target->getX() + rng.randDouble(0,1) * (donor->getX() - target->getX());
 	return new Solution(x);
 }

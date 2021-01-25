@@ -30,12 +30,10 @@ std::vector<double> randomMult(std::vector<double> vec, double const min, double
 	return vec;
 }
 
-std::vector<double> normalize(std::vector<double> vec){
-	double const absMax = std::abs(*std::max_element(vec.begin(), vec.end(), 
-			[](double const& x, double const& y){return std::abs(x) < std::abs(y);}));
-
+VectorXd normalize(VectorXd vec){
+	double const absMax = vec.cwiseAbs().maxCoeff();
 	if (absMax != 0.)
-		std::for_each(vec.begin(), vec.end(), [absMax](double& x){x/=absMax;});
+		vec /= absMax;
 	return vec;
 }
 
@@ -68,12 +66,12 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 
 double distance(Solution const*const s1, Solution const*const s2) {
 	Eigen::VectorXd const diff = (s1->getX() - s2->getX());
-	return std::sqrt(std::sqrt((diff * diff).sum())); 
+	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
 }
 
 double distance(Eigen::VectorXd const& s1, Eigen::VectorXd const& s2){
 	Eigen::VectorXd const diff = (s1 - s2);
-	return std::sqrt(std::sqrt((diff * diff).sum())); 
+	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
 }
 
 std::string checkFilename(std::string const fn){

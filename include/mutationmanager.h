@@ -104,7 +104,7 @@ class TwoOpt2MutationManager : public MutationManager {
 
 class ProximityMutationManager : public MutationManager {
 	private:
-		Eigen::ArrayXd Rp;
+		Eigen::ArrayXXd Rp;
 	public:
 		ProximityMutationManager(ConstraintHandler* const ch): MutationManager(ch){};
 		void prepare(std::vector<Solution*>const& genomes);

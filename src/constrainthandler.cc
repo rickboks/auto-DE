@@ -110,7 +110,7 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /
 }
 
 void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
-	Eigen::VectorXd x = p->getX();
+	Eigen::VectorXd const x = p->getX();
 	std::vector<double> alphas(D+1);
 	alphas[D] = 1.;
 
@@ -125,8 +125,7 @@ void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base,
 
 	std::vector<double>::iterator alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
-		x = (1.- *alpha) * base->getX() + *alpha * x;
-		p->setX(x);
+		p->setX((1.- *alpha) * base->getX() + *alpha * x);
 		nCorrected++;
 	}
 
@@ -260,7 +259,7 @@ bool TransformationRepair::shift(Solution* const p){
 			repaired=true;
 		}
 		if (p->getX(i) > xhi[i]){
-			p->setX(i, p->getX(i) - r[i] * (1 + (int)((p->getX(i)-xhi[i])/r[i])));
+			p->setX(i, p->getX(i) - r[i] * (1 + (int)((p->getX(i) - xhi[i])/r[i])));
 			repaired=true;
 		}
 

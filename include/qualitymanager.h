@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include "Eigen/Dense"
 
 class QualityManager {
 	protected:
@@ -9,8 +10,8 @@ class QualityManager {
 	public:
 		static std::function<QualityManager* (int const)> create(std::string const id);
 		QualityManager(int const K) : K(K){};
-		virtual void updateQuality(std::vector<double>&q, std::vector<double>const& r, 
-				std::vector<double>const& p) const=0;
+		virtual void updateQuality(Eigen::VectorXd &q, Eigen::VectorXd const& r, 
+				Eigen::VectorXd const& p) const=0;
 };
 
 class WeightedSumQuality : public QualityManager {
@@ -18,8 +19,8 @@ class WeightedSumQuality : public QualityManager {
 		double const alpha = 0.8;
 	public:
 		WeightedSumQuality(int const K) : QualityManager(K){};
-		void updateQuality(std::vector<double>&q, std::vector<double>const& r, 
-				std::vector<double>const& p) const;
+		void updateQuality(Eigen::VectorXd &q, Eigen::VectorXd const& r, 
+				Eigen::VectorXd const& p) const;
 };
 
 class RecPMQuality : public QualityManager {
@@ -27,6 +28,6 @@ class RecPMQuality : public QualityManager {
 		double const gamma = 0.1;
 	public:
 		RecPMQuality(int const K) : QualityManager(K){}
-		void updateQuality(std::vector<double>&q, std::vector<double>const& r, 
-				std::vector<double>const& p) const;
+		void updateQuality(Eigen::VectorXd &q, Eigen::VectorXd const& r, 
+				Eigen::VectorXd const& p) const;
 };

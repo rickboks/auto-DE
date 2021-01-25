@@ -22,9 +22,9 @@ class StrategyAdaptationManager {
 		StrategyAdaptationManager(StrategyAdaptationConfiguration const config, ConstraintHandler *const ch, 
 				std::vector<Solution*>const& population);
 		virtual ~StrategyAdaptationManager();
-		virtual void next(std::vector<Solution*>const& population, std::map<MutationManager*, Eigen::VectorXi>& mutation, 
-				std::map<CrossoverManager*, Eigen::VectorXi>& crossover, 
-				Eigen::VectorXd& Fs, Eigen::VectorXd& Crs)=0;
+		virtual void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				VectorXd& Fs, VectorXd& Crs)=0;
 		virtual void update(std::vector<Solution*>const& trials);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
@@ -43,9 +43,9 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 	public:
 		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
-		void next(std::vector<Solution*>const& population, std::map<MutationManager*, Eigen::VectorXi>& mutation, 
-				std::map<CrossoverManager*, Eigen::VectorXi>& crossover, 
-				Eigen::VectorXd& Fs, Eigen::VectorXd& Crs);
+		void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				VectorXd& Fs, VectorXd& Crs);
 };
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
@@ -54,21 +54,20 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;
 		double const alpha;
-		Eigen::VectorXd p; 
-		Eigen::VectorXd q; 
-		Eigen::VectorXd previousStrategies;
-		Eigen::VectorXd previousFitness; 
-		Eigen::VectorXd previousDistances; // Distances of all K configs
-		Eigen::VectorXd previousMean;
-		std::vector<bool> used;
-		Eigen::VectorXd getMean(std::vector<Solution*>const& population) const;
-		Eigen::VectorXd getDistances(std::vector<Solution*>const& population, Eigen::VectorXd const& mean) const;
+		VectorXd p; 
+		VectorXd q; 
+		std::vector<int> previousStrategies;
+		VectorXd previousFitness; 
+		VectorXd previousDistances; // Distances of all K configs
+		VectorXd previousMean;
+		VectorXd getMean(std::vector<Solution*>const& population) const;
+		VectorXd getDistances(std::vector<Solution*>const& population, VectorXd const& mean) const;
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
 		~AdaptiveStrategyManager();
-		void next(std::vector<Solution*>const & population, std::map<MutationManager*, Eigen::VectorXi>& mutation, 
-				std::map<CrossoverManager*, Eigen::VectorXi>& crossover, 
-				Eigen::VectorXd& Fs, Eigen::VectorXd& Crs);
+		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				VectorXd& Fs, VectorXd& Crs);
 		void update(std::vector<Solution*>const& trials);
 };

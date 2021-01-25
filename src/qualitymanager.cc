@@ -1,6 +1,7 @@
 #include "qualitymanager.h"
 #include "Eigen/Dense"
 #include <stdexcept>
+#include <iostream>
 
 std::function<QualityManager* (int const)> QualityManager::create(std::string const id){
 #define LC(X) [](int const K){return new X(K);}
@@ -8,20 +9,17 @@ std::function<QualityManager* (int const)> QualityManager::create(std::string co
 	throw std::invalid_argument("no such QualityManager: " + id);
 }
 
-void WeightedSumQuality::updateQuality(std::vector<double>&q, std::vector<double>const& r, 
-		std::vector<double>const& /*p*/) const{
-	for (int i = 0; i < K; i++)
-			q[i] += alpha * (r[i] - q[i]);
+void WeightedSumQuality::updateQuality(Eigen::VectorXd&q, Eigen::VectorXd const& r, 
+		Eigen::VectorXd const& /*p*/) const{
+	q += alpha * (r - q);
 }
 
-void RecPMQuality::updateQuality(std::vector<double>&q, std::vector<double>const& r, 
-		std::vector<double>const& p) const{
+void RecPMQuality::updateQuality(Eigen::VectorXd&q, Eigen::VectorXd const& r, 
+		Eigen::VectorXd const& p) const{
+	//Eigen::MatrixXd P (K, K);
+	//for (int i = 0; i < K; i++)
+		//for (int j = 0; j < K; j++)
+			//P(i,j)= 1 - gamma*(p[i] + p[j]);
 
-	Eigen::MatrixXd P (K, K);
-	for (int i = 0; i < K; i++)
-		for (int j = 0; j < K; j++)
-			P(i,j)= 1 - gamma*(p[i] + p[j]);
-
-	Eigen::VectorXd temp = P.inverse() * Eigen::VectorXd(r);
-	std::copy(temp.begin(), temp.end(), q);
+	//q = P.inverse() * Eigen::VectorXd(r);
 }

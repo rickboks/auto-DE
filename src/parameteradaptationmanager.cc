@@ -1,3 +1,4 @@
+#include <iostream>
 #include <numeric>
 #include <stdexcept>
 #include "parameteradaptationmanager.h"
@@ -16,43 +17,26 @@ ParameterAdaptationManager::ParameterAdaptationManager(std::vector<Solution*>con
 
 // SHADE
 SHADEManager::SHADEManager(std::vector<Solution*>const& population, int const K) : 
-	ParameterAdaptationManager(population, K), H(popSize/K), MCr(K, std::vector<double>(H)), MF(K, std::vector<double>(H)), 
-	k(K, 0){
+	ParameterAdaptationManager(population, K), H(popSize/K), MCr(K, H), MF(K, H), 
+	k(VectorXi::Zero(K)){
 
-	for (std::vector<double>& v : MCr)
-		std::fill(v.begin(), v.end(), .5);
-
-	for (std::vector<double>& v : MF)
-		std::fill(v.begin(), v.end(), .5);
+	MCr.fill(.5);
+	MF.fill(.5);
 }
 
-double SHADEManager::weightedMean(std::vector<double>const& x, std::vector<double>const& w) const{
-	double sum = 0;
-	for (unsigned int i = 0; i < x.size(); i++)
-		sum += w[i] * x[i];
-	return sum;
+double SHADEManager::weightedMean(VectorXd const& x, VectorXd const& w) const{
+	return (x.array() * w.array()).sum();
 }
 
-double SHADEManager::weightedLehmerMean(std::vector<double>const& x, std::vector<double>const& w) const{
-	double wSqSum=0, wSum=0;
-
-	for (unsigned int i = 0; i < x.size(); i++){
-		wSqSum += w[i]*(x[i]*x[i]);
-		wSum += w[i]*x[i];
-	}
-
-	return wSqSum / wSum;
+double SHADEManager::weightedLehmerMean(VectorXd const& x, VectorXd const& w) const{
+	return (w.array() * x.array() * x.array()).sum() / (w.array() * x.array()).sum();
 }
 
-std::vector<double> SHADEManager::w(std::vector<double>const& improvements) const {
-	std::vector<double> w(improvements.size());
-	double sum = std::accumulate(improvements.begin(), improvements.end(), 0.);
-	for (unsigned int i = 0; i < improvements.size(); i++)
-		w[i] = improvements[i]/sum;
-	return w;
+VectorXd SHADEManager::w(VectorXd const& improvements) const {
+	return improvements/improvements.sum();
 }
 
-void SHADEManager::update(std::vector<double>const& improvement){
+void SHADEManager::update(VectorXd const& improvement){
 	std::vector<std::vector<double>> SF(K), SCr(K), improvements(K);
 
 	for (int i = 0; i < popSize; i++){
@@ -66,27 +50,27 @@ void SHADEManager::update(std::vector<double>const& improvement){
 	
 	for (int c = 0; c < K; c++){
 		if (!SF[c].empty()){
-			std::vector<double> const _w = w(improvements[c]);
-			MF[c][k[c]] = weightedLehmerMean(SF[c], _w);
-			MCr[c][k[c]] = weightedMean(SCr[c], _w);
+			VectorXd const _w = w(VectorXd::Map(improvements[c].data(), improvements[c].size()));
+			MF(c,k[c]) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
+			MCr(c,k[c]) = weightedMean(VectorXd::Map(SCr[c].data(), SF[c].size()), _w);
 			k[c] = (k[c]+1)%H;
 		}
 	}
 }
 
-void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, std::vector<int>const& assignment){
+void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment){
 	for (int i = 0; i < popSize; i++){
 		int const randIndex = rng.randInt(0, H-1);
 		int const config = assignment[i]; // The configuration that this individual will use
 
 		// Update mutation rate
-		double const MFr = MF[config][randIndex];
+		double const MFr = MF(config, randIndex);
 		do{
 			Fs[i] = std::min(rng.cauchyDistribution(MFr, .1), 1.);
 		} while (Fs[i] <= 0.);
 
 		// Update crossover rate
-		double const MCrr = MCr[config][randIndex];
+		double const MCrr = MCr(config, randIndex);
 		Crs[i] = std::clamp(rng.normalDistribution(MCrr, .1),0.,1.);
 	}
 
@@ -99,12 +83,12 @@ void SHADEManager::nextParameters(std::vector<double>& Fs, std::vector<double>& 
 ConstantParameterManager::ConstantParameterManager(std::vector<Solution*>const& population, int const K)
  : ParameterAdaptationManager(population, K), F(.5), Cr(.9){}
 
-void ConstantParameterManager::update(std::vector<double>const& /*trials*/){
+void ConstantParameterManager::update(VectorXd const& /*trials*/){
 	//ignore
 }
 
-void ConstantParameterManager::nextParameters(std::vector<double>& Fs, std::vector<double>& Crs, 
-		std::vector<int>const& /*assignment*/){
+void ConstantParameterManager::nextParameters(VectorXd& Fs, VectorXd& Crs, 
+		VectorXi const& /*assignment*/){
 	std::fill(Fs.begin(), Fs.end(), F);
 	std::fill(Crs.begin(), Crs.end(), Cr);
 }

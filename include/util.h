@@ -11,7 +11,7 @@
 [[nodiscard]] std::vector<double> add(std::vector<double> lhs, std::vector<double>const rhs);
 [[nodiscard]] std::vector<double> subtract(std::vector<double> lhs, std::vector<double>const rhs);
 [[nodiscard]] std::vector<double> randomMult(std::vector<double> vec, double const min, double const max);
-[[nodiscard]] std::vector<double> normalize(std::vector<double> vec);
+[[nodiscard]] VectorXd normalize(VectorXd vec);
 [[nodiscard]] double mean(std::vector<double>const& vec);
 bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const* const s1, Solution const* const s2);
@@ -80,7 +80,7 @@ std::vector<T*> pickRandom(std::vector<T*> possibilities, int const n){
 		int const r = rng.randInt(0,possibilities.size()-1);
 		T* x = possibilities[r];
 		possibilities.erase(possibilities.begin() + r);
-		picked.push(x);
+		picked.push_back(x);
 	}
 	return picked;
 }
@@ -89,6 +89,7 @@ template<typename T>
 std::vector<T> rouletteSelect(std::vector<T> possibilities, std::vector<double> prob, int const n, bool const replace){
 	std::vector<T> particles;
 	double totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
+
 
 	for (int i = 0; i < n; i++){
 		double rand = rng.randDouble(0.,totalProb);
@@ -102,6 +103,7 @@ std::vector<T> rouletteSelect(std::vector<T> possibilities, std::vector<double> 
 					prob.erase(prob.begin() + i);
 				}
 				particles.push_back(selected);
+				break;
 			} 
 		}
 	}
