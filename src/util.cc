@@ -32,7 +32,7 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 }
 
 double distance(Solution const*const s1, Solution const*const s2) {
-	return distance(s1->getX(), s2->getX());
+	return distance(s1->X(), s2->X());
 }
 
 double distance(VectorXd const& s1, VectorXd const& s2){

@@ -18,8 +18,8 @@ class Solution {
 		virtual void setX(VectorXd const x, double const fitness);
 		void setX(int const dim, double const val);
 		void setX(VectorXd x);
-		VectorXd getX() const;
-		double getX(int const dim) const;
+		VectorXd X() const;
+		double X(int const dim) const;
 		double evaluate (coco_problem_t* const problem);
 		double getFitness() const;
 		void setFitness(double const d);

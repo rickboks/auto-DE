@@ -32,7 +32,7 @@ double Solution::evaluate(coco_problem_t* const problem) {
 	return fitness;
 }
 
-VectorXd Solution::getX() const {
+VectorXd Solution::X() const {
 	return x;
 }
 
@@ -61,7 +61,7 @@ void Solution::setX(int const dim, double const val){
 	x(dim) = val;
 }
 
-double Solution::getX(int const dim) const {
+double Solution::X(int const dim) const {
 	return x(dim);
 }
 

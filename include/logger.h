@@ -15,7 +15,7 @@ class Logger { // Used to log arbitrary stuff
 		template <typename T>
 		void log(std::vector<T*> const pop) {
 			for (T* s : pop){
-				for (double x : s->getX()){
+				for (double x : s->X()){
 					out << x << " ";
 				}
 				out << s->getFitness();

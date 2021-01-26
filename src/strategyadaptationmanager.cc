@@ -121,7 +121,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 VectorXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
 	VectorXd mean = VectorXd::Zero(D); // Mean position of the entire population
 	for (Solution* s : population) 
-		mean += s->getX();
+		mean += s->X();
 	mean /= popSize;
 	return mean;
 }
@@ -129,6 +129,6 @@ VectorXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& populatio
 VectorXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
 		VectorXd const& mean) const{
 	return VectorXd::NullaryExpr(popSize, [population, mean](Eigen::Index i){
-			return distance(population[i]->getX(), mean);
+			return distance(population[i]->X(), mean);
 		}); 
 }
