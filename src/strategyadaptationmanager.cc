@@ -101,7 +101,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
-	VectorXd improvement = VectorXd::NullaryExpr(popSize, [trials, this](Eigen::Index i){
+	VectorXd improvement = VectorXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
 		return (trials[i]->getFitness() < previousFitness[i] ? previousFitness[i] - trials[i]->getFitness() : 0.);
 	});
 
@@ -128,7 +128,7 @@ VectorXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& populatio
 
 VectorXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
 		VectorXd const& mean) const{
-	return VectorXd::NullaryExpr(popSize, [population, mean](Eigen::Index i){
+	return VectorXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 		}); 
 }

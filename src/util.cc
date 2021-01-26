@@ -36,8 +36,7 @@ double distance(Solution const*const s1, Solution const*const s2) {
 }
 
 double distance(VectorXd const& s1, VectorXd const& s2){
-	VectorXd const diff = s1 - s2;
-	return std::sqrt(diff.dot(diff));
+	return (s1 - s2).norm();
 }
 
 std::string checkFilename(std::string const fn){
@@ -63,11 +62,13 @@ Solution* getPBest(std::vector<Solution*>const& genomes){
 }
 
 Solution* getBest(std::vector<Solution*>const& genomes){
-	return *std::min_element(genomes.begin(), genomes.end(), [](Solution const* const a, Solution const* const b){return *a < *b;});
+	return *std::min_element(genomes.begin(), genomes.end(), 
+			[](Solution const* const a, Solution const* const b){return *a < *b;});
 }
 
 Solution* getWorst(std::vector<Solution*>const& genomes){
-	return *std::max_element(genomes.begin(), genomes.end(), [](Solution const * const a, Solution const * const b){return *a < *b;});
+	return *std::max_element(genomes.begin(), genomes.end(), 
+			[](Solution const * const a, Solution const * const b){return *a < *b;});
 }
 
 std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes){
