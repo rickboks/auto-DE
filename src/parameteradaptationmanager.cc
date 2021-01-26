@@ -52,7 +52,7 @@ void SHADEManager::update(VectorXd const& improvement){
 		if (!SF[c].empty()){
 			VectorXd const _w = w(VectorXd::Map(improvements[c].data(), improvements[c].size()));
 			MF(c,k(c)) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
-			MCr(c,k(c)) = weightedMean(VectorXd::Map(SCr[c].data(), SF[c].size()), _w);
+			MCr(c,k(c)) = weightedMean(VectorXd::Map(SCr[c].data(), SCr[c].size()), _w);
 			k(c) = (k(c)+1)%H;
 		}
 	}
