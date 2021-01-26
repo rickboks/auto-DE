@@ -12,8 +12,8 @@ protected:
 	int const popSize;
 	int const K;
 public:
-	static std::function<ParameterAdaptationManager*(std::vector<Solution*>, int const)> create(std::string const id);
-	ParameterAdaptationManager(std::vector<Solution*>const& population, int const K); 
+	static std::function<ParameterAdaptationManager*(int const, int const)> create(std::string const id);
+	ParameterAdaptationManager(int const popSize, int const K); 
 	virtual ~ParameterAdaptationManager(){};
 	virtual void nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment)=0; 
 	virtual void update(VectorXd const& trialF)=0;
@@ -33,7 +33,7 @@ class SHADEManager : public ParameterAdaptationManager {
 		double weightedMean(VectorXd const& x, VectorXd const& w) const;
 		VectorXd w(VectorXd const& delta) const;
 	public:
-		SHADEManager(std::vector<Solution*>const& population, int const K);
+		SHADEManager(int const popSize, int const K);
 		void nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment); 
 		void update(VectorXd const& improvement);
 };
@@ -43,7 +43,7 @@ class ConstantParameterManager : public ParameterAdaptationManager {
 		double const F;
 		double const Cr;
 	public:
-		ConstantParameterManager(std::vector<Solution*>const& population, int const K);
+		ConstantParameterManager(int const popSize, int const K);
 		void nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment); 
 		void update(VectorXd const& improvement);
 };

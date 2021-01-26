@@ -4,20 +4,20 @@
 #include "parameteradaptationmanager.h"
 #include "rng.h"
 
-std::function<ParameterAdaptationManager*(std::vector<Solution*>, int const)> ParameterAdaptationManager::create(std::string const id){
-#define LC(X) [](std::vector<Solution*>const& population, int const K){return new X(population, K);}
+std::function<ParameterAdaptationManager*(int const, int const)> ParameterAdaptationManager::create(std::string const id){
+#define LC(X) [](int const popSize, int const K){return new X(popSize, K);}
 	if (id == "S") return LC(SHADEManager);
 	if (id == "C") return LC(ConstantParameterManager);
 	throw std::invalid_argument("no such ParameterAdaptationManager: " + id);
 }
 
-ParameterAdaptationManager::ParameterAdaptationManager(std::vector<Solution*>const& population, int const K)
-	: popSize(population.size()), K(K){
+ParameterAdaptationManager::ParameterAdaptationManager(int const popSize, int const K)
+	: popSize(popSize), K(K){
 }
 
 // SHADE
-SHADEManager::SHADEManager(std::vector<Solution*>const& population, int const K) : 
-	ParameterAdaptationManager(population, K), H(popSize/K), MCr(K, H), MF(K, H), 
+SHADEManager::SHADEManager(int const popSize, int const K) : 
+	ParameterAdaptationManager(popSize, K), H(popSize/K), MCr(K, H), MF(K, H), 
 	k(VectorXi::Zero(K)){
 
 	MCr.fill(.5);
@@ -80,8 +80,8 @@ void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& a
 }
 
 //NO ADAPTATION
-ConstantParameterManager::ConstantParameterManager(std::vector<Solution*>const& population, int const K)
- : ParameterAdaptationManager(population, K), F(.5), Cr(.9){}
+ConstantParameterManager::ConstantParameterManager(int const popSize, int const K)
+ : ParameterAdaptationManager(popSize, K), F(.5), Cr(.9){}
 
 void ConstantParameterManager::update(VectorXd const& /*trials*/){
 	//ignore

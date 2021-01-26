@@ -10,7 +10,7 @@
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
 	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
-	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(population,K)){
+	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(MutationManager::create(m)(ch));
@@ -82,15 +82,15 @@ AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		VectorXd& Fs, VectorXd& Crs){
-
-	std::vector<int> const assignment = rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), 
-			popSize, true);
-
-	previousStrategies = assignment; 
 	previousMean = getMean(population);
 	previousDistances = getDistances(population, previousMean);
 
-	mutation.clear(); crossover.clear();
+	std::vector<int> const assignment = rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), 
+			popSize, true);
+	previousStrategies = assignment; 
+
+	mutation.clear(); 
+	crossover.clear();
 	for (int i = 0; i < popSize; i++){
 		previousFitness[i] = population[i]->getFitness();
 		auto const [m, c] = configurations[assignment[i]];
