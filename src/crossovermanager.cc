@@ -39,9 +39,6 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 		if (condition(i, start, end))
 			x[i] = donor->getX(i);
 
-	std::cout << x.transpose() << std::endl;
-	std::cout << std::endl;
-
 	return new Solution(x);
 }
 
