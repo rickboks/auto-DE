@@ -105,13 +105,16 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 		return (trials[i]->getFitness() < previousFitness[i] ? previousFitness[i] - trials[i]->getFitness() : 0.);
 	});
 
-	VectorXd const diversityFactor = ((getDistances(trials, previousMean) - previousDistances) / 
-			previousDistances.mean()).unaryExpr( [](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);});
+	VectorXd const diversityFactor = 
+		(1. + (
+			  (getDistances(trials, previousMean) - previousDistances) / previousDistances.mean()
+			  ).array()
+		 ).max(1).pow(2);
 
-	improvement = improvement.array() * diversityFactor.array();
+	improvement.array() *= diversityFactor.array();
 
-	VectorXd const r = rewardManager->getReward(improvement, 
-			VectorXi::Map(previousStrategies.data(), previousStrategies.size()));
+	VectorXd const r = rewardManager->getReward(
+			improvement, VectorXi::Map(previousStrategies.data(), previousStrategies.size()));
 
 	qualityManager->updateQuality(q, r, p);
 	probabilityManager->updateProbability(p, q);

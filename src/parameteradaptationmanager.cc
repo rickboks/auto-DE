@@ -29,7 +29,7 @@ double SHADEManager::weightedMean(VectorXd const& x, VectorXd const& w) const{
 }
 
 double SHADEManager::weightedLehmerMean(VectorXd const& x, VectorXd const& w) const{
-	return (w.array() * x.array() * x.array()).sum() / (w.array() * x.array()).sum();
+	return (w.array() * x.array().pow(2)).sum() / (w.array() * x.array()).sum();
 }
 
 VectorXd SHADEManager::w(VectorXd const& improvements) const {

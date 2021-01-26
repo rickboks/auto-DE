@@ -12,6 +12,18 @@ VectorXd normalizeAbs(VectorXd vec){ // Normalize by largest *absolute* value
 	return vec;
 }
 
+int argmax(VectorXd const& x){
+	double max = x(0);
+	int idx = 0;
+	for (int i = 1; i < x.size(); i++){
+		if (x(i) > max){
+			max = x(i);
+			idx=i;
+		}
+	}
+	return idx;
+}
+
 std::string generateConfig(std::string const templateFile, std::string const name){
 	std::string const folder = "configurations";
 	std::string const cfgFile = folder + "/" + name + ".ini";

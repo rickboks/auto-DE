@@ -1,4 +1,5 @@
 #include "probabilitymanager.h"
+#include "util.h"
 #include <algorithm>
 #include <iostream>
 #include <numeric>
@@ -11,13 +12,10 @@ std::function<ProbabilityManager* (int const)> ProbabilityManager::create(std::s
 	throw std::invalid_argument("no such ProbabilityManager: " + id);
 }
 void AdaptivePursuitManager::updateProbability(VectorXd& p, VectorXd const& q) const {
-	int const bestIdx = std::distance(q.begin(), std::max_element(q.begin(), q.end()));
-	for (int i = 0; i < K; i++){
-		if (i == bestIdx)
-			p[i] += beta * (pMax - p[i]);
-		else 
-			p[i] += beta * (pMin - p[i]);
-	}
+	int const bestIdx = argmax(q);
+	VectorXd const new_p = 
+		VectorXd::NullaryExpr(K, [this, bestIdx](Eigen::Index const i){return i == bestIdx ? pMax : pMin;});
+	p += beta * (new_p - p);
 }
 
 void ProbabilityMatchingManager::updateProbability(VectorXd& p, VectorXd const& q) const {

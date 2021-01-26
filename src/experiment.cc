@@ -47,14 +47,14 @@ int main() {
 			"C",							/* Parameter self-adaptation */
 			"AA", 		 					/* Reward */
 			"WS",							/* Quality */
-			"PM" 		 					/* Probability */
+			"AP" 		 					/* Probability */
 		},
 		"RS"								/* Constraint handling */
 	});
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"5",
+	  	dimensions 	= 	"3",
 	 	functions 	= 	"5",
 		instances 	= 	"1-15";
 
