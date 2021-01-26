@@ -5,25 +5,20 @@
 
 std::function<ConstraintHandler* (VectorXd const, VectorXd const)> 
 ConstraintHandler::create(std::string const id){
-#define LC(X) [](VectorXd const lb, VectorXd const ub){return new X(lb,ub);}
-	// Generic
-	if (id == "DP") return LC(DeathPenalty);
-	if (id == "RS") return LC(ResamplingRepair);
-
-	// Almost generic
-	if (id == "RI") return LC(ReinitializationRepair);
-	if (id == "PR") return LC(ProjectionRepair);
-	if (id == "RF") return LC(ReflectionRepair);
-	if (id == "WR") return LC(WrappingRepair);
-	if (id == "TR") return LC(TransformationRepair);
-
-	//// DE
-	if (id == "RB") return LC(RandBaseRepair);
-	if (id == "MB") return LC(MidpointBaseRepair);
-	if (id == "MT") return LC(MidpointTargetRepair);
-	if (id == "PM") return LC(ProjectionMidpointRepair);
-	if (id == "PB") return LC(ProjectionBaseRepair);
-	if (id == "CO") return LC(ConservatismRepair);
+#define ALIAS(X,Y) if(id==X) return [](VectorXd const lb, VectorXd const ub){return new Y(lb,ub);};
+	ALIAS("DP", DeathPenalty)
+	ALIAS("RS", ResamplingRepair)
+	ALIAS("RI", ReinitializationRepair)
+	ALIAS("PR", ProjectionRepair)
+	ALIAS("RF", ReflectionRepair)
+	ALIAS("WR", WrappingRepair)
+	ALIAS("TR", TransformationRepair)
+	ALIAS("RB", RandBaseRepair)
+	ALIAS("MB", MidpointBaseRepair)
+	ALIAS("MT", MidpointTargetRepair)
+	ALIAS("PM", ProjectionMidpointRepair)
+	ALIAS("PB", ProjectionBaseRepair)
+	ALIAS("CO", ConservatismRepair)
 	throw std::invalid_argument("no such ConstraintHandler: " + id);
 }
 

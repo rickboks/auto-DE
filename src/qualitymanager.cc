@@ -6,9 +6,9 @@
 using Eigen::MatrixXd;
 
 std::function<QualityManager* (int const)> QualityManager::create(std::string const id){
-#define LC(X) [](int const K){return new X(K);}
-	if (id == "WS") return LC(WeightedSumQuality);
-	if (id == "BM") return LC(BellmanQuality);
+#define ALIAS(X,Y) if (id==X) return [](int const K){return new Y(K);};
+	ALIAS("WS", WeightedSumQuality)
+	ALIAS("BM", BellmanQuality)
 	throw std::invalid_argument("no such QualityManager: " + id);
 }
 

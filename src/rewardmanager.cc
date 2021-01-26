@@ -4,11 +4,11 @@
 #include "util.h"
 
 std::function<RewardManager*(int const)> RewardManager::create(std::string const id){
-#define LC(X) [](int const K){return new X(K);}
-	if (id == "AN") return LC(AverageNormalizedReward);
-	if (id == "AA") return LC(AverageReward);
-	if (id == "EN") return LC(ExtremeNormalizedReward);
-	if (id == "EA") return LC(ExtremeReward);
+#define ALIAS(X,Y) if (id==X) return [](int const K){return new Y(K);};
+	ALIAS("AN", AverageNormalizedReward)
+	ALIAS("AA", AverageReward)
+	ALIAS("EN", ExtremeNormalizedReward)
+	ALIAS("EA", ExtremeReward)
 	throw std::invalid_argument("no such RewardManager: " + id);
 }
 

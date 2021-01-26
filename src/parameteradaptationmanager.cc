@@ -5,9 +5,9 @@
 #include "rng.h"
 
 std::function<ParameterAdaptationManager*(int const, int const)> ParameterAdaptationManager::create(std::string const id){
-#define LC(X) [](int const popSize, int const K){return new X(popSize, K);}
-	if (id == "S") return LC(SHADEManager);
-	if (id == "C") return LC(ConstantParameterManager);
+#define ALIAS(X,Y) if(id==X) return [](int const popSize, int const K){return new Y(popSize, K);};
+	ALIAS("S", SHADEManager)
+	ALIAS("C", ConstantParameterManager)
 	throw std::invalid_argument("no such ParameterAdaptationManager: " + id);
 }
 

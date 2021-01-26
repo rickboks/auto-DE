@@ -4,10 +4,10 @@
 #include <functional>
 
 std::function<CrossoverManager* ()> CrossoverManager::create(std::string const id){
-#define LC(X) [](){return new X();}
-	if (id == "B") return LC(BinomialCrossoverManager);
-	if (id == "E") return LC(ExponentialCrossoverManager);
-	if (id == "A") return LC(ArithmeticCrossoverManager);
+#define ALIAS(X, Y) if(id == X) return [](){return new Y();};
+	ALIAS("B", BinomialCrossoverManager)
+	ALIAS("E", ExponentialCrossoverManager)
+	ALIAS("A", ArithmeticCrossoverManager)
 	throw std::invalid_argument("no such CrossoverManager: " + id);
 }
 

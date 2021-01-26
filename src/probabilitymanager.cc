@@ -5,9 +5,9 @@
 #include <ostream>
 
 std::function<ProbabilityManager* (int const)> ProbabilityManager::create(std::string const id){
-#define LC(X) [](int const K){return new X(K);}
-	if (id == "AP") return LC(AdaptivePursuitManager);
-	if (id == "PM") return LC(ProbabilityMatchingManager);
+#define ALIAS(X,Y) if (id==X) return [](int const K){return new Y(K);};
+	ALIAS("AP", AdaptivePursuitManager)
+	ALIAS("PM", ProbabilityMatchingManager)
 	throw std::invalid_argument("no such ProbabilityManager: " + id);
 }
 void AdaptivePursuitManager::updateProbability(VectorXd& p, VectorXd const& q) const {

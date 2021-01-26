@@ -4,21 +4,22 @@
 using Eigen::ArrayXXd;
 
 std::function<MutationManager* (ConstraintHandler* const)> MutationManager::create(std::string const id){
-#define LC(X) [](ConstraintHandler* const ch){return new X(ch);}
-	if (id == "R1") return LC(Rand1MutationManager);
-	if (id == "T1") return LC(TTB1MutationManager);
-	if (id == "T2") return LC(TTB2MutationManager);
-	if (id == "P1") return LC(TTPB1MutationManager);
-	if (id == "B1") return LC(Best1MutationManager);
-	if (id == "B2") return LC(Best2MutationManager);
-	if (id == "R2") return LC(Rand2MutationManager);
-	if (id == "RD") return LC(Rand2DirMutationManager);
-	if (id == "NS") return LC(NSDEMutationManager);
-	if (id == "TR") return LC(TrigonometricMutationManager);
-	if (id == "O1") return LC(TwoOpt1MutationManager);
-	if (id == "O2") return LC(TwoOpt2MutationManager);
-	if (id == "PX") return LC(ProximityMutationManager);
-	if (id == "RA") return LC(RankingMutationManager);
+#define ALIAS(X, Y) if (id == X) return [](ConstraintHandler* const ch){return new Y(ch);};
+	ALIAS("R1", Rand2DirMutationManager)
+	ALIAS("R1", Rand1MutationManager)
+	ALIAS("T1", TTB1MutationManager)
+	ALIAS("T2", TTB2MutationManager)
+	ALIAS("P1", TTPB1MutationManager)
+	ALIAS("B1", Best1MutationManager)
+	ALIAS("B2", Best2MutationManager)
+	ALIAS("R2", Rand2MutationManager)
+	ALIAS("RD", Rand2DirMutationManager)
+	ALIAS("NS", NSDEMutationManager)
+	ALIAS("TR", TrigonometricMutationManager)
+	ALIAS("O1", TwoOpt1MutationManager)
+	ALIAS("O2", TwoOpt2MutationManager)
+	ALIAS("PX", ProximityMutationManager)
+	ALIAS("RA", RankingMutationManager)
 	throw std::invalid_argument("no such MutationManager: " + id);
 }
 
@@ -133,7 +134,7 @@ Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genom
 // NSDE
 Solution* NSDEMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const {
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
-	double const F = (rng.randDouble(0,1) < 0.5 ? rng.normalDistribution(0.5,0.5) : rng.cauchyDistribution(0,1));
+	double const F = (rng.randDouble(0,1) <= .5 ? rng.normalDistribution(.5,.5) : rng.cauchyDistribution(0,1));
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
