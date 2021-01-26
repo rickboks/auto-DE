@@ -103,8 +103,7 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /
 
 	auto alpha=std::min_element(alphas.begin(), alphas.end());
 	if (alpha != std::next(alphas.end(), -1)){
-		x = (1. - *alpha) * (lb + ub) / 2. + *alpha * x;
-		p->setX(x);
+		p->setX((1. - *alpha) * (lb + ub) / 2. + *alpha * x);
 		nCorrected++;
 	}
 

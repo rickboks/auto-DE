@@ -25,11 +25,12 @@ class WeightedSumQuality : public QualityManager {
 				VectorXd const& p) const;
 };
 
-class RecPMQuality : public QualityManager {
+class BellmanQuality : public QualityManager {
 	private:
-		double const gamma = 0.1;
+		double const gamma = 0.75;
+		VectorXd softmax(VectorXd const& x) const;
 	public:
-		RecPMQuality(int const K) : QualityManager(K){}
+		BellmanQuality(int const K) : QualityManager(K){}
 		void updateQuality(VectorXd &q, VectorXd const& r, 
 				VectorXd const& p) const;
 };

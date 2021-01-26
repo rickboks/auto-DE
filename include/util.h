@@ -6,7 +6,7 @@
 #include "rng.h"
 #include "solution.h"
 
-[[nodiscard]] VectorXd normalize(VectorXd vec);
+[[nodiscard]] VectorXd normalizeAbs(VectorXd vec);
 [[nodiscard]] double mean(std::vector<double>const& vec);
 bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const* const s1, Solution const* const s2);
@@ -14,14 +14,6 @@ double distance(VectorXd const& s1, VectorXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
-
-template <typename T>
-std::vector<T> vectorize(T const * const arr, int const size){
-	std::vector<T> vec(size);
-	for (int i = 0; i < size; i++)
-		vec[i] = arr[i];
-	return vec;
-}
 
 template <typename T>
 std::vector<T> remove(std::vector<T> vec, int const i){
@@ -111,4 +103,3 @@ void printVec(std::vector<T> const v){
 		std::cout << d << " ";
 	std::cout << std::endl;
 }
-

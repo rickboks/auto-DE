@@ -5,9 +5,9 @@
 #include <fstream>
 #include <numeric>
 
-VectorXd normalize(VectorXd vec){
+VectorXd normalizeAbs(VectorXd vec){ // Normalize by largest *absolute* value
 	double const absMax = vec.cwiseAbs().maxCoeff();
-	if (absMax != 0.)
+	if (absMax > 0.) 
 		vec /= absMax;
 	return vec;
 }
@@ -40,12 +40,12 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 }
 
 double distance(Solution const*const s1, Solution const*const s2) {
-	Eigen::VectorXd const diff = (s1->getX() - s2->getX());
+	VectorXd const diff = (s1->getX() - s2->getX());
 	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
 }
 
-double distance(Eigen::VectorXd const& s1, Eigen::VectorXd const& s2){
-	Eigen::VectorXd const diff = (s1 - s2);
+double distance(VectorXd const& s1, VectorXd const& s2){
+	VectorXd const diff = (s1 - s2);
 	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
 }
 

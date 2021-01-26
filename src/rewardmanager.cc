@@ -23,31 +23,25 @@ std::vector<std::vector<double>> RewardManager::group(VectorXd const& improvemen
 }
 
 VectorXd RewardManager::average(std::vector<std::vector<double>>const& deltas) const {
-	VectorXd r = VectorXd::Zero(K);
-	for (int i = 0; i < K; i++){
-		if (!deltas[i].empty())
-			r[i] = mean(deltas[i]);
-	}
-	return r;
+	return VectorXd::NullaryExpr(K, [deltas](Eigen::Index const i){
+			return (deltas[i].empty() ? 0. : VectorXd::Map(deltas[i].data(), deltas[i].size()).mean());
+		});
 }
 
 VectorXd RewardManager::extreme(std::vector<std::vector<double>>const& deltas) const {
-	VectorXd r = VectorXd::Zero(K);
-	for (int i = 0; i < K; i++){
-		if (!deltas[i].empty())
-			r[i] = *std::max_element(deltas[i].begin(), deltas[i].end());
-	}
-	return r;
+	return VectorXd::NullaryExpr(K, [deltas](Eigen::Index const i){
+			return VectorXd::Map(deltas[i].data(), deltas[i].size()).maxCoeff();
+		});
 }
 
 VectorXd AverageNormalizedReward::getReward(VectorXd const& improvements, 
 		VectorXi const& assignment) const {
-	return normalize(average(group(improvements, assignment)));
+	return normalizeAbs(average(group(improvements, assignment)));
 }
 
 VectorXd ExtremeNormalizedReward::getReward(VectorXd const& improvements, 
 		VectorXi const& assignment) const {
-	return normalize(extreme(group(improvements, assignment)));
+	return normalizeAbs(extreme(group(improvements, assignment)));
 }
 
 VectorXd ExtremeReward::getReward(VectorXd const& improvements, 

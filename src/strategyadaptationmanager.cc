@@ -104,24 +104,17 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
-	VectorXd improvement(popSize);
+	VectorXd improvement = VectorXd::NullaryExpr(popSize, [trials, this](Eigen::Index i){
+		return (trials[i]->getFitness() < previousFitness[i] ? previousFitness[i] - trials[i]->getFitness() : 0.);
+	});
 
-	for (int i = 0; i < popSize; i++){
-		double const f = trials[i]->getFitness();
-		improvement[i] = (f < previousFitness[i] ? previousFitness[i] - f : 0.);
-	}
-
-	VectorXd const currentDistances = getDistances(trials, previousMean); // distance to mean for each individual
-	VectorXd diversityFactor = (currentDistances - previousDistances) / previousDistances.mean();
-	
-	// Don't punish exploitation, only reward exploration
-	std::transform(diversityFactor.begin(), diversityFactor.end(), diversityFactor.begin(), 
-			[](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);}); 
+	VectorXd const diversityFactor = ((getDistances(trials, previousMean) - previousDistances) / 
+			previousDistances.mean()).unaryExpr( [](double const& x){return (x > 0. ? pow(1.+x,2.) : 1.);});
 
 	improvement = improvement.array() * diversityFactor.array();
 
-	VectorXd const r = rewardManager->getReward(improvement, VectorXi::Map(previousStrategies.data(), 
-				previousStrategies.size()));
+	VectorXd const r = rewardManager->getReward(improvement, 
+			VectorXi::Map(previousStrategies.data(), previousStrategies.size()));
 
 	qualityManager->updateQuality(q, r, p);
 	probabilityManager->updateProbability(p, q);
@@ -136,10 +129,9 @@ VectorXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& populatio
 	return mean;
 }
 
-VectorXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, 
+VectorXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
 		VectorXd const& mean) const{
-	VectorXd distances(popSize);
-	for (unsigned int i = 0; i < population.size(); i++) 
-		distances[i] = distance(population[i]->getX(), mean);
-	return distances; 
+	return VectorXd::NullaryExpr(popSize, [population, mean](Eigen::Index i){
+			return distance(population[i]->getX(), mean);
+		}); 
 }
