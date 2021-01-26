@@ -46,7 +46,7 @@ int main() {
 			{"B"},							/* Crossover */	
 			"C",							/* Parameter self-adaptation */
 			"AA", 		 					/* Reward */
-			"BM",							/* Quality */
+			"WS",							/* Quality */
 			"PM" 		 					/* Probability */
 		},
 		"RS"								/* Constraint handling */

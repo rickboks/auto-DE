@@ -28,7 +28,6 @@ class ConstraintHandler {
 		bool isFeasible(Solution const * const p) const;
 };
 
-// Differential Evolution
 class RandBaseRepair : public ConstraintHandler {
 	public:
 		RandBaseRepair(VectorXd const lb, VectorXd const ub):ConstraintHandler(lb,ub){};
@@ -65,7 +64,6 @@ class ConservatismRepair : public ConstraintHandler {
 		void repair(Solution* const p, Solution const* const base, Solution const* const target);
 };
 
-// Generic
 class ResamplingRepair : public ConstraintHandler {
 	public:
 		ResamplingRepair(VectorXd const lb, VectorXd const ub)

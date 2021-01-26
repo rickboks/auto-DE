@@ -5,7 +5,6 @@ using Eigen::ArrayXXd;
 
 std::function<MutationManager* (ConstraintHandler* const)> MutationManager::create(std::string const id){
 #define ALIAS(X, Y) if (id == X) return [](ConstraintHandler* const ch){return new Y(ch);};
-	ALIAS("R1", Rand2DirMutationManager)
 	ALIAS("R1", Rand1MutationManager)
 	ALIAS("T1", TTB1MutationManager)
 	ALIAS("T2", TTB2MutationManager)
