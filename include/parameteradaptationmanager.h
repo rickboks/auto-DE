@@ -40,8 +40,8 @@ class SHADEManager : public ParameterAdaptationManager {
 
 class ConstantParameterManager : public ParameterAdaptationManager {
 	private:
-		double const F;
-		double const Cr;
+		double const F = .5;
+		double const Cr = .9;
 	public:
 		ConstantParameterManager(int const popSize, int const K);
 		void nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment); 

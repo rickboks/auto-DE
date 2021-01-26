@@ -36,7 +36,7 @@ class StrategyAdaptationManager {
 		int const popSize;
 		int const K;
 		int const D;
-		ParameterAdaptationManager* parameterAdaptationManager;
+		ParameterAdaptationManager* const parameterAdaptationManager;
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {
@@ -53,7 +53,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		RewardManager const* const rewardManager;
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;
-		double const alpha;
+		double const alpha = .8;
 		VectorXd p; 
 		VectorXd q; 
 		std::vector<int> previousStrategies;

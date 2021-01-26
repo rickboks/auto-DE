@@ -40,20 +40,20 @@ void SHADEManager::update(VectorXd const& improvement){
 	std::vector<std::vector<double>> SF(K), SCr(K), improvements(K);
 
 	for (int i = 0; i < popSize; i++){
-		int const c = previousAssignment[i];
-		if (improvement[i] > 0.){
-			SF[c].push_back(previousFs[i]); 
-			SCr[c].push_back(previousCrs[i]);
-			improvements[c].push_back(improvement[i]);
+		int const c = previousAssignment(i);
+		if (improvement(i) > 0.){
+			SF[c].push_back(previousFs(i)); 
+			SCr[c].push_back(previousCrs(i));
+			improvements[c].push_back(improvement(i));
 		}
 	}
 	
 	for (int c = 0; c < K; c++){
 		if (!SF[c].empty()){
 			VectorXd const _w = w(VectorXd::Map(improvements[c].data(), improvements[c].size()));
-			MF(c,k[c]) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
-			MCr(c,k[c]) = weightedMean(VectorXd::Map(SCr[c].data(), SF[c].size()), _w);
-			k[c] = (k[c]+1)%H;
+			MF(c,k(c)) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
+			MCr(c,k(c)) = weightedMean(VectorXd::Map(SCr[c].data(), SF[c].size()), _w);
+			k(c) = (k(c)+1)%H;
 		}
 	}
 }
@@ -61,13 +61,13 @@ void SHADEManager::update(VectorXd const& improvement){
 void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment){
 	for (int i = 0; i < popSize; i++){
 		int const randIndex = rng.randInt(0, H-1);
-		int const config = assignment[i]; // The configuration that this individual will use
+		int const config = assignment(i); // The configuration that this individual will use
 
 		// Update mutation rate
 		double const MFr = MF(config, randIndex);
 		do{
-			Fs[i] = std::min(rng.cauchyDistribution(MFr, .1), 1.);
-		} while (Fs[i] <= 0.);
+			Fs(i) = std::min(rng.cauchyDistribution(MFr, .1), 1.);
+		} while (Fs(i) <= 0.);
 
 		// Update crossover rate
 		double const MCrr = MCr(config, randIndex);
@@ -81,7 +81,7 @@ void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& a
 
 //NO ADAPTATION
 ConstantParameterManager::ConstantParameterManager(int const popSize, int const K)
- : ParameterAdaptationManager(popSize, K), F(.5), Cr(.9){}
+ : ParameterAdaptationManager(popSize, K){}
 
 void ConstantParameterManager::update(VectorXd const& /*trials*/){
 	//ignore
@@ -89,6 +89,6 @@ void ConstantParameterManager::update(VectorXd const& /*trials*/){
 
 void ConstantParameterManager::nextParameters(VectorXd& Fs, VectorXd& Crs, 
 		VectorXi const& /*assignment*/){
-	std::fill(Fs.begin(), Fs.end(), F);
-	std::fill(Crs.begin(), Crs.end(), Cr);
+	Fs.fill(F);
+	Crs.fill(Cr);
 }

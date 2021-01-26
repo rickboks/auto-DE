@@ -18,7 +18,7 @@ std::vector<std::vector<double>> RewardManager::group(VectorXd const& improvemen
 		VectorXi const& assignment) const{
 	std::vector<std::vector<double>> groups(K);
 	for (unsigned int i = 0; i < improvements.size(); i++)
-		groups[assignment[i]].push_back(improvements[i]);
+		groups[assignment(i)].push_back(improvements(i));
 	return groups;
 }
 

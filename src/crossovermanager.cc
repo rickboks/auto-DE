@@ -16,7 +16,7 @@ Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solu
 	unsigned int const jrand = rng.randInt(0,x.size()-1);
 	for (unsigned int j = 0; j < x.size(); j++){
 		if (j == jrand || rng.randDouble(0,1) < Cr)
-			x[j] = donor->getX(j);
+			x(j) = donor->getX(j);
 	}
 	return new Solution(x);
 }
@@ -37,7 +37,7 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 
 	for (unsigned int i = 0; i < x.size(); i++)
 		if (condition(i, start, end))
-			x[i] = donor->getX(i);
+			x(i) = donor->getX(i);
 
 	return new Solution(x);
 }

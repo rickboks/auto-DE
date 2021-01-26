@@ -24,7 +24,7 @@ void BellmanQuality::updateQuality(VectorXd&q, VectorXd const& r,
 
 	for (int i = 0; i < K-1; i++) // iterate over upper triangular part
 		for (int j = i+1; j < K; j++)
-			P(i,j) = P(j,i) = p[i] + p[j];
+			P(i,j) = P(j,i) = p(i) + p(j);
 
 	q = softmax((1. - (gamma * P.array())).matrix().inverse() * r);
 }

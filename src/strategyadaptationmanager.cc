@@ -24,7 +24,7 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 void StrategyAdaptationManager::update(std::vector<Solution*>const& population){
 	VectorXd trialF(popSize);
 	for (int i = 0; i < popSize; i++)
-		trialF[i] = population[i]->getFitness();
+		trialF(i) = population[i]->getFitness();
 	parameterAdaptationManager->update(trialF);
 }
 
@@ -55,12 +55,9 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, VectorXd& Fs, 
 		VectorXd& Crs){
-
-	std::vector<int> key(popSize);
-	std::iota(key.begin(), key.end(), 0); // All indices [0,M-1]
+	std::vector<int> const key = range(popSize);
 	mutation[std::get<0>(configurations.front())] = key;
 	crossover[std::get<1>(configurations.front())] = key;
-
 	parameterAdaptationManager->nextParameters(Fs, Crs, VectorXi::Zero(popSize));
 }
 
@@ -70,7 +67,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	alpha(.8), p(VectorXd::Constant(K, 1./K)), q(VectorXd::Zero(K)), previousStrategies(popSize), previousFitness(popSize){
+	p(VectorXd::Constant(K, 1./K)), q(VectorXd::Zero(K)), previousStrategies(popSize), previousFitness(popSize){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -92,7 +89,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 	mutation.clear(); 
 	crossover.clear();
 	for (int i = 0; i < popSize; i++){
-		previousFitness[i] = population[i]->getFitness();
+		previousFitness(i) = population[i]->getFitness();
 		auto const [m, c] = configurations[assignment[i]];
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};

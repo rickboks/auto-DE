@@ -27,7 +27,7 @@ void Solution::setFitness(double const f){
 double Solution::evaluate(coco_problem_t* const problem) {
 	if (!evaluated){
 		evaluated = true;		
-		coco_evaluate_function(problem, &x[0], &fitness);
+		coco_evaluate_function(problem, x.data(), &fitness);
 	} 
 	return fitness;
 }
@@ -39,16 +39,16 @@ VectorXd Solution::getX() const {
 std::string Solution::positionString() const {
 	std::string pos = "";
 	for (int i = 0; i < D -1; i++){
-		pos += std::to_string(x[i]);
+		pos += std::to_string(x(i));
 		pos += " ";
 	}
-	pos += std::to_string(x[D-1]);
+	pos += std::to_string(x(D-1));
 	return pos;
 }
 
 void Solution::randomize(VectorXd const lowerBounds, VectorXd const upperBounds){
 	for (int i = 0; i < D; i++){
-		x[i] = rng.randDouble(lowerBounds[i], upperBounds[i]);
+		x(i) = rng.randDouble(lowerBounds(i), upperBounds(i));
 	}
 	evaluated=false;
 }
@@ -58,11 +58,11 @@ bool Solution::operator < (const Solution& s) const {
 }
 
 void Solution::setX(int const dim, double const val){
-	x[dim] = val;
+	x(dim) = val;
 }
 
 double Solution::getX(int const dim) const {
-	return x[dim];
+	return x(dim);
 }
 
 void Solution::copy(Solution const* const other){
