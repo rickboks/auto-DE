@@ -222,10 +222,7 @@ Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& geno
 void RankingMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	probability.clear();
-
-	std::vector<Solution*> sorted = genomes;
-	sortOnFitness(sorted);
-
+	std::vector<Solution*> const sorted = sortOnFitness(genomes);
 	for (int i = 0; i < size; i++)
 		probability[sorted[i]] = double(size - (i+1)) / double(size);
 }

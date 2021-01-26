@@ -11,10 +11,10 @@ double distance(VectorXd const& s1, VectorXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
-Solution* getPBest(std::vector<Solution*> genomes);
+Solution* getPBest(std::vector<Solution*>const& genomes);
 Solution* getBest(std::vector<Solution*>const& genomes);
 Solution* getWorst(std::vector<Solution*>const& genomes);
-void sortOnFitness(std::vector<Solution*>& genomes);
+[[nodiscard]] std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes);
 
 template <typename T>
 std::vector<T> remove(std::vector<T> vec, int const i){
