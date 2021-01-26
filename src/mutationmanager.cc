@@ -207,7 +207,8 @@ void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 		}
 	}
 
-	Rp = (Rd.colwise() / Rd.rowwise().sum()).inverse();
+	Rp = (Rd.colwise() / Rd.rowwise().sum()).cwiseInverse();
+	Rp.matrix().diagonal().fill(0.);
 }
 
 Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
