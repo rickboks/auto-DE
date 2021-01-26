@@ -30,6 +30,7 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 		L++;
 
 	int const end = (start+L-1) % x.size();
+
 	auto const condition = end >= start ? \
 		[](int const i, int const start, int const end) {return i >= start && i <= end;}: 
 		[](int const i, int const start, int const end) {return i <= end || i >= start;};
@@ -37,6 +38,9 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 	for (unsigned int i = 0; i < x.size(); i++)
 		if (condition(i, start, end))
 			x[i] = donor->getX(i);
+
+	std::cout << x.transpose() << std::endl;
+	std::cout << std::endl;
 
 	return new Solution(x);
 }

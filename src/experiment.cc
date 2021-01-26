@@ -43,7 +43,7 @@ int main() {
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
 			{"P1", "B1", "T1"},
-			{"B"},							/* Crossover */	
+			{"E"},							/* Crossover */	
 			"C",							/* Parameter self-adaptation */
 			"AA", 		 					/* Reward */
 			"BM",							/* Quality */
@@ -54,7 +54,7 @@ int main() {
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"20",
+	  	dimensions 	= 	"5",
 	 	functions 	= 	"5",
 		instances 	= 	"1-15";
 
