@@ -12,14 +12,6 @@ VectorXd normalizeAbs(VectorXd vec){ // Normalize by largest *absolute* value
 	return vec;
 }
 
-double mean (std::vector<double>const& vec){
-	return std::accumulate(vec.begin(), vec.end(), 0.) / vec.size();
-}
-
-bool comparePtrs(Solution const* const a, Solution const *const b){
-	return *a < *b;
-}
-
 std::string generateConfig(std::string const templateFile, std::string const name){
 	std::string const folder = "configurations";
 	std::string const cfgFile = folder + "/" + name + ".ini";
@@ -40,13 +32,12 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 }
 
 double distance(Solution const*const s1, Solution const*const s2) {
-	VectorXd const diff = (s1->getX() - s2->getX());
-	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
+	return distance(s1->getX(), s2->getX());
 }
 
 double distance(VectorXd const& s1, VectorXd const& s2){
-	VectorXd const diff = (s1 - s2);
-	return std::sqrt(std::sqrt((diff.array() * diff.array()).sum())); 
+	VectorXd const diff = s1 - s2;
+	return std::sqrt(diff.dot(diff));
 }
 
 std::string checkFilename(std::string const fn){

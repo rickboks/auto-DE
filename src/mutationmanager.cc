@@ -25,7 +25,7 @@ std::function<MutationManager* (ConstraintHandler* const)> MutationManager::crea
 Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int const i, double const F){
 	int resamples = 0;
 	while (true){
-		Solution* m = doMutation(genomes, i, F);
+		Solution* const m = doMutation(genomes, i, F);
 		if (!ch->resample(m, resamples)){
 			ch->repair(m); //generic repair
 			return m;
@@ -38,8 +38,7 @@ Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int cons
 // Rand/1
 Solution* Rand1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
-	VectorXd const mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -51,9 +50,9 @@ void TTB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 Solution* TTB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
-	VectorXd const mutant = genomes[i]->getX() + F * (best->getX() - genomes[i]->getX() 
-			+ xr[0]->getX() - xr[1]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(
+			genomes[i]->getX() + F * (best->getX() - genomes[i]->getX() + xr[0]->getX() - xr[1]->getX())
+		);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
@@ -65,9 +64,10 @@ void TTB2MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 Solution* TTB2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4);
-	VectorXd const mutant = genomes[i]->getX() + F * (best->getX() - genomes[i]->getX() 
-			+ xr[0]->getX() - xr[1]->getX() + xr[2]->getX() - xr[3]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(
+			genomes[i]->getX() + F * (best->getX() - genomes[i]->getX() + xr[0]->getX() 
+				- xr[1]->getX() + xr[2]->getX() - xr[3]->getX())
+		);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
@@ -76,9 +76,9 @@ Solution* TTB2MutationManager::doMutation(std::vector<Solution*>const& genomes, 
 Solution* TTPB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	Solution const* const pBest = getPBest(genomes); // pBest is sampled for each mutation
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
-	VectorXd const mutant = genomes[i]->getX() + F * (pBest->getX() - genomes[i]->getX() + 
-			xr[0]->getX() - xr[1]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(
+			genomes[i]->getX() + F * (pBest->getX() - genomes[i]->getX() + xr[0]->getX() - xr[1]->getX())
+		);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }
@@ -90,8 +90,7 @@ void Best1MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 Solution* Best1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
-	VectorXd const mutant = best->getX() + F * (xr[0]->getX() - xr[1]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(best->getX() + F * (xr[0]->getX() - xr[1]->getX()));
 	ch->repair(m, best, genomes[i]);
 	return m;
 }
@@ -103,8 +102,7 @@ void Best2MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 Solution* Best2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4);
-	VectorXd const mutant =  best->getX() + F * (xr[0]->getX() - xr[1]->getX() + xr[2]->getX() - xr[3]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(best->getX() + F * (xr[0]->getX() - xr[1]->getX() + xr[2]->getX() - xr[3]->getX()));
 	ch->repair(m, best, genomes[i]);
 	return m;
 }
@@ -112,8 +110,7 @@ Solution* Best2MutationManager::doMutation(std::vector<Solution*>const& genomes,
 // Rand/2
 Solution* Rand2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 5);
-	VectorXd const mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX() + xr[3]->getX() - xr[4]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX() + xr[3]->getX() - xr[4]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -128,8 +125,7 @@ Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genom
 	if (xr[3]->getFitness() < xr[2]->getFitness())
 		std::swap(xr[2], xr[3]);
 
-	VectorXd const mutant = xr[0]->getX() + F/2. * (xr[0]->getX() - xr[1]->getX() + xr[2]->getX() - xr[3]->getX());
-	Solution* m = new Solution(mutant);
+	Solution* m = new Solution(xr[0]->getX() + F/2. * (xr[0]->getX() - xr[1]->getX() + xr[2]->getX() - xr[3]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -138,8 +134,7 @@ Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genom
 Solution* NSDEMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const {
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
 	double const F = (rng.randDouble(0,1) < 0.5 ? rng.normalDistribution(0.5,0.5) : rng.cauchyDistribution(0,1));
-	VectorXd const mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -162,7 +157,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 	Solution const base = Solution(mutant); // only used for correction strategies
 
 	mutant += (p1-p0) * (xr[0]->getX() - xr[1]->getX()) + (p2-p1) * (xr[1]->getX() - xr[2]->getX()) + 
-		(p0-p2) * (xr[2]->getX() - xr[0]->getX()) ;
+		(p0-p2) * (xr[2]->getX() - xr[0]->getX());
 	
 	Solution* m = new Solution(mutant);
 	ch->repair(m, &base, genomes[i]);
@@ -182,8 +177,7 @@ Solution* TwoOpt1MutationManager::doMutation(std::vector<Solution*>const& genome
 	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 3);
 	if (xr[1]->getFitness() < xr[0]->getFitness())
 		std::swap(xr[0], xr[1]);
-	VectorXd const mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -193,8 +187,7 @@ Solution* TwoOpt2MutationManager::doMutation(std::vector<Solution*>const& genome
 	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 5);
 	if (xr[1]->getFitness() < xr[0]->getFitness())
 		std::swap(xr[0], xr[1]);
-	VectorXd const mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX() + xr[3]->getX() - xr[4]->getX());
-	Solution* const m = new Solution(mutant);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX() + xr[3]->getX() - xr[4]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -203,26 +196,24 @@ Solution* TwoOpt2MutationManager::doMutation(std::vector<Solution*>const& genome
 void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	//Initialize the matrices
-	ArrayXXd Rd = ArrayXXd::Zero(size, size);
-	Rp = ArrayXXd::Zero(size, size);
+	ArrayXXd Rd(size, size);
+	Rd.matrix().diagonal().fill(0.);
 
 	// Fill distance matrix
 	for (int i = 0; i < size-1; i++){ // Only fill upper triangle
 		for (int j = i + 1; j < size; j++){
-			double const dist = std::max(distance(genomes[i], genomes[j]), 1.0e-12);
-			Rd(i,j) = dist;
-			Rd(j,i) = dist;
+			double const dist = std::max(distance(genomes[i], genomes[j]), 1.0e-10);
+			Rd(i,j) = Rd(j,i) = dist;
 		}
 	}
 
-	Rp = 1. / (Rd.colwise() / Rd.rowwise().sum());
+	Rp = (Rd.colwise() / Rd.rowwise().sum()).inverse();
 }
 
 Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<double> prob(Rp.row(i).begin(), Rp.row(i).end());
-	std::vector<Solution*> xr = rouletteSelect(remove(genomes, i), remove(prob, i), 3, false);
-	VectorXd mutant = xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX());
-	Solution* const m = new Solution(mutant);
+	std::vector<Solution*> const xr = rouletteSelect(remove(genomes, i), remove(prob, i), 3, false);
+	Solution* const m = new Solution(xr[0]->getX() + F * (xr[1]->getX() - xr[2]->getX()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
 }
@@ -255,8 +246,10 @@ Solution* RankingMutationManager::doMutation(std::vector<Solution*>const& genome
 	std::vector<Solution*> possibilities = remove(genomes,i);
 	Solution const* const xr0 = pickRanked(possibilities); // N.B. Ranked instead of Random (removes from possibilities)
 	Solution const* const xr1 = pickRandom(possibilities, 1)[0];
-	VectorXd const mutant = genomes[i]->getX() + F * (pBest->getX() - genomes[i]->getX() + xr0->getX() - xr1->getX());
-	Solution* const m = new Solution(mutant);
+
+	Solution* const m = new Solution(
+			genomes[i]->getX() + F * (pBest->getX() - genomes[i]->getX() + xr0->getX() - xr1->getX())
+		);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
 }

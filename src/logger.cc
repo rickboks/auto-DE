@@ -2,8 +2,8 @@
 #include "util.h"
 #include <numeric>
 
-void Logger::log(int const function, int const D, std::vector<double> const percCorrected, 
-		std::vector<double> const bestX, double const bestF, int const numEvals){
+void Logger::log(int const function, int const D, VectorXd const percCorrected, 
+		VectorXd const bestX, double const bestF, int const numEvals){
 	out.precision(3);
 
 	out << function << " " << D << " ";
@@ -18,11 +18,9 @@ void Logger::start(int const function, int const D){
 	out << function << " " << D << ":";
 }
 
-void Logger::log(std::vector<double> F, std::vector<double> Cr){
+void Logger::log(VectorXd const& F, VectorXd const& Cr){
 	out.precision(3);
-	double const avgF = mean(F);
-	double const avgCr = mean(Cr);
-	out << avgF << " " << avgCr << ","; 
+	out << F.mean() << " " << Cr.mean() << ","; 
 }
 
 void Logger::newLine(){

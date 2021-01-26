@@ -7,8 +7,6 @@
 #include "solution.h"
 
 [[nodiscard]] VectorXd normalizeAbs(VectorXd vec);
-[[nodiscard]] double mean(std::vector<double>const& vec);
-bool comparePtrs(Solution const* const a, Solution const* const b);
 double distance(Solution const* const s1, Solution const* const s2);
 double distance(VectorXd const& s1, VectorXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
@@ -23,7 +21,7 @@ std::vector<T> remove(std::vector<T> vec, int const i){
 
 template <typename T>
 void sortOnFitness(std::vector<T*>& genomes){
-	std::sort(genomes.begin(), genomes.end(), comparePtrs);
+	std::sort(genomes.begin(), genomes.end(), [](T* a, T* b){return *a < *b;});
 }
 
 template<typename T>
@@ -40,32 +38,21 @@ T* getPBest(std::vector<T*> genomes){
 
 template<typename T>
 T* getBest(std::vector<T*>const& genomes){
-	T* best = NULL;
-
-	for (T* s : genomes)
-		if (best == NULL || *s < *best)
-			best = s;
-
-	return best;
+	return *std::min_element(genomes.begin(), genomes.end(), [](T const* const a, T const* const b){return *a < *b;});
 }
 
 template<typename T>
 T* getWorst(std::vector<T*>const& genomes){
-	T* worst = NULL;
-
-	for (T* s : genomes)
-		if (worst == NULL || *worst < *s)
-			worst = s;
-
-	return worst;
+	return *std::max_element(genomes.begin(), genomes.end(), [](T const * const a, T const * const b){return *a < *b;});
 }
 
 template<typename T>
 std::vector<T> pickRandom(std::vector<T> possibilities, int const n){
 	std::vector<T> picked;
+	picked.reserve(n);
 	for (int i = 0; i < n; i++){
 		int const r = rng.randInt(0,possibilities.size()-1);
-		T x = possibilities[r];
+		T const x = possibilities[r];
 		possibilities.erase(possibilities.begin() + r);
 		picked.push_back(x);
 	}
@@ -74,32 +61,24 @@ std::vector<T> pickRandom(std::vector<T> possibilities, int const n){
 
 template<typename T>
 std::vector<T> rouletteSelect(std::vector<T> possibilities, std::vector<double> prob, int const n, bool const replace){
-	assert(possibilities.size() == prob.size());
-	std::vector<T> particles;
+	std::vector<T> picked;
+	picked.reserve(n);
 	double totalProb = std::accumulate(prob.begin(), prob.end(), 0.);
-
 	for (int i = 0; i < n; i++){
 		double rand = rng.randDouble(0.,totalProb);
-		for (unsigned int i = 0; i < possibilities.size(); i++){
-			rand -= prob[i];
+		for (unsigned int j = 0; j < possibilities.size(); j++){
+			rand -= prob[j];
 			if (rand <= 0.){
-				T selected = possibilities[i];
+				T const t = possibilities[j];
 				if (!replace){
-					possibilities.erase(possibilities.begin() + i);
-					totalProb -= prob[i];
-					prob.erase(prob.begin() + i);
+					possibilities.erase(possibilities.begin() + j);
+					totalProb -= prob[j];
+					prob.erase(prob.begin() + j);
 				}
-				particles.push_back(selected);
+				picked.push_back(t);
 				break;
 			} 
 		}
 	}
-	return particles;
-}
-
-template <typename T>
-void printVec(std::vector<T> const v){
-	for (double d : v)
-		std::cout << d << " ";
-	std::cout << std::endl;
+	return picked;
 }

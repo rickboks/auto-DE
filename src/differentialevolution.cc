@@ -13,8 +13,7 @@ DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 DifferentialEvolution::~DifferentialEvolution(){}
 
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
-	return (*std::max_element(population.begin(), population.end(), comparePtrs))->getFitness() -
-			(*std::min_element(population.begin(), population.end(), comparePtrs))->getFitness() < CONVERGENCE_DELTA;
+	return getWorst(population)->getFitness() - getBest(population)->getFitness() < CONVERGENCE_DELTA;
 } 
 
 // Should be called before starting to optimize a problem
@@ -60,7 +59,7 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
-		for (MutationManager* m : strategyAdaptationManager->getMutationManagers()){
+		for (MutationManager* const m : strategyAdaptationManager->getMutationManagers()){
 			if (mutationManagers.count(m)){
 				std::vector<int> const indices = mutationManagers[m];
 				if (!indices.empty()){
@@ -74,7 +73,7 @@ void DifferentialEvolution::run(int const evalBudget){
 		// Crossover step
 		std::vector<double> trialF(popSize);
 		std::vector<Solution*> trials(popSize); 
-		for (CrossoverManager* c : strategyAdaptationManager->getCrossoverManagers()){
+		for (CrossoverManager* const c : strategyAdaptationManager->getCrossoverManagers()){
 			for (int i : crossoverManagers[c]){
 				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
 				delete donors[i];

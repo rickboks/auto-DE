@@ -29,9 +29,8 @@ ConstraintHandler::create(std::string const id){
 
 bool ConstraintHandler::isFeasible(Solution const * const p) const{
 	for (int i = 0; i < D; i++){
-		if (p->getX(i) < lb[i]  || p->getX(i) > ub[i] ){
+		if (p->getX(i) < lb[i] || p->getX(i) > ub[i] )
 			return false;
-		}
 	}
 	return true;
 }
@@ -88,7 +87,7 @@ void MidpointTargetRepair::repair(Solution* const p, Solution const* const /*bas
 }
 
 void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /*base*/, Solution const* const /*target*/) {
-	VectorXd x = p->getX();
+	VectorXd const x = p->getX();
 	std::vector<double>alphas(D+1);
 	alphas[D] = 1.;
 
