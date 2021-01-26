@@ -55,3 +55,21 @@ std::vector<int> range(int const size){
 	std::iota(r.begin(), r.end(), 0);
 	return r;
 }
+
+Solution* getPBest(std::vector<Solution*> genomes){
+	int const P = std::max(0.05, 3./genomes.size()) * genomes.size(); // The number of elements to consider
+	sortOnFitness(genomes);
+	return (P > 0 ? genomes[rng.randInt(0, P-1)] : genomes[0]);
+}
+
+Solution* getBest(std::vector<Solution*>const& genomes){
+	return *std::min_element(genomes.begin(), genomes.end(), [](Solution const* const a, Solution const* const b){return *a < *b;});
+}
+
+Solution* getWorst(std::vector<Solution*>const& genomes){
+	return *std::max_element(genomes.begin(), genomes.end(), [](Solution const * const a, Solution const * const b){return *a < *b;});
+}
+
+void sortOnFitness(std::vector<Solution*>& genomes){
+	std::sort(genomes.begin(), genomes.end(), [](Solution* a, Solution* b){return *a < *b;});
+}

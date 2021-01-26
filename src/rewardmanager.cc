@@ -34,14 +34,18 @@ VectorXd RewardManager::extreme(std::vector<std::vector<double>>const& deltas) c
 		});
 }
 
+VectorXd RewardManager::normalized(VectorXd const& x) const {
+	return x / x.maxCoeff();
+}
+
 VectorXd AverageNormalizedReward::getReward(VectorXd const& improvements, 
 		VectorXi const& assignment) const {
-	return normalizeAbs(average(group(improvements, assignment)));
+	return normalized(average(group(improvements, assignment)));
 }
 
 VectorXd ExtremeNormalizedReward::getReward(VectorXd const& improvements, 
 		VectorXi const& assignment) const {
-	return normalizeAbs(extreme(group(improvements, assignment)));
+	return normalized(extreme(group(improvements, assignment)));
 }
 
 VectorXd ExtremeReward::getReward(VectorXd const& improvements, 

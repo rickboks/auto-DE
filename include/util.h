@@ -6,44 +6,20 @@
 #include "rng.h"
 #include "solution.h"
 
-[[nodiscard]] VectorXd normalizeAbs(VectorXd vec);
 double distance(Solution const* const s1, Solution const* const s2);
 double distance(VectorXd const& s1, VectorXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
+Solution* getPBest(std::vector<Solution*> genomes);
+Solution* getBest(std::vector<Solution*>const& genomes);
+Solution* getWorst(std::vector<Solution*>const& genomes);
+void sortOnFitness(std::vector<Solution*>& genomes);
 
 template <typename T>
 std::vector<T> remove(std::vector<T> vec, int const i){
 	vec.erase(vec.begin()+i);
 	return vec;
-}
-
-template <typename T>
-void sortOnFitness(std::vector<T*>& genomes){
-	std::sort(genomes.begin(), genomes.end(), [](T* a, T* b){return *a < *b;});
-}
-
-template<typename T>
-T* getPBest(std::vector<T*> genomes){
-	double const p = std::max(0.05, 3./genomes.size());
-	sortOnFitness(genomes);
-	std::vector<T*> bestP = std::vector<T*>(genomes.begin(), genomes.begin() + (genomes.size() * p));
-
-	if (bestP.empty())
-		return genomes[0];
-	else
-		return bestP[rng.randInt(0, bestP.size()-1)];
-}
-
-template<typename T>
-T* getBest(std::vector<T*>const& genomes){
-	return *std::min_element(genomes.begin(), genomes.end(), [](T const* const a, T const* const b){return *a < *b;});
-}
-
-template<typename T>
-T* getWorst(std::vector<T*>const& genomes){
-	return *std::max_element(genomes.begin(), genomes.end(), [](T const * const a, T const * const b){return *a < *b;});
 }
 
 template<typename T>

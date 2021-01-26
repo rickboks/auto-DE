@@ -10,6 +10,7 @@ class RewardManager {
 	protected:
 		VectorXd average(std::vector<std::vector<double>>const& deltas) const;
 		VectorXd extreme(std::vector<std::vector<double>>const& deltas) const;
+		VectorXd normalized(VectorXd const& x) const;
 		std::vector<std::vector<double>> group(VectorXd const& improvements, 
 				VectorXi const& assignment) const;
 		int const K;
