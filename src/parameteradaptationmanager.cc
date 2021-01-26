@@ -25,7 +25,7 @@ SHADEManager::SHADEManager(int const popSize, int const K) :
 }
 
 double SHADEManager::weightedMean(VectorXd const& x, VectorXd const& w) const{
-	return (x.array() * w.array()).sum();
+	return (w.array() * x.array()).sum();
 }
 
 double SHADEManager::weightedLehmerMean(VectorXd const& x, VectorXd const& w) const{
@@ -49,7 +49,7 @@ void SHADEManager::update(VectorXd const& improvement){
 	}
 	
 	for (int c = 0; c < K; c++){
-		if (!SF[c].empty()){
+		if (!improvements[c].empty()){
 			VectorXd const _w = w(VectorXd::Map(improvements[c].data(), improvements[c].size()));
 			MF(c,k(c)) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
 			MCr(c,k(c)) = weightedMean(VectorXd::Map(SCr[c].data(), SCr[c].size()), _w);

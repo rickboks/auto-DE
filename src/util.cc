@@ -57,7 +57,7 @@ std::vector<int> range(int const size){
 }
 
 Solution* getPBest(std::vector<Solution*>const& genomes){
-	int const P = std::max(0.05, 3./genomes.size()) * genomes.size(); // The number of elements to consider
+	int const P = rng.randDouble(2./genomes.size(), .2) * genomes.size(); // The number of elements to consider
 	std::vector<Solution*> const sorted = sortOnFitness(genomes);
 	return (P > 0 ? sorted[rng.randInt(0, P-1)] : sorted[0]);
 }
