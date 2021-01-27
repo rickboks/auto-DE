@@ -5,7 +5,7 @@
 #include <map>
 #include "Eigen/Dense"
 
-using Eigen::VectorXd;
+using Eigen::ArrayXd;
 class ProbabilityManager {
 	protected:
 		int const K;
@@ -14,7 +14,7 @@ class ProbabilityManager {
 		static std::function<ProbabilityManager* (int const)> create(std::string const id);
 		ProbabilityManager(int const K): K(K), pMin(.2/K){};
 		virtual ~ProbabilityManager (){};
-		virtual void updateProbability(VectorXd& p, VectorXd const& q) const=0;
+		virtual void updateProbability(ArrayXd& p, ArrayXd const& q) const=0;
 };
 
 class AdaptivePursuitManager : public ProbabilityManager {
@@ -23,11 +23,11 @@ class AdaptivePursuitManager : public ProbabilityManager {
 		double const pMax;
 	public:
 		AdaptivePursuitManager (int const K): ProbabilityManager(K), pMax(pMin + 1. - K * pMin){};
-		void updateProbability(VectorXd& p, VectorXd const& q) const;
+		void updateProbability(ArrayXd& p, ArrayXd const& q) const;
 };
 
 class ProbabilityMatchingManager : public ProbabilityManager {
 	public:
 		ProbabilityMatchingManager (int const K): ProbabilityManager(K){};
-		void updateProbability(VectorXd& p, VectorXd const& q) const;
+		void updateProbability(ArrayXd& p, ArrayXd const& q) const;
 };

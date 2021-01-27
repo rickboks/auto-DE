@@ -2,8 +2,8 @@
 #include "util.h"
 #include <numeric>
 
-void Logger::log(int const function, int const D, VectorXd const percCorrected, 
-		VectorXd const bestX, double const bestF, int const numEvals){
+void Logger::log(int const function, int const D, ArrayXd const percCorrected, 
+		ArrayXd const bestX, double const bestF, int const numEvals){
 	out.precision(3);
 
 	out << function << " " << D << " ";
@@ -18,7 +18,7 @@ void Logger::start(int const function, int const D){
 	out << function << " " << D << ":";
 }
 
-void Logger::log(VectorXd const& F, VectorXd const& Cr){
+void Logger::log(ArrayXd const& F, ArrayXd const& Cr){
 	out.precision(3);
 	out << F.mean() << " " << Cr.mean() << ","; 
 }

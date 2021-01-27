@@ -24,10 +24,10 @@ class Logger { // Used to log arbitrary stuff
 			out << "\n";
 		}
 
-		void log(int const function, int const D, VectorXd const percCorrected, 
-				VectorXd const bestX, double const bestF, int const numEvals);
+		void log(int const function, int const D, ArrayXd const percCorrected, 
+				ArrayXd const bestX, double const bestF, int const numEvals);
 
-		void log(VectorXd const& F, VectorXd const& Cr);
+		void log(ArrayXd const& F, ArrayXd const& Cr);
 		void start(int const f, int const D);
 
 		void newLine();

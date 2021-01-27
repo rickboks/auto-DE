@@ -4,44 +4,44 @@
 #include <string>
 #include "Eigen/Dense"
 
-using Eigen::VectorXd, Eigen::VectorXi;
+using Eigen::ArrayXd, Eigen::ArrayXi;
 
 class RewardManager {
 	protected:
-		VectorXd average(std::vector<std::vector<double>>const& deltas) const;
-		VectorXd extreme(std::vector<std::vector<double>>const& deltas) const;
-		VectorXd normalized(VectorXd const& x) const;
-		std::vector<std::vector<double>> group(VectorXd const& improvements, 
-				VectorXi const& assignment) const;
+		ArrayXd average(std::vector<std::vector<double>>const& deltas) const;
+		ArrayXd extreme(std::vector<std::vector<double>>const& deltas) const;
+		ArrayXd normalized(ArrayXd const& x) const;
+		std::vector<std::vector<double>> group(ArrayXd const& improvements, 
+				ArrayXi const& assignment) const;
 		int const K;
 	public:
 		static std::function<RewardManager*(int const)> create(std::string const id);
 		RewardManager(int const K);
 		virtual ~RewardManager (){};
-		virtual VectorXd getReward(VectorXd const& improvements, 
-				VectorXi const& assignment) const=0;
+		virtual ArrayXd getReward(ArrayXd const& improvements, 
+				ArrayXi const& assignment) const=0;
 };
 
 class AverageNormalizedReward : public RewardManager {
 	public:
 		AverageNormalizedReward(int const K): RewardManager(K){};
-		VectorXd getReward(VectorXd const& improvements, VectorXi const& assignment) const;
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
 };
 
 class AverageReward : public RewardManager {
 	public:
 		AverageReward(int const K): RewardManager(K){};
-		VectorXd getReward(VectorXd const& improvements, VectorXi const& assignment) const;
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
 };
 
 class ExtremeNormalizedReward : public RewardManager {
 	public:
 		ExtremeNormalizedReward(int const K): RewardManager(K){};
-		VectorXd getReward(VectorXd const& improvements, VectorXi const& assignment) const;
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
 };
 
 class ExtremeReward : public RewardManager {
 	public:
 		ExtremeReward(int const K): RewardManager(K){};
-		VectorXd getReward(VectorXd const& improvements, VectorXi const& assignment) const;
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
 };

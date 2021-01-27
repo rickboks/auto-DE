@@ -12,7 +12,7 @@ std::function<CrossoverManager* ()> CrossoverManager::create(std::string const i
 }
 
 Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{
-	VectorXd x = target->X();
+	ArrayXd x = target->X();
 	unsigned int const jrand = rng.randInt(0,x.size()-1);
 	for (unsigned int j = 0; j < x.size(); j++){
 		if (j == jrand || rng.randDouble(0,1) < Cr)
@@ -22,7 +22,7 @@ Solution* BinomialCrossoverManager::crossover(Solution const* const target, Solu
 }
 
 Solution* ExponentialCrossoverManager::crossover(Solution const* const target, Solution const* const donor, double const Cr) const{
-	VectorXd x = target->X();
+	ArrayXd x = target->X();
 	int const start = rng.randInt(0,x.size()-1);
 
 	int L = 1;

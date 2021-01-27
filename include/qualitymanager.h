@@ -4,7 +4,7 @@
 #include <functional>
 #include "Eigen/Dense"
 
-using Eigen::VectorXd;
+using Eigen::ArrayXd;
 class QualityManager {
 	protected:
 		int const K;
@@ -12,8 +12,8 @@ class QualityManager {
 		static std::function<QualityManager* (int const)> create(std::string const id);
 		QualityManager(int const K) : K(K){};
 		virtual ~QualityManager(){};
-		virtual void updateQuality(VectorXd &q, VectorXd const& r, 
-				VectorXd const& p) const=0;
+		virtual void updateQuality(ArrayXd &q, ArrayXd const& r, 
+				ArrayXd const& p) const=0;
 };
 
 class WeightedSumQuality : public QualityManager {
@@ -21,16 +21,16 @@ class WeightedSumQuality : public QualityManager {
 		double const alpha = 0.8;
 	public:
 		WeightedSumQuality(int const K) : QualityManager(K){};
-		void updateQuality(VectorXd &q, VectorXd const& r, 
-				VectorXd const& p) const;
+		void updateQuality(ArrayXd &q, ArrayXd const& r, 
+				ArrayXd const& p) const;
 };
 
 class BellmanQuality : public QualityManager {
 	private:
 		double const gamma = 0.75;
-		VectorXd softmax(VectorXd const& x) const;
+		ArrayXd softmax(ArrayXd const& x) const;
 	public:
 		BellmanQuality(int const K) : QualityManager(K){}
-		void updateQuality(VectorXd &q, VectorXd const& r, 
-				VectorXd const& p) const;
+		void updateQuality(ArrayXd &q, ArrayXd const& r, 
+				ArrayXd const& p) const;
 };

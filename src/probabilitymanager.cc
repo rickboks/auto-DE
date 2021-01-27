@@ -11,13 +11,13 @@ std::function<ProbabilityManager* (int const)> ProbabilityManager::create(std::s
 	ALIAS("PM", ProbabilityMatchingManager)
 	throw std::invalid_argument("no such ProbabilityManager: " + id);
 }
-void AdaptivePursuitManager::updateProbability(VectorXd& p, VectorXd const& q) const {
+void AdaptivePursuitManager::updateProbability(ArrayXd& p, ArrayXd const& q) const {
 	Eigen::Index bestIdx; q.maxCoeff(&bestIdx);
-	VectorXd const new_p = 
-		VectorXd::NullaryExpr(K, [this, bestIdx](Eigen::Index const i){return i == bestIdx ? pMax : pMin;});
+	ArrayXd const new_p = 
+		ArrayXd::NullaryExpr(K, [this, bestIdx](Eigen::Index const i){return i == bestIdx ? pMax : pMin;});
 	p += beta * (new_p - p);
 }
 
-void ProbabilityMatchingManager::updateProbability(VectorXd& p, VectorXd const& q) const {
-	p = pMin + ((1. - K * pMin) * (q / q.sum())).array();
+void ProbabilityMatchingManager::updateProbability(ArrayXd& p, ArrayXd const& q) const {
+	p = pMin + (1. - K * pMin) * (q / q.sum());
 }

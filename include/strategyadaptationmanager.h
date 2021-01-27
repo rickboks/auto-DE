@@ -24,7 +24,7 @@ class StrategyAdaptationManager {
 		virtual ~StrategyAdaptationManager();
 		virtual void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				VectorXd& Fs, VectorXd& Crs)=0;
+				ArrayXd& Fs, ArrayXd& Crs)=0;
 		virtual void update(std::vector<Solution*>const& trials);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
@@ -45,7 +45,7 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 				std::vector<Solution*>const& population);
 		void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				VectorXd& Fs, VectorXd& Crs);
+				ArrayXd& Fs, ArrayXd& Crs);
 };
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
@@ -54,20 +54,20 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;
 		double const alpha = .8;
-		VectorXd p; 
-		VectorXd q; 
+		ArrayXd p; 
+		ArrayXd q; 
 		std::vector<int> previousStrategies;
-		VectorXd previousFitness; 
-		VectorXd previousDistances; // Distances of all K configs
-		VectorXd previousMean;
-		VectorXd getMean(std::vector<Solution*>const& population) const;
-		VectorXd getDistances(std::vector<Solution*>const& population, VectorXd const& mean) const;
+		ArrayXd previousFitness; 
+		ArrayXd previousDistances; // Distances of all K configs
+		ArrayXd previousMean;
+		ArrayXd getMean(std::vector<Solution*>const& population) const;
+		ArrayXd getDistances(std::vector<Solution*>const& population, ArrayXd const& mean) const;
 	public:
 		AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
 		~AdaptiveStrategyManager();
 		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				VectorXd& Fs, VectorXd& Crs);
+				ArrayXd& Fs, ArrayXd& Crs);
 		void update(std::vector<Solution*>const& trials);
 };

@@ -3,9 +3,9 @@
 #include "solution.h"
 #include <stdexcept>
 
-std::function<ConstraintHandler* (VectorXd const, VectorXd const)> 
+std::function<ConstraintHandler* (ArrayXd const, ArrayXd const)> 
 ConstraintHandler::create(std::string const id){
-#define ALIAS(X,Y) if(id==X) return [](VectorXd const lb, VectorXd const ub){return new Y(lb,ub);};
+#define ALIAS(X,Y) if(id==X) return [](ArrayXd const lb, ArrayXd const ub){return new Y(lb,ub);};
 	ALIAS("DP", DeathPenalty)
 	ALIAS("RS", ResamplingRepair)
 	ALIAS("RI", ReinitializationRepair)
@@ -82,7 +82,7 @@ void MidpointTargetRepair::repair(Solution* const p, Solution const* const /*bas
 }
 
 void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /*base*/, Solution const* const /*target*/) {
-	VectorXd const x = p->X();
+	ArrayXd const x = p->X();
 	std::vector<double>alphas(D+1);
 	alphas[D] = 1.;
 
@@ -105,7 +105,7 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /
 }
 
 void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
-	VectorXd const x = p->X();
+	ArrayXd const x = p->X();
 	std::vector<double> alphas(D+1);
 	alphas[D] = 1.;
 
@@ -218,7 +218,7 @@ void WrappingRepair::repair(Solution* const p) {
 }
 
 // Transformation, adapted from https://github.com/psbiomech/c-cmaes
-TransformationRepair::TransformationRepair(VectorXd const lb, VectorXd const ub) 
+TransformationRepair::TransformationRepair(ArrayXd const lb, ArrayXd const ub) 
 	:ConstraintHandler(lb,ub), al(D), au(D), xlo(D), xhi(D), r(D){
 	for (int i = 0; i < D; i++){
 		al(i) = std::min( (ub(i)-lb(i))/2., (1.+std::abs(lb(i)))/20. );

@@ -22,8 +22,8 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	this->popSize = popSize;
 	this->problem = problem;
 
-	VectorXd const lowerBound = VectorXd::Map(coco_problem_get_smallest_values_of_interest(problem), D),
-				upperBound = VectorXd::Map(coco_problem_get_largest_values_of_interest(problem), D);
+	ArrayXd const lowerBound = ArrayXd::Map(coco_problem_get_smallest_values_of_interest(problem), D),
+				upperBound = ArrayXd::Map(coco_problem_get_largest_values_of_interest(problem), D);
 
 	// Initialize and evaluate the population
 	genomes.resize(popSize, NULL);
@@ -46,7 +46,7 @@ void DifferentialEvolution::run(coco_problem_t* problem, int const evalBudget, i
 
 // Optimize the problem for 'evalBudget' evaluations.
 void DifferentialEvolution::run(int const evalBudget){
-	VectorXd Fs(popSize), Crs(popSize);
+	ArrayXd Fs(popSize), Crs(popSize);
 
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.

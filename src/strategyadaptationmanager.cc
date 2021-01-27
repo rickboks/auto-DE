@@ -22,7 +22,7 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 }
 
 void StrategyAdaptationManager::update(std::vector<Solution*>const& population){
-	VectorXd trialF(popSize);
+	ArrayXd trialF(popSize);
 	for (int i = 0; i < popSize; i++)
 		trialF(i) = population[i]->getFitness();
 	parameterAdaptationManager->update(trialF);
@@ -53,12 +53,12 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 }
 
 void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/, std::map<MutationManager*, 
-		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, VectorXd& Fs, 
-		VectorXd& Crs){
+		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, 
+		ArrayXd& Crs){
 	std::vector<int> const key = range(popSize);
 	mutation[std::get<0>(configurations.front())] = key;
 	crossover[std::get<1>(configurations.front())] = key;
-	parameterAdaptationManager->nextParameters(Fs, Crs, VectorXi::Zero(popSize));
+	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Zero(popSize));
 }
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -67,7 +67,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	p(VectorXd::Constant(K, 1./K)), q(VectorXd::Zero(K)), previousStrategies(popSize), previousFitness(popSize){
+	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Zero(K)), previousStrategies(popSize), previousFitness(popSize){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -78,7 +78,7 @@ AdaptiveStrategyManager::~AdaptiveStrategyManager(){
 
 void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
-		VectorXd& Fs, VectorXd& Crs){
+		ArrayXd& Fs, ArrayXd& Crs){
 	previousMean = getMean(population);
 	previousDistances = getDistances(population, previousMean);
 
@@ -97,41 +97,41 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		crossover[c].push_back(i);
 	}
 
-	parameterAdaptationManager->nextParameters(Fs, Crs, VectorXi::Map(assignment.data(), assignment.size()));
+	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(assignment.data(), assignment.size()));
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
-	VectorXd improvement = VectorXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-		return (trials[i]->getFitness() < previousFitness[i] ? previousFitness[i] - trials[i]->getFitness() : 0.);
-	});
+	ArrayXd const improvement = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
+		return (trials[i]->getFitness() < previousFitness[i] 
+				? 
+					previousFitness[i] - trials[i]->getFitness() 
+				: 
+					0.
+				);
+	// Apply diversity bonus
+	}) * (1. + (getDistances(trials, previousMean) - previousDistances) / 
+		previousDistances.mean()).max(1).pow(2);
 
-	VectorXd const diversityFactor = 
-		(1. + (
-			  (getDistances(trials, previousMean) - previousDistances) / previousDistances.mean()
-			  ).array()
-		 ).max(1).pow(2);
-
-	improvement.array() *= diversityFactor.array();
-
-	VectorXd const r = rewardManager->getReward(
-			improvement, VectorXi::Map(previousStrategies.data(), previousStrategies.size()));
+	ArrayXd const r = rewardManager->getReward(
+			improvement, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 
 	qualityManager->updateQuality(q, r, p);
 	probabilityManager->updateProbability(p, q);
 	parameterAdaptationManager->update(improvement);
 }
 
-VectorXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
-	VectorXd mean = VectorXd::Zero(D); // Mean position of the entire population
-	for (Solution* s : population) 
-		mean += s->X();
-	mean /= popSize;
-	return mean;
+ArrayXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
+	ArrayXXd pop(D, popSize);
+	for (int i = 0; i < popSize; i++)
+		pop.col(i) = population[i]->X();
+	return pop.rowwise().mean();
 }
 
-VectorXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
-		VectorXd const& mean) const{
-	return VectorXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
+
+ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
+		ArrayXd const& mean) const{
+
+	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 		}); 
 }

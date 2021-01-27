@@ -153,7 +153,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 	double const p1 = std::abs(xr[1]->getFitness()) / pPrime;
 	double const p2 = std::abs(xr[2]->getFitness()) / pPrime;
 
-	VectorXd mutant = (xr[0]->X() + xr[1]->X() + xr[2]->X())/3.;
+	ArrayXd mutant = (xr[0]->X() + xr[1]->X() + xr[2]->X())/3.;
 	Solution const base = Solution(mutant); // only used for correction strategies
 
 	mutant += (p1-p0) * (xr[0]->X() - xr[1]->X()) + (p2-p1) * (xr[1]->X() - xr[2]->X()) + 
@@ -166,7 +166,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 
 Solution* TrigonometricMutationManager::rand1Mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
-	VectorXd const mutant = xr[0]->X() + F * (xr[1]->X() - xr[2]->X());
+	ArrayXd const mutant = xr[0]->X() + F * (xr[1]->X() - xr[2]->X());
 	Solution* const m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
 	return m;

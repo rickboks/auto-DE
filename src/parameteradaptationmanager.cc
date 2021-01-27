@@ -18,25 +18,25 @@ ParameterAdaptationManager::ParameterAdaptationManager(int const popSize, int co
 // SHADE
 SHADEManager::SHADEManager(int const popSize, int const K) : 
 	ParameterAdaptationManager(popSize, K), H(popSize/K), MCr(K, H), MF(K, H), 
-	k(VectorXi::Zero(K)){
+	k(ArrayXi::Zero(K)){
 
 	MCr.fill(.5);
 	MF.fill(.5);
 }
 
-double SHADEManager::weightedMean(VectorXd const& x, VectorXd const& w) const{
-	return (w.array() * x.array()).sum();
+double SHADEManager::weightedMean(ArrayXd const& x, ArrayXd const& w) const{
+	return (w * x).sum();
 }
 
-double SHADEManager::weightedLehmerMean(VectorXd const& x, VectorXd const& w) const{
-	return (w.array() * x.array().pow(2)).sum() / (w.array() * x.array()).sum();
+double SHADEManager::weightedLehmerMean(ArrayXd const& x, ArrayXd const& w) const{
+	return (w * x.pow(2)).sum() / (w * x).sum();
 }
 
-VectorXd SHADEManager::w(VectorXd const& improvements) const {
+ArrayXd SHADEManager::w(ArrayXd const& improvements) const {
 	return improvements/improvements.sum();
 }
 
-void SHADEManager::update(VectorXd const& improvement){
+void SHADEManager::update(ArrayXd const& improvement){
 	std::vector<std::vector<double>> SF(K), SCr(K), improvements(K);
 
 	for (int i = 0; i < popSize; i++){
@@ -50,15 +50,15 @@ void SHADEManager::update(VectorXd const& improvement){
 	
 	for (int c = 0; c < K; c++){
 		if (!improvements[c].empty()){
-			VectorXd const _w = w(VectorXd::Map(improvements[c].data(), improvements[c].size()));
-			MF(c,k(c)) = weightedLehmerMean(VectorXd::Map(SF[c].data(), SF[c].size()), _w);
-			MCr(c,k(c)) = weightedMean(VectorXd::Map(SCr[c].data(), SCr[c].size()), _w);
+			ArrayXd const _w = w(ArrayXd::Map(improvements[c].data(), improvements[c].size()));
+			MF(c,k(c)) = weightedLehmerMean(ArrayXd::Map(SF[c].data(), SF[c].size()), _w);
+			MCr(c,k(c)) = weightedMean(ArrayXd::Map(SCr[c].data(), SCr[c].size()), _w);
 			k(c) = (k(c)+1)%H;
 		}
 	}
 }
 
-void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& assignment){
+void SHADEManager::nextParameters(ArrayXd& Fs, ArrayXd& Crs, ArrayXi const& assignment){
 	for (int i = 0; i < popSize; i++){
 		int const randIndex = rng.randInt(0, H-1);
 		int const config = assignment(i); // The configuration that this individual will use
@@ -83,12 +83,12 @@ void SHADEManager::nextParameters(VectorXd& Fs, VectorXd& Crs, VectorXi const& a
 ConstantParameterManager::ConstantParameterManager(int const popSize, int const K)
  : ParameterAdaptationManager(popSize, K){}
 
-void ConstantParameterManager::update(VectorXd const& /*trials*/){
+void ConstantParameterManager::update(ArrayXd const& /*trials*/){
 	//ignore
 }
 
-void ConstantParameterManager::nextParameters(VectorXd& Fs, VectorXd& Crs, 
-		VectorXi const& /*assignment*/){
+void ConstantParameterManager::nextParameters(ArrayXd& Fs, ArrayXd& Crs, 
+		ArrayXi const& /*assignment*/){
 	Fs.fill(F);
 	Crs.fill(Cr);
 }

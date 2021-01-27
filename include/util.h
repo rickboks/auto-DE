@@ -7,7 +7,7 @@
 #include "solution.h"
 
 double distance(Solution const* const s1, Solution const* const s2);
-double distance(VectorXd const& s1, VectorXd const& s2);
+double distance(ArrayXd const& s1, ArrayXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);

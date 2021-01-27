@@ -12,13 +12,13 @@ std::function<QualityManager* (int const)> QualityManager::create(std::string co
 	throw std::invalid_argument("no such QualityManager: " + id);
 }
 
-void WeightedSumQuality::updateQuality(VectorXd&q, VectorXd const& r, 
-		VectorXd const& /*p*/) const{
+void WeightedSumQuality::updateQuality(ArrayXd&q, ArrayXd const& r, 
+		ArrayXd const& /*p*/) const{
 	q += alpha * (r - q);
 }
 
-void BellmanQuality::updateQuality(VectorXd&q, VectorXd const& r, 
-		VectorXd const& p) const{
+void BellmanQuality::updateQuality(ArrayXd&q, ArrayXd const& r, 
+		ArrayXd const& p) const{
 	MatrixXd P(K, K);
 	P.diagonal().fill(0.);
 
@@ -26,10 +26,10 @@ void BellmanQuality::updateQuality(VectorXd&q, VectorXd const& r,
 		for (int j = i+1; j < K; j++)
 			P(i,j) = P(j,i) = p(i) + p(j);
 
-	q = softmax((1. - (gamma * P.array())).matrix().inverse() * r);
+	q = softmax((1. - gamma * P.array()).matrix().inverse() * r.matrix());
 }
 
-VectorXd BellmanQuality::softmax(VectorXd const& x) const{
-	VectorXd const exp_x = x.array().exp();
+ArrayXd BellmanQuality::softmax(ArrayXd const& x) const{
+	ArrayXd const exp_x = x.exp();
 	return exp_x / exp_x.sum();
 }

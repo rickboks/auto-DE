@@ -5,7 +5,7 @@
 #include <fstream>
 #include <numeric>
 
-VectorXd normalizeAbs(VectorXd vec){ // Normalize by largest *absolute* value
+ArrayXd normalizeAbs(ArrayXd vec){ // Normalize by largest *absolute* value
 	double const absMax = vec.cwiseAbs().maxCoeff();
 	if (absMax > 0.) 
 		vec /= absMax;
@@ -35,8 +35,8 @@ double distance(Solution const*const s1, Solution const*const s2) {
 	return distance(s1->X(), s2->X());
 }
 
-double distance(VectorXd const& s1, VectorXd const& s2){
-	return (s1 - s2).norm();
+double distance(ArrayXd const& s1, ArrayXd const& s2){
+	return (s1 - s2).matrix().norm();
 }
 
 std::string checkFilename(std::string const fn){
