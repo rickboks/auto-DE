@@ -5,20 +5,20 @@ using Eigen::ArrayXXd;
 
 std::function<MutationManager* (ConstraintHandler* const)> MutationManager::create(std::string const id){
 #define ALIAS(X, Y) if (id == X) return [](ConstraintHandler* const ch){return new Y(ch);};
-	ALIAS("R1", Rand1MutationManager)
-	ALIAS("T1", TTB1MutationManager)
-	ALIAS("T2", TTB2MutationManager)
-	ALIAS("P1", TTPB1MutationManager)
-	ALIAS("B1", Best1MutationManager)
-	ALIAS("B2", Best2MutationManager)
-	ALIAS("R2", Rand2MutationManager)
-	ALIAS("RD", Rand2DirMutationManager)
-	ALIAS("NS", NSDEMutationManager)
-	ALIAS("TR", TrigonometricMutationManager)
-	ALIAS("O1", TwoOpt1MutationManager)
-	ALIAS("O2", TwoOpt2MutationManager)
-	ALIAS("PX", ProximityMutationManager)
-	ALIAS("RA", RankingMutationManager)
+	ALIAS("RA1", Rand1MutationManager)
+	ALIAS("TB1", TTB1MutationManager)
+	ALIAS("TB2", TTB2MutationManager)
+	ALIAS("TP1", TTPB1MutationManager)
+	ALIAS("BE1", Best1MutationManager)
+	ALIAS("BE2", Best2MutationManager)
+	ALIAS("RA2", Rand2MutationManager)
+	ALIAS("R2D", Rand2DirMutationManager)
+	ALIAS("NSD", NSDEMutationManager)
+	ALIAS("TRI", TrigonometricMutationManager)
+	ALIAS("TO1", TwoOpt1MutationManager)
+	ALIAS("TO2", TwoOpt2MutationManager)
+	ALIAS("PRX", ProximityMutationManager)
+	ALIAS("RAN", RankingMutationManager)
 	throw std::invalid_argument("no such MutationManager: " + id);
 }
 

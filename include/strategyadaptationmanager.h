@@ -53,7 +53,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		RewardManager const* const rewardManager;
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;
-		double const alpha = .8;
+		double const alpha = .3;
 		ArrayXd p; 
 		ArrayXd q; 
 		std::vector<int> previousStrategies;

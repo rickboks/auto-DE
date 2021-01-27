@@ -15,7 +15,7 @@ void AdaptivePursuitManager::updateProbability(ArrayXd& p, ArrayXd const& q) con
 	Eigen::Index bestIdx; q.maxCoeff(&bestIdx);
 	ArrayXd const new_p = 
 		ArrayXd::NullaryExpr(K, [this, bestIdx](Eigen::Index const i){return i == bestIdx ? pMax : pMin;});
-	p += beta * (new_p - p);
+	p = (1.-beta) * p + beta * new_p; // low beta -> slow change
 }
 
 void ProbabilityMatchingManager::updateProbability(ArrayXd& p, ArrayXd const& q) const {

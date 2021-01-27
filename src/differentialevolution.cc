@@ -22,11 +22,12 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	this->popSize = popSize;
 	this->problem = problem;
 
-	ArrayXd const lowerBound = ArrayXd::Map(coco_problem_get_smallest_values_of_interest(problem), D),
-				upperBound = ArrayXd::Map(coco_problem_get_largest_values_of_interest(problem), D);
+	ArrayXd const 
+		lowerBound = ArrayXd::Map(coco_problem_get_smallest_values_of_interest(problem), D),
+		upperBound = ArrayXd::Map(coco_problem_get_largest_values_of_interest(problem), D);
 
 	// Initialize and evaluate the population
-	genomes.resize(popSize, NULL);
+	genomes.resize(popSize);
 	for (int i = 0; i < popSize; i++){
 		genomes[i] = new Solution(D);
 		genomes[i]->randomize(lowerBound, upperBound);

@@ -5,13 +5,6 @@
 #include <fstream>
 #include <numeric>
 
-ArrayXd normalizeAbs(ArrayXd vec){ // Normalize by largest *absolute* value
-	double const absMax = vec.cwiseAbs().maxCoeff();
-	if (absMax > 0.) 
-		vec /= absMax;
-	return vec;
-}
-
 std::string generateConfig(std::string const templateFile, std::string const name){
 	std::string const folder = "configurations";
 	std::string const cfgFile = folder + "/" + name + ".ini";

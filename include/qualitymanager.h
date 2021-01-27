@@ -18,7 +18,7 @@ class QualityManager {
 
 class WeightedSumQuality : public QualityManager {
 	private:
-		double const alpha = 0.8;
+		double const alpha = 0.2;
 	public:
 		WeightedSumQuality(int const K) : QualityManager(K){};
 		void updateQuality(ArrayXd &q, ArrayXd const& r, 

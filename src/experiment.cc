@@ -42,10 +42,10 @@ int main() {
 	coco_set_log_level("info");
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"R1", "B1"},
+			{"B1", "R1"},
 			{"B"},							/* Crossover */	
 			"S",							/* Parameter self-adaptation */
-			"AN", 		 					/* Reward */
+			"EA", 		 					/* Reward */
 			"WS",							/* Quality */
 			"PM" 		 					/* Probability */
 		},
@@ -54,7 +54,7 @@ int main() {
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"40",
+	  	dimensions 	= 	"20",
 	 	functions 	= 	"23",
 		instances 	= 	"1-15";
 
