@@ -42,7 +42,7 @@ int main() {
 	coco_set_log_level("info");
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"B1", "R1"},
+			{"BE1", "RA1"},
 			{"B"},							/* Crossover */	
 			"S",							/* Parameter self-adaptation */
 			"EA", 		 					/* Reward */
