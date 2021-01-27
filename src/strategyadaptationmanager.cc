@@ -81,23 +81,22 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		ArrayXd& Fs, ArrayXd& Crs){
 	previousMean = getMean(population);
 	previousDistances = getDistances(population, previousMean);
-
-	std::vector<int> const assignment = rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), 
-			popSize, true);
-	previousStrategies = assignment; 
+	previousStrategies = //Roulette WITH replacement
+		rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), popSize, true); 
+	previousFitness = 
+		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
 
 	mutation.clear(); 
 	crossover.clear();
 	for (int i = 0; i < popSize; i++){
-		previousFitness(i) = population[i]->getFitness();
-		auto const [m, c] = configurations[assignment[i]];
+		auto const [m, c] = configurations[previousStrategies[i]];
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};
 		mutation[m].push_back(i); 
 		crossover[c].push_back(i);
 	}
 
-	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(assignment.data(), assignment.size()));
+	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
@@ -127,11 +126,9 @@ ArrayXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population
 	return pop.rowwise().mean();
 }
 
-
 ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
 		ArrayXd const& mean) const{
-
 	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
-		}); 
+	}); 
 }
