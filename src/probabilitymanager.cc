@@ -12,7 +12,7 @@ std::function<ProbabilityManager* (int const)> ProbabilityManager::create(std::s
 	throw std::invalid_argument("no such ProbabilityManager: " + id);
 }
 void AdaptivePursuitManager::updateProbability(VectorXd& p, VectorXd const& q) const {
-	int const bestIdx = argmax(q);
+	Eigen::Index bestIdx; q.maxCoeff(&bestIdx);
 	VectorXd const new_p = 
 		VectorXd::NullaryExpr(K, [this, bestIdx](Eigen::Index const i){return i == bestIdx ? pMax : pMin;});
 	p += beta * (new_p - p);
