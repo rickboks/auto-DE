@@ -17,25 +17,28 @@ RewardManager::RewardManager(int const K): K(K){}
 std::vector<std::vector<double>> RewardManager::group(ArrayXd const& improvements, 
 		ArrayXi const& assignment) const{
 	std::vector<std::vector<double>> groups(K);
-	for (unsigned int i = 0; i < improvements.size(); i++)
-		groups[assignment(i)].push_back(improvements(i));
+	for (unsigned int i = 0; i < improvements.size(); i++){
+		if (improvements(i) > 0.)
+			groups[assignment(i)].push_back(improvements(i));
+	}
 	return groups;
 }
 
 ArrayXd RewardManager::average(std::vector<std::vector<double>>const& deltas) const {
 	return ArrayXd::NullaryExpr(K, [deltas](Eigen::Index const i){
-			return (deltas[i].empty() ? 0. : ArrayXd::Map(deltas[i].data(), deltas[i].size()).mean());
+			return deltas[i].empty() ? 0. : ArrayXd::Map(deltas[i].data(), deltas[i].size()).mean();
 		});
 }
 
 ArrayXd RewardManager::extreme(std::vector<std::vector<double>>const& deltas) const {
 	return ArrayXd::NullaryExpr(K, [deltas](Eigen::Index const i){
-			return ArrayXd::Map(deltas[i].data(), deltas[i].size()).maxCoeff();
+			return deltas[i].empty() ? 0. : ArrayXd::Map(deltas[i].data(), deltas[i].size()).maxCoeff();
 		});
 }
 
 ArrayXd RewardManager::normalized(ArrayXd const& x) const {
-	return x / x.maxCoeff();
+	double const max = x.maxCoeff();
+	return max > 0. ? x/max : x;
 }
 
 ArrayXd AverageNormalizedReward::getReward(ArrayXd const& improvements, 

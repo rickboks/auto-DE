@@ -100,10 +100,11 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
-	ArrayXd const improvement = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-		return (previousFitness[i] - trials[i]->getFitness());}
-		).max(0) * 
-		(1. + (getDistances(trials, previousMean) - previousDistances) / previousDistances.mean()).max(1).pow(2);
+	ArrayXd const improvement = (ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
+			return std::max(previousFitness[i] - trials[i]->getFitness(), 0.);
+		}) * (
+			1. + ((getDistances(trials, previousMean) - previousDistances) / previousDistances.mean())
+		).max(1).pow(2));
 
 	ArrayXd const r = rewardManager->getReward(
 			improvement, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));

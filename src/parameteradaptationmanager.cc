@@ -40,8 +40,8 @@ void SHADEManager::update(ArrayXd const& improvement){
 	std::vector<std::vector<double>> SF(K), SCr(K), improvements(K);
 
 	for (int i = 0; i < popSize; i++){
-		int const c = previousAssignment(i);
 		if (improvement(i) > 0.){
+			int const c = previousAssignment(i);
 			SF[c].push_back(previousFs(i)); 
 			SCr[c].push_back(previousCrs(i));
 			improvements[c].push_back(improvement(i));
