@@ -1,3 +1,3 @@
-set logscale
-filelist=system("ls data/*")
+set logscale y
+filelist=system("ls plotdata/*")
 plot for [filename in filelist] filename with lines title filename

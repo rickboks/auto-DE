@@ -4,7 +4,7 @@
 #include <map>
 #include "Eigen/Dense"
 
-using Eigen::ArrayXd;
+using Eigen::ArrayXd, Eigen::ArrayXi;
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
@@ -37,6 +37,7 @@ class StrategyAdaptationManager {
 		virtual void update(std::vector<Solution*>const& trials);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
+		ArrayXi getActivations() const;
 	protected:
 		StrategyAdaptationConfiguration const config;
 		std::vector<MutationManager*> mutationManagers; 
@@ -46,6 +47,8 @@ class StrategyAdaptationManager {
 		int const K;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;
+		ArrayXi activations;
+		void updateActivations(std::vector<int> const& assignment);
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {

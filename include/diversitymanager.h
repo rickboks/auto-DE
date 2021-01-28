@@ -17,7 +17,13 @@ class FitnessScaledByDiversity : public DiversityManager {
 				ArrayXd const& currentDistances) const;
 };
 
-class DiversityImprovement : public DiversityManager {
+class DiversityFraction : public DiversityManager {
+	public:
+		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+				ArrayXd const& currentDistances) const;
+};
+
+class FitnessImprovement : public DiversityManager {
 	public:
 		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 				ArrayXd const& currentDistances) const;

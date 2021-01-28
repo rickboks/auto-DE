@@ -15,7 +15,8 @@
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
 	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
-	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)){
+	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), 
+	activations(ArrayXi::Zero(K)){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(MutationManager::create(m)(ch));
@@ -41,6 +42,15 @@ std::vector<CrossoverManager*> StrategyAdaptationManager::getCrossoverManagers()
 	return crossoverManagers;
 }
 
+void StrategyAdaptationManager::updateActivations(std::vector<int> const& assignment){
+	for (int i : assignment)
+		activations(i)++;
+}
+
+ArrayXi StrategyAdaptationManager::getActivations() const{
+	return activations;
+}
+
 StrategyAdaptationManager::~StrategyAdaptationManager(){
 	for (auto m : mutationManagers)
 		delete m;
@@ -60,10 +70,12 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, 
 		ArrayXd& Crs){
-	std::vector<int> const key = range(popSize);
-	mutation[std::get<0>(configurations.front())] = key;
-	crossover[std::get<1>(configurations.front())] = key;
-	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Zero(popSize));
+	std::vector<int> const indices = range(popSize);
+	std::vector<int> const assignment(popSize, 0);
+	updateActivations(assignment);
+	mutation[std::get<0>(configurations.front())] = indices;
+	crossover[std::get<1>(configurations.front())] = indices;
+	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(assignment.data(), assignment.size()));
 }
 
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -73,7 +85,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Zero(K)), previousStrategies(popSize), previousFitness(popSize){
+	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Zero(K)){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -87,10 +99,12 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		ArrayXd& Fs, ArrayXd& Crs){
 	previousMean = getMean(population);
 	previousDistances = getDistances(population, previousMean);
+
 	previousStrategies = //Roulette WITH replacement
 		rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), popSize, true); 
 	previousFitness = 
 		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+	updateActivations(previousStrategies);
 
 	mutation.clear(); 
 	crossover.clear();
@@ -136,3 +150,4 @@ ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& popul
 			return distance(population[i]->X(), mean);
 	}); 
 }
+

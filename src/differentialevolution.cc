@@ -16,7 +16,7 @@ DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 DifferentialEvolution::~DifferentialEvolution(){}
 
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
-	return getWorst(population)->getFitness() - getBest(population)->getFitness() < CONVERGENCE_DELTA;
+	return std::abs(getWorst(population)->getFitness() - getBest(population)->getFitness()) < CONVERGENCE_DELTA;
 } 
 
 // Should be called before starting to optimize a problem
@@ -61,8 +61,6 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 
-		std::cout << Fs << std::endl;
-
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
 		for (MutationManager* const m : strategyAdaptationManager->getMutationManagers()){
@@ -103,6 +101,8 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 	}
+
+	//std::cout << strategyAdaptationManager->getActivations().transpose() << std::endl;
 }
 
 void DifferentialEvolution::reset(){
