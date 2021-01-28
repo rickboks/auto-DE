@@ -7,7 +7,7 @@
 #include "crossovermanager.h"
 #include "util.h"
 
-#define CONVERGENCE_DELTA 1e-10
+#define CONVERGENCE_DELTA 1e-9
 
 DifferentialEvolution::DifferentialEvolution(DEConfig const config)
 	: config(config){

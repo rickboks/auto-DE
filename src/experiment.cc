@@ -43,8 +43,8 @@ int main() {
 	//coco_set_log_level("error");
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"TB1", "RA1", "BE1"},			/* Mutation */
-			{"B", "E"},						/* Crossover */	
+			{"RA1", "TP1", "TB2"},			/* Mutation */
+			{"B"},						/* Crossover */	
 			"S",							/* Parameter self-adaptation */
 			"DF",							/* Diversity reward */
 			"AA", 		 					/* Reward */
@@ -60,8 +60,7 @@ int main() {
 	 	functions 	= 	"1-24",
 		instances 	= 	"1-5";
 
-	std::string id = "DF";
-
+	std::string id = "debug";
 
 	experiment(
 		de, 
