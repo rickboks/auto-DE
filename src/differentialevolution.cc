@@ -2,6 +2,9 @@
 #include "differentialevolution.h"
 #include "strategyadaptationmanager.h"
 #include "parameteradaptationmanager.h"
+#include "constrainthandler.h"
+#include "mutationmanager.h"
+#include "crossovermanager.h"
 #include "util.h"
 
 #define CONVERGENCE_DELTA 1e-10

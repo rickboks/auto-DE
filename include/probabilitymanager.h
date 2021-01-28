@@ -19,7 +19,7 @@ class ProbabilityManager {
 
 class AdaptivePursuitManager : public ProbabilityManager {
 	private:
-		double const beta = .2;
+		double const beta = .6;
 		double const pMax;
 	public:
 		AdaptivePursuitManager (int const K): ProbabilityManager(K), pMax(pMin + 1. - K * pMin){};

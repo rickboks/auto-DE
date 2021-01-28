@@ -1,21 +1,30 @@
 #pragma once
+#include <string>
 #include <vector>
-#include "mutationmanager.h"
-#include "crossovermanager.h"
-#include "parameteradaptationmanager.h"
-#include "probabilitymanager.h"
+#include <map>
+#include "Eigen/Dense"
+
+using Eigen::ArrayXd;
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
-									std::string const param, std::string const reward, std::string const quality,
-									std::string const probability)
-	: mutation(mutation), crossover(crossover), param(param), reward(reward), quality(quality), probability(probability){};
+									std::string const param, std::string diversity, std::string const reward, 
+									std::string const quality, std::string const probability)
+	: mutation(mutation), crossover(crossover), param(param), diversity(diversity), reward(reward), quality(quality), 
+	probability(probability){};
 	std::vector<std::string> const mutation, crossover;
-	std::string const param, reward, quality, probability;
+	std::string const param, diversity, reward, quality, probability;
 };
 
 class RewardManager; 
 class QualityManager;
+class DiversityManager;
+class ProbabilityManager;
+class ParameterAdaptationManager;
+class MutationManager;
+class CrossoverManager;
+class ConstraintHandler;
+class Solution;
 
 class StrategyAdaptationManager {
 	public:
@@ -50,6 +59,7 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
+		DiversityManager const* const diversityManager;
 		RewardManager const* const rewardManager;
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;

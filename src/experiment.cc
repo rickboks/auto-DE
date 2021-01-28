@@ -11,6 +11,7 @@
 #include "util.h"
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 10000;
+static int const POPSIZE_MULTIPLIER = 5;
 
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
@@ -27,7 +28,7 @@ void experiment(DifferentialEvolution& de,
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		int const popSize = dimension * 5;
+		int const popSize = dimension * POPSIZE_MULTIPLIER;
 
 		do {
 			de.run(PROBLEM, budget, popSize);
@@ -42,9 +43,10 @@ int main() {
 	coco_set_log_level("info");
 	DifferentialEvolution de({
 		{ /* -- Strategy self-adaptation configuration -- */
-			{"BE1", "RA1"},
-			{"B"},							/* Crossover */	
+			{"RA1", "BE1"},
+			{"B", "E"},						/* Crossover */	
 			"S",							/* Parameter self-adaptation */
+			"DI",							/* Diversity reward */
 			"EA", 		 					/* Reward */
 			"WS",							/* Quality */
 			"PM" 		 					/* Probability */
@@ -55,15 +57,18 @@ int main() {
 	std::string const 
 		suite 		=	"bbob",
 	  	dimensions 	= 	"20",
-	 	functions 	= 	"23",
-		instances 	= 	"1-15";
+	 	functions 	= 	"1-24",
+		instances 	= 	"1-5";
+
+	std::string id = "O2";
+	//std::string id = "FITNESS";
 
 	experiment(
 		de, 
-		"bbob", 
+		suite.c_str(), 
 		("dimensions: " + dimensions + " instance_indices: " + instances + " function_indices: " + functions).c_str(), 
-		"bbob", 
-		("result_folder: " + de.getIdString()).c_str()
+		suite.c_str(), 
+		("result_folder: " + id).c_str()
 	);
 
 	return 0;

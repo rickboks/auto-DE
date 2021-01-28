@@ -6,6 +6,11 @@
 #include "rewardmanager.h"
 #include "util.h"
 #include "qualitymanager.h"
+#include "diversitymanager.h"
+#include "probabilitymanager.h"
+#include "mutationmanager.h"
+#include "crossovermanager.h"
+#include "parameteradaptationmanager.h"
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
@@ -64,6 +69,7 @@ void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/,
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
+	diversityManager(DiversityManager::create(config.diversity)()),
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
@@ -101,18 +107,14 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	// Fitness improvements. Deteriorations are set to 0.
-	ArrayXd const improvement = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-			return std::max(previousFitness[i] - trials[i]->getFitness(), 0.);
+	ArrayXd const fitnessDeltas = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
+			return previousFitness[i] - trials[i]->getFitness();
 		});
 
-	// Multiplier based on the diversity improvement
-	ArrayXd const diversityFactor = 
-		(1. + ((getDistances(trials, previousMean) - previousDistances) / previousDistances.mean())).max(1).pow(2);
+	ArrayXd const currentDistances = getDistances(trials, previousMean);
 
-	// The credit, based on diversity and fitness
-	ArrayXd const credit = diversityFactor * improvement;
+	ArrayXd const credit = diversityManager->rewardDiversity(fitnessDeltas, previousDistances, currentDistances);
 
-	// The final reward is computed based on the credit.
 	ArrayXd const r = rewardManager->getReward(
 			credit, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 
