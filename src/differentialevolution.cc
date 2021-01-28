@@ -61,6 +61,8 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 
+		std::cout << Fs << std::endl;
+
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
 		for (MutationManager* const m : strategyAdaptationManager->getMutationManagers()){
