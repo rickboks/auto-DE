@@ -26,6 +26,19 @@ class DiversityRatio : public DiversityManager {
 				ArrayXd const& currentDistances) const;
 };
 
+class DiversityRatioSquared : public DiversityManager {
+	public:
+		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+				ArrayXd const& currentDistances) const;
+};
+
+class DiversityRatioSquaredImprovement : public DiversityManager {
+	public:
+		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+				ArrayXd const& currentDistances) const;
+};
+
+
 class FitnessImprovement : public DiversityManager {
 	public:
 		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 

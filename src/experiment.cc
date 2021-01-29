@@ -46,7 +46,7 @@ int main() {
 			{"RA1", "TP1", "TB2"},			/* Mutation */
 			{"B"},						/* Crossover */	
 			"S",							/* Parameter self-adaptation */
-			"CO",							/* Diversity reward */
+			"DI",							/* Diversity reward */
 			"AA", 		 					/* Reward */
 			"WS",							/* Quality */
 			"AP" 		 					/* Probability */
@@ -56,11 +56,11 @@ int main() {
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"3",
+	  	dimensions 	= 	"20",
 	 	functions 	= 	"1-24",
 		instances 	= 	"1-5";
 
-	std::string id = "debug";
+	std::string id = "RICK3";
 
 	experiment(
 		de, 
