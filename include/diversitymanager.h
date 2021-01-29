@@ -1,7 +1,10 @@
 #pragma once
 #include "Eigen/Dense"
+#include <cmath>
 
-using Eigen::ArrayXd;
+constexpr double pi() { return std::atan(1)*4; }
+
+using Eigen::ArrayXd, Eigen::Vector2d;
 class DiversityManager {
 	public:
 		static std::function<DiversityManager* ()> create(std::string const id);
@@ -17,7 +20,7 @@ class FitnessScaledByDiversity : public DiversityManager {
 				ArrayXd const& currentDistances) const;
 };
 
-class DiversityFraction : public DiversityManager {
+class DiversityRatio : public DiversityManager {
 	public:
 		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 				ArrayXd const& currentDistances) const;
@@ -25,6 +28,16 @@ class DiversityFraction : public DiversityManager {
 
 class FitnessImprovement : public DiversityManager {
 	public:
+		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+				ArrayXd const& currentDistances) const;
+};
+
+class Compass : public DiversityManager {
+	private:
+		double const omega = pi() / 4.;
+		Vector2d const c;
+	public:
+		Compass() : c(cos(omega), sin(omega)){};
 		ArrayXd rewardDiversity(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 				ArrayXd const& currentDistances) const;
 };

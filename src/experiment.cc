@@ -46,7 +46,7 @@ int main() {
 			{"RA1", "TP1", "TB2"},			/* Mutation */
 			{"B"},						/* Crossover */	
 			"S",							/* Parameter self-adaptation */
-			"DF",							/* Diversity reward */
+			"CO",							/* Diversity reward */
 			"AA", 		 					/* Reward */
 			"WS",							/* Quality */
 			"AP" 		 					/* Probability */
@@ -56,7 +56,7 @@ int main() {
 
 	std::string const 
 		suite 		=	"bbob",
-	  	dimensions 	= 	"40",
+	  	dimensions 	= 	"3",
 	 	functions 	= 	"1-24",
 		instances 	= 	"1-5";
 
