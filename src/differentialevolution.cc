@@ -102,7 +102,7 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 	}
 
-	//std::cout << strategyAdaptationManager->getActivations().transpose() << std::endl;
+	std::cout << strategyAdaptationManager->getActivations().transpose() << std::endl;
 }
 
 void DifferentialEvolution::reset(){

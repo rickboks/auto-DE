@@ -100,7 +100,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 	previousMean = getMean(population);
 	previousDistances = getDistances(population, previousMean);
 
-	previousStrategies = //Roulette WITH replacement
+	previousStrategies = //Roulette with replacement
 		rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), popSize, true); 
 	previousFitness = 
 		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
@@ -146,7 +146,7 @@ ArrayXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population
 }
 
 ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
-		ArrayXd const& mean) const{
+		ArrayXd const& mean) const {
 	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 	}); 
