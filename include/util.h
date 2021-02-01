@@ -14,7 +14,7 @@ std::vector<int> range(int const size);
 Solution* getPBest(std::vector<Solution*>const& genomes);
 Solution* getBest(std::vector<Solution*>const& genomes);
 Solution* getWorst(std::vector<Solution*>const& genomes);
-[[nodiscard]] std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes);
+std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes);
 
 template <typename T>
 std::vector<T> remove(std::vector<T> vec, int const i){
