@@ -55,14 +55,14 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("error");
 
-	std::string param = "S",		
-		credit= "DR",
-		reward = "AA",
-		quality = "WS",
-		probability = "AP",
-		constraint = "RS";
-
 	std::string 
+		param		= "S",		
+		credit		= "DR",
+		reward 		= "AA",
+		quality 	= "WS",
+		probability = "AP",
+		constraint 	= "RS",
+		/*-------------------*/
 		suite 		=	"bbob",
 	  	dimensions 	= 	"20",
 	 	functions 	= 	"1-24",
@@ -95,7 +95,7 @@ int main(int argc, char** argv) {
 	}
 
 	DifferentialEvolution de({
-		{ /* -- Strategy self-adaptation configuration -- */
+		{ 
 			mutation,
 			crossover,
 			param,
