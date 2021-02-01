@@ -53,14 +53,14 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	coco_set_log_level("error");
+	coco_set_log_level("info");
 
 	std::string 
 		param		= "S",		
 		credit		= "DR",
 		reward 		= "AA",
 		quality 	= "WS",
-		probability = "AP",
+		probability	= "AP",
 		constraint 	= "RS",
 		/*-------------------*/
 		suite 		=	"bbob",
@@ -68,7 +68,7 @@ int main(int argc, char** argv) {
 	 	functions 	= 	"1-24",
 		instances 	= 	"1-5";
 
-	std::string id = "RICK3";
+	std::string id = "DE";
 
 	std::vector<std::string>
 		mutation = {"BE1"},
