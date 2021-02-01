@@ -109,7 +109,8 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 	mutation.clear(); 
 	crossover.clear();
 	for (int i = 0; i < popSize; i++){
-		auto const [m, c] = configurations[previousStrategies[i]];
+		MutationManager* const m = std::get<0>(configurations[previousStrategies[i]]);
+		CrossoverManager* const c = std::get<1>(configurations[previousStrategies[i]]);
 		if (!mutation.count(m)) mutation[m] = {};
 		if (!crossover.count(c)) crossover[c] = {};
 		mutation[m].push_back(i); 

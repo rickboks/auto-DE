@@ -71,7 +71,7 @@ void SHADEManager::nextParameters(ArrayXd& Fs, ArrayXd& Crs, ArrayXi const& assi
 
 		// Update crossover rate
 		double const MCrr = MCr(config, randIndex);
-		Crs[i] = std::clamp(rng.normalDistribution(MCrr, .1),0.,1.);
+		Crs[i] = std::max(std::min(rng.normalDistribution(MCrr, .1),1.), 0.);
 	}
 
 	previousFs = Fs;

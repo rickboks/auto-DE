@@ -10,7 +10,7 @@ INC = -I $(INC_DIR)
 
 CC = g++
 CC_COCO = gcc
-CFLAGS  = -Wall -Wextra -std=c++17 -O2 -g
+CFLAGS  = -Wall -Wextra -std=c++11 -O2 -g
 CFLAGS_COCO = -g -ggdb -std=c89 -pedantic -Wall -Wextra -Wstrict-prototypes -Wshadow -Wno-sign-compare -Wno-sign-conversion
 
 all: $(OBJ_DIR) $(EXE)

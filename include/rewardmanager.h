@@ -2,6 +2,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <vector>
 #include "Eigen/Dense"
 
 using Eigen::ArrayXd;
