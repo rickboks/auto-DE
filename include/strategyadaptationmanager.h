@@ -4,7 +4,8 @@
 #include <map>
 #include "Eigen/Dense"
 
-using Eigen::ArrayXd, Eigen::ArrayXi;
+using Eigen::ArrayXd;
+using Eigen::ArrayXi;
 
 struct StrategyAdaptationConfiguration {
 	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,

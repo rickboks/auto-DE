@@ -1,7 +1,8 @@
 #include "diversitymanager.h"
 #include <iostream>
 
-using Eigen::Vector2d, Eigen::MatrixXd;
+using Eigen::Vector2d;
+using Eigen::MatrixXd;
 std::function<DiversityManager* ()> DiversityManager::create(std::string const id){
 #define ALIAS(X, Y) if (id == X) return [](){return new Y();};
 	ALIAS("FS", FitnessScaledByDiversity)
