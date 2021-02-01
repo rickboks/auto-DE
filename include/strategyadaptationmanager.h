@@ -19,7 +19,7 @@ struct StrategyAdaptationConfiguration {
 
 class RewardManager; 
 class QualityManager;
-class DiversityManager;
+class CreditManager;
 class ProbabilityManager;
 class ParameterAdaptationManager;
 class MutationManager;
@@ -63,7 +63,7 @@ class ConstantStrategyManager : public StrategyAdaptationManager {
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
-		DiversityManager const* const diversityManager;
+		CreditManager const* const creditManager;
 		RewardManager const* const rewardManager;
 		QualityManager const* const qualityManager;
 		ProbabilityManager const* const probabilityManager;

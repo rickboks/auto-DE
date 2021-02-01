@@ -6,7 +6,7 @@
 #include "rewardmanager.h"
 #include "util.h"
 #include "qualitymanager.h"
-#include "diversitymanager.h"
+#include "creditmanager.h"
 #include "probabilitymanager.h"
 #include "mutationmanager.h"
 #include "crossovermanager.h"
@@ -81,7 +81,7 @@ void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/,
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
-	diversityManager(DiversityManager::create(config.diversity)()),
+	creditManager(CreditManager::create(config.diversity)()),
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
@@ -128,7 +128,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 
 	ArrayXd const currentDistances = getDistances(trials, previousMean);
 
-	ArrayXd const credit = diversityManager->rewardDiversity(fitnessDeltas, previousDistances, currentDistances);
+	ArrayXd const credit = creditManager->getCredit(fitnessDeltas, previousDistances, currentDistances);
 
 	ArrayXd const r = rewardManager->getReward(
 			credit, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
