@@ -4,7 +4,8 @@
 #include <string>
 #include "Eigen/Dense"
 
-using Eigen::ArrayXd, Eigen::ArrayXi;
+using Eigen::ArrayXd;
+using Eigen::ArrayXi;
 
 class RewardManager {
 	protected:

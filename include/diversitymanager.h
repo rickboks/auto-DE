@@ -4,7 +4,8 @@
 
 constexpr double pi() { return std::atan(1)*4; }
 
-using Eigen::ArrayXd, Eigen::Vector2d;
+using Eigen::ArrayXd;
+using Eigen::Vector2d;
 class DiversityManager {
 	public:
 		static std::function<DiversityManager* ()> create(std::string const id);

@@ -5,7 +5,8 @@
 #include <map>
 #include <functional>
 
-using Eigen::ArrayXi, Eigen::MatrixXd;
+using Eigen::ArrayXi;
+using Eigen::MatrixXd;
 
 class ParameterAdaptationManager {
 protected:
