@@ -1,4 +1,4 @@
-#!/home/rmboks/.local/bin/fish
+#!/usr/bin/env fish
 set hostfile "hostfile"
 set credit "DR" "SD" "FI"
 set mutation "BE2,RA2,TB1,TP1"
