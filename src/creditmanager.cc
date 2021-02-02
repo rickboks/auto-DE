@@ -45,7 +45,7 @@ ArrayXd FitnessImprovement::getCredit(ArrayXd const& fitnessDeltas, ArrayXd cons
 
 ArrayXd Compass::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 	ArrayXd const& currentDistances) const {
-	ArrayXd const diversityDeltas = previousDistances - currentDistances;
+	ArrayXd const diversityDeltas = currentDistances - previousDistances;
 
 	MatrixXd vectors(2, fitnessDeltas.size());
 	vectors.row(0) = diversityDeltas / diversityDeltas.abs().maxCoeff();

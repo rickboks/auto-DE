@@ -31,6 +31,12 @@ class TTB1MutationManager : public MutationManager {
 		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
+class TTR1MutationManager : public MutationManager {
+	public:
+		TTR1MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
+		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
+};
+
 class TTB2MutationManager : public MutationManager {
 	private:
 		Solution const* best;

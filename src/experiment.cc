@@ -25,7 +25,6 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, "", suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;

@@ -8,6 +8,7 @@ std::function<MutationManager* (ConstraintHandler* const)> MutationManager::crea
 	ALIAS("RA1", Rand1MutationManager)
 	ALIAS("TB1", TTB1MutationManager)
 	ALIAS("TB2", TTB2MutationManager)
+	ALIAS("TR1", TTR1MutationManager)
 	ALIAS("TP1", TTPB1MutationManager)
 	ALIAS("BE1", Best1MutationManager)
 	ALIAS("BE2", Best2MutationManager)
@@ -52,6 +53,16 @@ Solution* TTB1MutationManager::doMutation(std::vector<Solution*>const& genomes, 
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (best->X() - genomes[i]->X() + xr[0]->X() - xr[1]->X())
+		);
+	ch->repair(m, genomes[i], genomes[i]);
+	return m;
+}
+
+// Target-to-rand/1
+Solution* TTR1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	Solution* const m = new Solution(
+			genomes[i]->X() + F * (xr[0]->X() - genomes[i]->X() + xr[1]->X() - xr[2]->X())
 		);
 	ch->repair(m, genomes[i], genomes[i]);
 	return m;
