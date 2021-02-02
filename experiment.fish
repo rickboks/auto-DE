@@ -8,7 +8,10 @@ set instances "1-24"
 set threads "32"
 
 set executable "$HOME/auto-DE/experiment"
-preserve -llist | grep rmboks | cut -f9- | tr ' ' '\n' > $hostfile
+set hosts (preserve -llist | grep rmboks | cut -f9-) 
+printf '%s\n' $hosts
+exit
+
 set configs (printf '%s\n' $mutation" "$crossover" "$credit | awk '{printf("%s %s_%s_%s\n",$0,$1,$2,$3);}')
 parallel --workdir "$HOME/auto-DE" -u --sshloginfile $hostfile -j $threads --colsep ' '\
 	$executable -m {1} -c {2} -C {3} -I {4} ::: $configs
