@@ -22,7 +22,7 @@ void experiment(DifferentialEvolution& de,
 
 	coco_suite_t *suite;
 	coco_observer_t *observer;
-	suite = coco_suite(suite_name, "", suite_options);
+	suite = coco_suite(suite_name, "instances: 1-50", suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
 	std::string 
 		param		= "S",		
-		credit		= "CO",
+		credit		= "DR",
 		reward 		= "AA",
 		quality 	= "WS",
 		probability	= "AP",
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 		suite 		=	"bbob",
 	  	dimensions 	= 	"20",
 	 	functions 	= 	"1-24",
-		instances 	= 	"1-5";
+		instances 	= 	"1-50";
 
 	std::string id = "DE";
 

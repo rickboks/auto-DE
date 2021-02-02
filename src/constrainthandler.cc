@@ -101,7 +101,7 @@ void ProjectionMidpointRepair::repair(Solution* const p, Solution const* const /
 		nCorrected++;
 	}
 
-	p->setX(p->X().cwiseMax(lb).cwiseMin(ub)); // clamp
+	p->setX(p->X().max(lb).min(ub)); // clamp
 }
 
 void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base, Solution const* const /*target*/) {
@@ -124,7 +124,7 @@ void ProjectionBaseRepair::repair(Solution* const p, Solution const* const base,
 		nCorrected++;
 	}
 
-	p->setX(p->X().cwiseMax(lb).cwiseMin(ub)); // clamp
+	p->setX(p->X().max(lb).min(ub)); // clamp
 }
 
 void ConservatismRepair::repair(Solution* const p, Solution const*const base, Solution const*const /*target*/){
@@ -139,11 +139,12 @@ bool ResamplingRepair::resample(Solution * const p, int const resamples) {
 	if (isFeasible(p)){
 		return false;
 	} else if (resamples >= 100){
-		p->setX(p->X().cwiseMax(lb).cwiseMin(ub)); // clamp
+		p->setX(p->X().max(lb).min(ub)); // clamp
 		return false;
 	}
 
-	if (resamples == 0) nCorrected++; // Only count the first resample
+	if (resamples == 0) 
+		nCorrected++; // Only count the first resample
 
 	return true;
 }

@@ -12,7 +12,7 @@ class ProbabilityManager {
 		double const pMin;
 	public:
 		static std::function<ProbabilityManager* (int const)> create(std::string const id);
-		ProbabilityManager(int const K): K(K), pMin(.2/K){};
+		ProbabilityManager(int const K): K(K), pMin(1./(2.*K)){};
 		virtual ~ProbabilityManager (){};
 		virtual void updateProbability(ArrayXd& p, ArrayXd const& q) const=0;
 };
