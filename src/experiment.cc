@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
 
 	std::string 
 		param		= "S",		
-		credit		= "DR",
+		credit		= "CO",
 		reward 		= "AA",
 		quality 	= "WS",
 		probability	= "AP",
