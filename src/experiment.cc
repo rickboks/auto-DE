@@ -62,7 +62,6 @@ int main(int argc, char** argv) {
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
-		/*-------------------*/
 		suite 		=	"bbob",
 	  	dimensions 	= 	"20",
 	 	functions 	= 	"1-24",
@@ -77,7 +76,7 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt (argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:")) != -1){
+	while ((c = getopt(argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:")) != -1){
 		switch (c){
 			OPT('P', param)
 			OPT('C', credit)
