@@ -151,4 +151,3 @@ ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& popul
 			return distance(population[i]->X(), mean);
 	}); 
 }
-

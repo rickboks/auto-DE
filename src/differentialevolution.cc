@@ -75,7 +75,6 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		// Crossover step
-		std::vector<double> trialF(popSize);
 		std::vector<Solution*> trials(popSize); 
 		for (CrossoverManager* const c : strategyAdaptationManager->getCrossoverManagers()){
 			for (int i : crossoverManagers[c]){
@@ -84,7 +83,6 @@ void DifferentialEvolution::run(int const evalBudget){
 
 				trials[i]->evaluate(problem);
 				ch->penalize(trials[i]); 
-				trialF[i] = trials[i]->getFitness();
 			}
 		}
 
@@ -93,7 +91,7 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		// Selection step
 		for (int i = 0; i < popSize; i++){
-			if (trialF[i] < genomes[i]->getFitness()){
+			if (trials[i]->getFitness() < genomes[i]->getFitness()){
 				delete genomes[i];
 				genomes[i] = trials[i];
 			} else {
