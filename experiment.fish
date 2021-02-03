@@ -16,4 +16,3 @@ parallel --sshdelay 0.1 --workdir (dirname "$executable") -S "$hosts" -u -j $thr
 	$executable -m {1} -c {2} -C {3} -p {4} -I {5} ::: $configs
 
 printf "done!\n"
-

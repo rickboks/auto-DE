@@ -9,8 +9,8 @@
 
 #define CONVERGENCE_DELTA 1e-9
 
-DifferentialEvolution::DifferentialEvolution(DEConfig const config)
-	: config(config){
+DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig const config)
+	:config(config), id(id){
 }
 
 DifferentialEvolution::~DifferentialEvolution(){}

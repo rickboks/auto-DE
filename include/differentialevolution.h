@@ -31,7 +31,8 @@ class DifferentialEvolution {
 		int D;
 		coco_problem_t* problem;
 	public:
-		DifferentialEvolution(DEConfig const config);
+		std::string const id;
+		DifferentialEvolution(std::string const id, DEConfig const config);
 		virtual ~DifferentialEvolution();
 		void run(int const evalBudget);
 		void run(coco_problem_t* problem, int const evalBudget, int const popSize);

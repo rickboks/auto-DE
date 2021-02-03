@@ -10,6 +10,7 @@
 #include "rng.h"
 #include "util.h"
 #include <getopt.h>
+
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 10e5;
 static int const POPSIZE_MULTIPLIER = 5;
@@ -54,6 +55,7 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("error");
 
+	// defaults
 	std::string 
 		param		= "S",		
 		credit		= "DR",
@@ -92,18 +94,21 @@ int main(int argc, char** argv) {
 		}
 	}
 
-	DifferentialEvolution de({
-		{ 
-			mutation,
-			crossover,
-			param,
-			credit,
-			reward,
-			quality,
-			probability
-		},
-	    constraint	
-	});
+	DifferentialEvolution de(
+		id, 
+		{
+			{ 
+				mutation,
+				crossover,
+				param,
+				credit,
+				reward,
+				quality,
+				probability
+			},
+			constraint	
+		}
+	);
 
 	experiment(
 		de, 
