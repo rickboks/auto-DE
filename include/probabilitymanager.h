@@ -22,7 +22,7 @@ class AdaptivePursuitManager : public ProbabilityManager {
 		double const beta = .6;
 		double const pMax;
 	public:
-		AdaptivePursuitManager (int const K): ProbabilityManager(K), pMax(pMin + 1. - K * pMin){};
+		AdaptivePursuitManager (int const K): ProbabilityManager(K), pMax(1.-(K-1.)*pMin){};
 		void updateProbability(ArrayXd& p, ArrayXd const& q) const;
 };
 
