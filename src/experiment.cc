@@ -11,7 +11,7 @@
 #include "util.h"
 #include <getopt.h>
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 10000;
+static int const BUDGET_MULTIPLIER = 10e5;
 static int const POPSIZE_MULTIPLIER = 5;
 
 void experiment(DifferentialEvolution& de,
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 	 	functions 	= "1-24",
-		instances 	= "1-50";
+		instances 	= "1-15";
 
 	std::string id = "DE";
 
