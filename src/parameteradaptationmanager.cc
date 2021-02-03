@@ -66,12 +66,12 @@ void SHADEManager::nextParameters(ArrayXd& Fs, ArrayXd& Crs, ArrayXi const& assi
 		// Update mutation rate
 		double const MFr = MF(config, randIndex);
 		do{
-			Fs(i) = std::min(rng.cauchyDistribution(MFr, .1), 1.);
+			Fs(i) = std::min(rng.cauchyDouble(MFr, .1), 1.);
 		} while (Fs(i) <= 0.);
 
 		// Update crossover rate
 		double const MCrr = MCr(config, randIndex);
-		Crs[i] = std::max(std::min(rng.normalDistribution(MCrr, .1),1.), 0.);
+		Crs[i] = std::max(std::min(rng.normalDouble(MCrr, .1),1.), 0.);
 	}
 
 	previousFs = Fs;

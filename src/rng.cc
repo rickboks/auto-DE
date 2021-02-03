@@ -11,12 +11,12 @@ int RNG::randInt(int const start, int const end){
 	return dist(rng);
 }
 
-double RNG::normalDistribution(double const mean, double const stdDev){
+double RNG::normalDouble(double const mean, double const stdDev){
 	std::normal_distribution<double> N(mean, stdDev);
 	return N(rng);
 }
 
-double RNG::cauchyDistribution(double const a, double const b){
+double RNG::cauchyDouble(double const a, double const b){
 	std::cauchy_distribution<double> C(a,b);
 	return C(rng);
 }

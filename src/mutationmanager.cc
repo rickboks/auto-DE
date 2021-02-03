@@ -144,7 +144,7 @@ Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genom
 // NSDE
 Solution* NSDEMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const {
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
-	double const F = (rng.randDouble(0,1) <= .5 ? rng.normalDistribution(.5,.5) : rng.cauchyDistribution(0,1));
+	double const F = (rng.randDouble(0,1) <= .5 ? rng.normalDouble(.5,.5) : rng.cauchyDouble(0,1));
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
