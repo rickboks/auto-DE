@@ -1,5 +1,6 @@
 #include "rng.h"
 #include <random>
+
 double RNG::randDouble(double const start, double const end){
 	std::uniform_real_distribution<double> dist(start, end);
 	return dist(rng);
