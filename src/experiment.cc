@@ -63,6 +63,7 @@ int main(int argc, char** argv) {
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
+		//////////////////////
 		suite 		= "bbob",
 	  	dimensions 	= "5",
 	 	functions 	= "1-24",
@@ -71,8 +72,8 @@ int main(int argc, char** argv) {
 	std::string id = "DE";
 
 	std::vector<std::string>
-		mutation = {"BE1"},
-		crossover = {"B"};
+		mutation = {"BE1", "RA1"},
+		crossover = {"B", "E"};
 
 	int c;
 

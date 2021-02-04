@@ -14,7 +14,7 @@ std::function<QualityManager* (int const)> QualityManager::create(std::string co
 
 void WeightedSumQuality::updateQuality(ArrayXd&q, ArrayXd const& r, 
 		ArrayXd const& /*p*/) const{
-	q += alpha * (r - q); // low alpha -> slow change
+	q += alpha * (r - q); // small alpha -> slow change
 }
 
 void BellmanQuality::updateQuality(ArrayXd&q, ArrayXd const& r, 
