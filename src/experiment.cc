@@ -63,6 +63,7 @@ int main(int argc, char** argv) {
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
+		//////////////////////
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 	 	functions 	= "1-24",

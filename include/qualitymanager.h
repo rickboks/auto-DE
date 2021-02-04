@@ -12,8 +12,7 @@ class QualityManager {
 		static std::function<QualityManager* (int const)> create(std::string const id);
 		QualityManager(int const K) : K(K){};
 		virtual ~QualityManager(){};
-		virtual void updateQuality(ArrayXd &q, ArrayXd const& r, 
-				ArrayXd const& p) const=0;
+		virtual void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const=0;
 };
 
 class WeightedSumQuality : public QualityManager {
@@ -21,8 +20,7 @@ class WeightedSumQuality : public QualityManager {
 		double const alpha = 0.3;
 	public:
 		WeightedSumQuality(int const K) : QualityManager(K){};
-		void updateQuality(ArrayXd &q, ArrayXd const& r, 
-				ArrayXd const& p) const;
+		void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const;
 };
 
 class BellmanQuality : public QualityManager {
@@ -31,6 +29,5 @@ class BellmanQuality : public QualityManager {
 		ArrayXd softmax(ArrayXd const& x) const;
 	public:
 		BellmanQuality(int const K) : QualityManager(K){}
-		void updateQuality(ArrayXd &q, ArrayXd const& r, 
-				ArrayXd const& p) const;
+		void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const;
 };
