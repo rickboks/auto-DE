@@ -12,7 +12,7 @@
 #include <getopt.h>
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 10e5;
+static int const BUDGET_MULTIPLIER = 1e5;
 static int const POPSIZE_MULTIPLIER = 5;
 
 void experiment(DifferentialEvolution& de,
