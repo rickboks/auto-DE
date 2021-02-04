@@ -72,8 +72,8 @@ int main(int argc, char** argv) {
 	std::string id = "DE";
 
 	std::vector<std::string>
-		mutation = {"BE1"},
-		crossover = {"B"};
+		mutation = {"BE1", "RA1"},
+		crossover = {"B", "E"};
 
 	int c;
 
