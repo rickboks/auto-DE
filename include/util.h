@@ -23,13 +23,14 @@ std::vector<T> remove(std::vector<T> vec, int const i){
 }
 
 template<typename T>
-std::vector<T> pickRandom(std::vector<T> possibilities, int const n){
+std::vector<T> pickRandom(std::vector<T> possibilities, int const n, bool const replace){
 	std::vector<T> picked;
 	picked.reserve(n);
 	for (int i = 0; i < n; i++){
 		int const r = rng.randInt(0,possibilities.size()-1);
 		T const x = possibilities[r];
-		possibilities.erase(possibilities.begin() + r);
+		if (!replace)
+			possibilities.erase(possibilities.begin() + r);
 		picked.push_back(x);
 	}
 	return picked;
