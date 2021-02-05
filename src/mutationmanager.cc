@@ -38,7 +38,7 @@ Solution* MutationManager::mutate(std::vector<Solution*>const& genomes, int cons
 
 // Rand/1
 Solution* Rand1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3, false);
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
@@ -50,7 +50,7 @@ void TTB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 }
 
 Solution* TTB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (best->X() - genomes[i]->X() + xr[0]->X() - xr[1]->X())
 		);
@@ -60,7 +60,7 @@ Solution* TTB1MutationManager::doMutation(std::vector<Solution*>const& genomes, 
 
 // Target-to-rand/1
 Solution* TTR1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (xr[0]->X() - genomes[i]->X() + xr[1]->X() - xr[2]->X())
 		);
@@ -74,7 +74,7 @@ void TTB2MutationManager::prepare(std::vector<Solution*>const& genomes){
 }
 
 Solution* TTB2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (best->X() - genomes[i]->X() + xr[0]->X() 
 				- xr[1]->X() + xr[2]->X() - xr[3]->X())
@@ -83,10 +83,14 @@ Solution* TTB2MutationManager::doMutation(std::vector<Solution*>const& genomes, 
 	return m;
 }
 
+void TTPB1MutationManager::prepare(std::vector<Solution*>const& genomes){
+	sorted = sortOnFitness(genomes);
+}
+
 // Target-to-pbest/1
 Solution* TTPB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const* const pBest = getPBest(genomes); // pBest is sampled for each mutation
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
+	Solution const* const pBest = getPBest(sorted, true); // pBest is sampled for each mutation
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (pBest->X() - genomes[i]->X() + xr[0]->X() - xr[1]->X())
 		);
@@ -100,7 +104,7 @@ void Best1MutationManager::prepare(std::vector<Solution*>const& genomes){
 }
 
 Solution* Best1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2, false);
 	Solution* const m = new Solution(best->X() + F * (xr[0]->X() - xr[1]->X()));
 	ch->repair(m, best, genomes[i]);
 	return m;
@@ -112,7 +116,7 @@ void Best2MutationManager::prepare(std::vector<Solution*>const& genomes){
 }
 
 Solution* Best2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 4, false);
 	Solution* const m = new Solution(best->X() + F * (xr[0]->X() - xr[1]->X() + xr[2]->X() - xr[3]->X()));
 	ch->repair(m, best, genomes[i]);
 	return m;
@@ -120,7 +124,7 @@ Solution* Best2MutationManager::doMutation(std::vector<Solution*>const& genomes,
 
 // Rand/2
 Solution* Rand2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 5);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 5, false);
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X() + xr[3]->X() - xr[4]->X()));
 	ch->repair(m, xr[0], genomes[i]);
 	return m;
@@ -128,7 +132,7 @@ Solution* Rand2MutationManager::doMutation(std::vector<Solution*>const& genomes,
 
 // Rand/2/dir
 Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 4);
+	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 4, false);
 
 	if (xr[1]->getFitness() < xr[0]->getFitness())
 		std::swap(xr[0], xr[1]);
@@ -143,7 +147,7 @@ Solution* Rand2DirMutationManager::doMutation(std::vector<Solution*>const& genom
 
 // NSDE
 Solution* NSDEMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const /*F*/) const {
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3, false);
 	double const F = (rng.randDouble(0,1) <= .5 ? rng.normalDouble(.5,.5) : rng.cauchyDouble(0,1));
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X()));
 	ch->repair(m, xr[0], genomes[i]);
@@ -157,7 +161,7 @@ Solution* TrigonometricMutationManager::doMutation(std::vector<Solution*>const& 
 
 Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Solution*>const& genomes, int const i, 
 		double const /*F*/) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3, false);
 
 	double const pPrime = std::abs(xr[0]->getFitness()) + std::abs(xr[1]->getFitness()) + std::abs(xr[2]->getFitness());
 	double const p0 = std::abs(xr[0]->getFitness()) / pPrime;
@@ -176,7 +180,7 @@ Solution* TrigonometricMutationManager::trigonometricMutation(std::vector<Soluti
 }
 
 Solution* TrigonometricMutationManager::rand1Mutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 3, false);
 	ArrayXd const mutant = xr[0]->X() + F * (xr[1]->X() - xr[2]->X());
 	Solution* const m = new Solution(mutant);
 	ch->repair(m, xr[0], genomes[i]);
@@ -185,7 +189,7 @@ Solution* TrigonometricMutationManager::rand1Mutation(std::vector<Solution*>cons
 
 // Two-opt/1
 Solution* TwoOpt1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 3);
+	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 3, false);
 	if (xr[1]->getFitness() < xr[0]->getFitness())
 		std::swap(xr[0], xr[1]);
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X()));
@@ -195,7 +199,7 @@ Solution* TwoOpt1MutationManager::doMutation(std::vector<Solution*>const& genome
 
 // Two-opt/2
 Solution* TwoOpt2MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 5);
+	std::vector<Solution*> xr = pickRandom(remove(genomes,i), 5, false);
 	if (xr[1]->getFitness() < xr[0]->getFitness())
 		std::swap(xr[0], xr[1]);
 	Solution* const m = new Solution(xr[0]->X() + F * (xr[1]->X() - xr[2]->X() + xr[3]->X() - xr[4]->X()));
@@ -234,9 +238,11 @@ Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& geno
 void RankingMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	probability.clear();
-	std::vector<Solution*> const sorted = sortOnFitness(genomes);
+	std::vector<Solution*> const _sorted = sortOnFitness(genomes);
 	for (int i = 0; i < size; i++)
-		probability[sorted[i]] = double(size - (i+1)) / double(size);
+		probability[_sorted[i]] = double(size - (i+1)) / double(size);
+	
+	this->sorted = _sorted;
 }
 
 Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibilities) const{
@@ -251,10 +257,10 @@ Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibiliti
 }
 
 Solution* RankingMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const * const pBest = getPBest(genomes); // pBest is sampled for each mutation
+	Solution const * const pBest = getPBest(sorted, true); // pBest is sampled for each mutation
 	std::vector<Solution*> possibilities = remove(genomes,i);
 	Solution const* const xr0 = pickRanked(possibilities); // N.B. Ranked instead of Random (removes from possibilities)
-	Solution const* const xr1 = pickRandom(possibilities, 1)[0];
+	Solution const* const xr1 = pickRandom(possibilities, 1, false)[0];
 
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (pBest->X() - genomes[i]->X() + xr0->X() - xr1->X())

@@ -11,7 +11,7 @@ double distance(ArrayXd const& s1, ArrayXd const& s2);
 std::string generateConfig(std::string const templateFile, std::string const name);
 std::string checkFilename(std::string const fn);
 std::vector<int> range(int const size);
-Solution* getPBest(std::vector<Solution*>const& genomes);
+Solution* getPBest(std::vector<Solution*>const& genomes, bool const isSorted);
 Solution* getBest(std::vector<Solution*>const& genomes);
 Solution* getWorst(std::vector<Solution*>const& genomes);
 std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes);
@@ -23,13 +23,14 @@ std::vector<T> remove(std::vector<T> vec, int const i){
 }
 
 template<typename T>
-std::vector<T> pickRandom(std::vector<T> possibilities, int const n){
+std::vector<T> pickRandom(std::vector<T> possibilities, int const n, bool const replace){
 	std::vector<T> picked;
 	picked.reserve(n);
 	for (int i = 0; i < n; i++){
 		int const r = rng.randInt(0,possibilities.size()-1);
 		T const x = possibilities[r];
-		possibilities.erase(possibilities.begin() + r);
+		if (!replace)
+			possibilities.erase(possibilities.begin() + r);
 		picked.push_back(x);
 	}
 	return picked;

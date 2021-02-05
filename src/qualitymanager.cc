@@ -29,7 +29,7 @@ void BellmanQuality::updateQuality(ArrayXd&q, ArrayXd const& r,
 	q = softmax((1. - gamma * P.array()).matrix().inverse() * r.matrix());
 }
 
-ArrayXd BellmanQuality::softmax(ArrayXd const& x) const{
+ArrayXd BellmanQuality::softmax(ArrayXd const& x) const {
 	ArrayXd const exp_x = x.exp();
 	return exp_x / exp_x.sum();
 }
