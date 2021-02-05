@@ -47,8 +47,11 @@ class TTB2MutationManager : public MutationManager {
 };
 
 class TTPB1MutationManager : public MutationManager {
+	private:
+		std::vector<Solution*> sorted;
 	public:
 		TTPB1MutationManager(ConstraintHandler* const ch): MutationManager(ch){};
+		void prepare(std::vector<Solution*>const& genomes);
 		Solution* doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const;
 };
 
@@ -121,6 +124,7 @@ class ProximityMutationManager : public MutationManager {
 
 class RankingMutationManager : public MutationManager {
 	private:
+		std::vector<Solution*> sorted;
 		std::map<Solution*, double> probability;
 		Solution* pickRanked(std::vector<Solution*> & possibilities) const;
 	public:
