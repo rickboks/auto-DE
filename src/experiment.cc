@@ -64,7 +64,7 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	//coco_set_log_level("error");
+	coco_set_log_level("warning");
 
 	// defaults
 	std::string 
@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
-	  	dimensions 	= "20",
+	  	dimensions 	= "5",
 	 	functions 	= "1-24",
 		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 
