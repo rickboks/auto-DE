@@ -15,8 +15,8 @@
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
 static int const POPSIZE_MULTIPLIER = 5;
-static int const INDEPENDENT_RUNS = 1;
-static std::vector<int> const INSTANCES = {1};
+static int const INDEPENDENT_RUNS = 20;
+static std::vector<int> const INSTANCES = {1,2,3,4,5};
 
 std::string gen_instances(){
 	std::string instances = "";
