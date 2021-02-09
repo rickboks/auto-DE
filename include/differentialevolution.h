@@ -13,10 +13,6 @@ class Solution;
 class ConstraintHandler;
 
 struct DEConfig {
-	DEConfig(StrategyAdaptationConfiguration const strategyAdaptationConfig,
-			std::string const constraintHandler)
-			: constraintHandler(constraintHandler), strategyAdaptationConfig(strategyAdaptationConfig){}
-
 	std::string const constraintHandler;
 	StrategyAdaptationConfiguration const strategyAdaptationConfig;
 };
