@@ -76,7 +76,7 @@ int main(int argc, char** argv) {
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
-	  	dimensions 	= "5",
+	  	dimensions 	= "20",
 	 	functions 	= "1-24",
 		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 
