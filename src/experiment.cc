@@ -94,8 +94,13 @@ int main(int argc, char** argv) {
 		//////////////////////
 		suite 		= "bbob",
 	  	dimensions 	= "20",
+<<<<<<< HEAD
 	 	functions 	= "24",
 		instances 	= "1"; //+ std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
+=======
+	 	functions 	= "1-24",
+		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
+>>>>>>> f1b554bed38f2da00bf628d15daee76f32fe6e70
 
 	std::string id = "DE";
 
