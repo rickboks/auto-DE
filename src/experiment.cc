@@ -12,8 +12,19 @@
 #include <getopt.h>
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1e5;
+static int const BUDGET_MULTIPLIER = 1e4;
 static int const POPSIZE_MULTIPLIER = 5;
+static int const INDEPENDENT_RUNS = 20;
+static std::vector<int> const INSTANCES = {1,2,3,4,5};
+
+std::string gen_instances(){
+	std::string instances = "";
+	for (int i : INSTANCES)
+		for (int j = 0; j < INDEPENDENT_RUNS; j++)
+			instances += std::to_string(i) + ",";
+	instances.pop_back();
+	return instances;
+}
 
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
@@ -23,7 +34,7 @@ void experiment(DifferentialEvolution& de,
 
 	coco_suite_t *suite;
 	coco_observer_t *observer;
-	suite = coco_suite(suite_name, "instances: 1-50", suite_options);
+	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
@@ -53,7 +64,7 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	coco_set_log_level("error");
+	//coco_set_log_level("error");
 
 	// defaults
 	std::string 
@@ -67,12 +78,12 @@ int main(int argc, char** argv) {
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 	 	functions 	= "1-24",
-		instances 	= "1-15";
+		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 
 	std::string id = "DE";
 
 	std::vector<std::string>
-		mutation = {"BE1", "RA1"},
+		mutation = {"BE1", "RA1", "TB2"},
 		crossover = {"B", "E"};
 
 	int c;

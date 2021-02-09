@@ -98,6 +98,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
 	previousMean = getMean(population);
+
 	previousDistances = getDistances(population, previousMean);
 
 	previousStrategies = //Roulette with replacement
