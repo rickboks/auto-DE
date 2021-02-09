@@ -42,6 +42,7 @@ class StrategyAdaptationManager {
 		int const K;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;
+		std::vector<int> previousStrategies;
 		ArrayXi activations;
 		void updateActivations(std::vector<int> const& assignment);
 };
@@ -54,7 +55,6 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		ProbabilityManager const* const probabilityManager;
 		ArrayXd p; 
 		ArrayXd q; 
-		std::vector<int> previousStrategies;
 		ArrayXd previousFitness; 
 		ArrayXd previousDistances; // Distances of all K configs
 		ArrayXd previousMean;
