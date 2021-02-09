@@ -33,8 +33,7 @@ class StrategyAdaptationManager {
 				std::vector<Solution*>const& population);
 		virtual ~StrategyAdaptationManager();
 		virtual void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
-				std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				ArrayXd& Fs, ArrayXd& Crs)=0;
+				std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, ArrayXd& Crs)=0;
 		virtual void update(std::vector<Solution*>const& trials);
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;

@@ -112,5 +112,9 @@ void DifferentialEvolution::reset(){
 }
 
 std::string DifferentialEvolution::getIdString() const {
-	return "DE_" + config.strategyAdaptationConfig.mutation[0] + "_" + config.strategyAdaptationConfig.crossover[0]; // + "_" + config.adaptation + "_" + config.constraintHandler;
+	return id;
+}
+
+ArrayXi DifferentialEvolution::getActivations(){
+	return strategyAdaptationManager->getActivations();
 }

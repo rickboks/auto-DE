@@ -1,14 +1,17 @@
 #include <fstream>
-#include <iostream>
-#include <vector>
-#include "util.h" 
+#include "Eigen/Dense"
 
-class Solution;
-
-class Logger { // Used to log arbitrary stuff
+class Logger {
 	private:
 		std::ofstream out;
 	public:
-		Logger(std::string filename): out(filename, std::ios::app){};
+		Logger(std::string filename): out(filename){};
 		~Logger();
+
+		template <typename T>
+		void log(T const& t, bool newline = true){
+			out << t;
+			if (newline)
+				out << "\n";
+		}
 };

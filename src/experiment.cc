@@ -8,11 +8,12 @@
 #include "coco.h"
 #include "differentialevolution.h"
 #include "rng.h"
+#include "logger.h"
 #include "util.h"
 #include <getopt.h>
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1e4;
+static int const BUDGET_MULTIPLIER = 1e5;
 static int const POPSIZE_MULTIPLIER = 5;
 static int const INDEPENDENT_RUNS = 20;
 static std::vector<int> const INSTANCES = {1,2,3,4,5};
@@ -36,15 +37,31 @@ void experiment(DifferentialEvolution& de,
 	coco_observer_t *observer;
 	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
+	
+	Logger activationsLogger("extra_data/" + de.getIdString() + ".tact");
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
 		int const popSize = dimension * POPSIZE_MULTIPLIER;
+		std::string const fid = coco_problem_get_id(PROBLEM);
+
+		ArrayXi activations;
 
 		do {
-			de.run(PROBLEM, budget, popSize);
+			de.prepare(PROBLEM, popSize);
+			de.run(budget);
+
+			if (activations.size() > 0)
+				activations += de.getActivations();
+			else 
+				activations = de.getActivations();
+
+			de.reset();
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
+
+		activationsLogger.log(fid + " ", false);
+		activationsLogger.log(activations.transpose());
 	}
 
 	coco_observer_free(observer);
@@ -76,9 +93,9 @@ int main(int argc, char** argv) {
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
-	  	dimensions 	= "5",
-	 	functions 	= "1-24",
-		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
+	  	dimensions 	= "20",
+	 	functions 	= "24",
+		instances 	= "1"; //+ std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 
 	std::string id = "DE";
 

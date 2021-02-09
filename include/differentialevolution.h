@@ -39,5 +39,6 @@ class DifferentialEvolution {
 		void prepare(coco_problem_t* problem, int const popSize);
 		void reset();
 		bool converged(std::vector<Solution*>const& population) const;
+		ArrayXi getActivations();
 		std::string getIdString() const;
 };
