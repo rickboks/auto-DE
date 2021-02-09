@@ -8,13 +8,8 @@ using Eigen::ArrayXd;
 using Eigen::ArrayXi;
 
 struct StrategyAdaptationConfiguration {
-	StrategyAdaptationConfiguration(std::vector<std::string> const mutation, std::vector<std::string> const crossover,
-									std::string const param, std::string diversity, std::string const reward, 
-									std::string const quality, std::string const probability)
-	: mutation(mutation), crossover(crossover), param(param), diversity(diversity), reward(reward), quality(quality), 
-	probability(probability){};
 	std::vector<std::string> const mutation, crossover;
-	std::string const param, diversity, reward, quality, probability;
+	std::string const param, credit, reward, quality, probability;
 };
 
 class RewardManager; 
@@ -74,3 +69,18 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 				ArrayXd& Fs, ArrayXd& Crs);
 		void update(std::vector<Solution*>const& trials);
 };
+
+//class RandomStrategyManager : public StrategyAdaptationManager {
+	//private:
+		//CreditManager const* const creditManager;
+		//std::vector<int> previousStrategies;
+		//ArrayXd previousFitness; 
+	//public:
+		//RandomStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
+				//std::vector<Solution*>const& population);
+		//~RandomStrategyManager();
+		//void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				//std::map<CrossoverManager*, std::vector<int>>& crossover, 
+				//ArrayXd& Fs, ArrayXd& Crs);
+		//void update(std::vector<Solution*>const& trials);
+//};

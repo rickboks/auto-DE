@@ -127,16 +127,16 @@ int main(int argc, char** argv) {
 	DifferentialEvolution de(
 		id, 
 		{
-			{ 
-				mutation,
-				crossover,
-				param,
-				credit,
-				reward,
-				quality,
-				probability
-			},
-			constraint	
+			.constraintHandler = constraint,
+			.strategyAdaptationConfig = { 
+				.mutation = mutation,
+				.crossover = crossover,
+				.param = param,
+				.credit = credit,
+				.reward = reward,
+				.quality = quality,
+				.probability = probability
+			}
 		}
 	);
 

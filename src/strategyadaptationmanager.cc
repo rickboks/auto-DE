@@ -62,7 +62,7 @@ StrategyAdaptationManager::~StrategyAdaptationManager(){
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 
-	creditManager(CreditManager::create(config.diversity)()),
+	creditManager(CreditManager::create(config.credit)()),
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
