@@ -15,8 +15,8 @@
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
 static int const POPSIZE_MULTIPLIER = 5;
-static int const INDEPENDENT_RUNS = 20;
-static std::vector<int> const INSTANCES = {1,2,3,4,5};
+static int const INDEPENDENT_RUNS = 1;
+static std::vector<int> const INSTANCES = {1};
 
 std::string gen_instances(){
 	std::string instances = "";
@@ -62,6 +62,7 @@ void experiment(DifferentialEvolution& de,
 
 		activationsLogger.log(fid + " ", false);
 		activationsLogger.log(activations.transpose());
+		activationsLogger.flush();
 	}
 
 	coco_observer_free(observer);
@@ -81,15 +82,15 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	coco_set_log_level("warning");
+	//coco_set_log_level("warning");
 
 	// defaults
 	std::string 
 		param		= "S",		
-		credit		= "DR",
+		credit		= "SD",
 		reward 		= "AA",
 		quality 	= "WS",
-		probability	= "AP",
+		probability	= "PM",
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",

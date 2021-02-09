@@ -14,4 +14,6 @@ class Logger {
 			if (newline)
 				out << "\n";
 		}
+
+		void flush();
 };
