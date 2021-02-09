@@ -59,25 +59,6 @@ StrategyAdaptationManager::~StrategyAdaptationManager(){
 	delete parameterAdaptationManager;
 }
 
-ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration const config, 
-		ConstraintHandler*const ch, std::vector<Solution*>const& population)
-	:StrategyAdaptationManager(config, ch, population){
-
-	if (configurations.size() > 1)
-		throw std::invalid_argument("ConstantStrategyManager needs exactly 1 configuration");
-}
-
-void ConstantStrategyManager::next(std::vector<Solution*> const& /*population*/, std::map<MutationManager*, 
-		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, 
-		ArrayXd& Crs){
-	std::vector<int> const indices = range(popSize);
-	std::vector<int> const assignment(popSize, 0);
-	updateActivations(assignment);
-	mutation[std::get<0>(configurations.front())] = indices;
-	crossover[std::get<1>(configurations.front())] = indices;
-	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(assignment.data(), assignment.size()));
-}
-
 AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population), 

@@ -51,15 +51,6 @@ class StrategyAdaptationManager {
 		void updateActivations(std::vector<int> const& assignment);
 };
 
-class ConstantStrategyManager : public StrategyAdaptationManager {
-	public:
-		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
-				std::vector<Solution*>const& population);
-		void next(std::vector<Solution*>const& population, std::map<MutationManager*, std::vector<int>>& mutation, 
-				std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				ArrayXd& Fs, ArrayXd& Crs);
-};
-
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
 	private:
 		CreditManager const* const creditManager;
