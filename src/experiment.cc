@@ -38,7 +38,7 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
 	
-	Logger activationsLogger("extra_data/" + de.getIdString() + ".tact");
+	Logger activationsLogger("extra_data/" + de.getIdString() + ".act");
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
