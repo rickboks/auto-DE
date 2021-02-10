@@ -9,7 +9,7 @@ set threads "32"
 
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
 set configs (printf '%s\n' $credit" "$reward" "$quality" "$probability |\
-	awk '{printf("%s %s_%s_%s_%s\n",$0,$1,$2,$3,$4);}')
+	awk -v exe=$executable '{printf("%1$s -C %2$s -r %3$s -q %4$s -p %5$s -I %2$s_%3$s_%4$s_%5$s\n",exe,$1,$2,$3,$4)}')
 
 set num_configs (count $configs)	
 set num_nodes (count (string split ',' $hosts))
@@ -26,7 +26,6 @@ if test $num_nodes -lt $nodes_required
 end
 
 if test (read -n1 -P "OK? [y/n]") = "y"
-	parallel --sshdelay 0.1 --workdir (dirname "$executable") -S "$hosts" -u -j $threads --colsep ' '\
-		$executable -C {1} -r {2} -q {3} -p {4} -I {5} ::: $configs
+	parallel --sshdelay 0.1 --workdir (dirname "$executable") -S "$hosts" -u -j $threads --colsep ' ' ::: $configs
 	printf "Done!\n"
 end

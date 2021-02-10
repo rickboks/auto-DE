@@ -15,7 +15,7 @@
 std::function<StrategyAdaptationManager* (StrategyAdaptationConfiguration const, ConstraintHandler *const, 
 		std::vector<Solution*>const&)> StrategyAdaptationManager::create(std::string const id){
 #define ALIAS(X, Y) if (id == X) return [](StrategyAdaptationConfiguration const s, ConstraintHandler *const c, \
-		std::vector<Solution*>const& p){return new Y(s,c,p);};
+	std::vector<Solution*>const& p){return new Y(s,c,p);};
 	ALIAS("A", AdaptiveStrategyManager)
 	ALIAS("R", RandomStrategyManager)
 	ALIAS("C", ConstantStrategyManager)
@@ -95,14 +95,14 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
 	previousMean = getMean(population);
-
 	previousDistances = getDistances(population, previousMean);
 
 	previousStrategies = //Roulette with replacement
 		rouletteSelect(range(K), std::vector<double>(p.begin(), p.end()), popSize, true); 
 
-	previousFitness = 
-		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
+		return population[i]->getFitness();
+	});
 
 	updateActivations(previousStrategies);
 
@@ -115,8 +115,8 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	// Fitness improvements. Deteriorations are set to 0.
 	ArrayXd const fitnessDeltas = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-			return previousFitness[i] - trials[i]->getFitness();
-		});
+		return previousFitness[i] - trials[i]->getFitness();
+	});
 
 	ArrayXd const currentDistances = getDistances(trials, previousMean);
 
@@ -158,8 +158,9 @@ void RandomStrategyManager::next(std::vector<Solution*>const& population, std::m
 	for (int i = 0; i < popSize; i++)
 		assignment.push_back(rng.randInt(0, K-1)); // uniformly random allocation
 
-	previousFitness = 
-		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
+		return population[i]->getFitness();
+	});
 
 	updateActivations(assignment);
 
@@ -172,8 +173,8 @@ void RandomStrategyManager::next(std::vector<Solution*>const& population, std::m
 void RandomStrategyManager::update(std::vector<Solution*>const& trials){
 	// Fitness improvements. Deteriorations are set to 0.
 	ArrayXd const credit = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-			return previousFitness[i] - trials[i]->getFitness();
-		}).max(0);
+		return previousFitness[i] - trials[i]->getFitness();
+	}).max(0);
 
 	parameterAdaptationManager->update(credit);
 }
@@ -190,8 +191,9 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& population, std:
 
 	std::vector<int> const assignment (popSize, 0);
 
-	previousFitness = 
-		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
+		return population[i]->getFitness();
+	});
 
 	updateActivations(assignment);
 
@@ -204,8 +206,8 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& population, std:
 void ConstantStrategyManager::update(std::vector<Solution*>const& trials){
 	// Fitness improvements. Deteriorations are set to 0.
 	ArrayXd const credit = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
-			return previousFitness[i] - trials[i]->getFitness();
-		}).max(0);
+		return previousFitness[i] - trials[i]->getFitness();
+	}).max(0);
 
 	parameterAdaptationManager->update(credit);
 }
