@@ -36,13 +36,6 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 			configurations.push_back({m,c});
 }
 
-void StrategyAdaptationManager::update(std::vector<Solution*>const& population){
-	ArrayXd trialF(popSize);
-	for (int i = 0; i < popSize; i++)
-		trialF(i) = population[i]->getFitness();
-	parameterAdaptationManager->update(trialF);
-}
-
 void StrategyAdaptationManager::assign(std::map<MutationManager*, std::vector<int>>& mutation, 
 		std::map<CrossoverManager*, std::vector<int>>& crossover, std::vector<int> const& assignment){
 	mutation.clear(); 
