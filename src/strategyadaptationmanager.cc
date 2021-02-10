@@ -34,6 +34,20 @@ void StrategyAdaptationManager::update(std::vector<Solution*>const& population){
 	parameterAdaptationManager->update(trialF);
 }
 
+void StrategyAdaptationManager::assign(std::map<MutationManager*, std::vector<int>>& mutation, 
+		std::map<CrossoverManager*, std::vector<int>>& crossover){
+	mutation.clear(); 
+	crossover.clear();
+	for (int i = 0; i < popSize; i++){
+		MutationManager* const m = std::get<0>(configurations[previousStrategies[i]]);
+		CrossoverManager* const c = std::get<1>(configurations[previousStrategies[i]]);
+		if (!mutation.count(m)) mutation[m] = {};
+		if (!crossover.count(c)) crossover[c] = {};
+		mutation[m].push_back(i); 
+		crossover[c].push_back(i);
+	}
+}
+
 std::vector<MutationManager*> StrategyAdaptationManager::getMutationManagers() const{
 	return mutationManagers;
 }
@@ -43,8 +57,7 @@ std::vector<CrossoverManager*> StrategyAdaptationManager::getCrossoverManagers()
 }
 
 void StrategyAdaptationManager::updateActivations(std::vector<int> const& assignment){
-	for (int i : assignment)
-		activations(i)++;
+	for (int i : assignment) activations(i)++;
 }
 
 ArrayXi StrategyAdaptationManager::getActivations() const{
@@ -70,6 +83,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
+	delete creditManager;
 	delete rewardManager;
 	delete qualityManager;
 	delete probabilityManager;
@@ -84,22 +98,16 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 
 	previousStrategies = //Roulette with replacement
 		rouletteSelect(range(K), std::vector<double>(p.data(), p.data() + p.size()), popSize, true); 
+
 	previousFitness = 
 		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+
 	updateActivations(previousStrategies);
 
-	mutation.clear(); 
-	crossover.clear();
-	for (int i = 0; i < popSize; i++){
-		MutationManager* const m = std::get<0>(configurations[previousStrategies[i]]);
-		CrossoverManager* const c = std::get<1>(configurations[previousStrategies[i]]);
-		if (!mutation.count(m)) mutation[m] = {};
-		if (!crossover.count(c)) crossover[c] = {};
-		mutation[m].push_back(i); 
-		crossover[c].push_back(i);
-	}
+	assign(mutation, crossover);
 
-	parameterAdaptationManager->nextParameters(Fs, Crs, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
+	parameterAdaptationManager->nextParameters(Fs, Crs, 
+			ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 }
 
 void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
@@ -132,4 +140,38 @@ ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& popul
 	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 	}); 
+}
+
+RandomStrategyManager::RandomStrategyManager(StrategyAdaptationConfiguration const config, 
+		ConstraintHandler*const ch, std::vector<Solution*>const& population)
+	: StrategyAdaptationManager(config, ch, population){
+}
+
+void RandomStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
+		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
+		ArrayXd& Fs, ArrayXd& Crs){
+
+	std::vector<int> strategies;
+	strategies.reserve(popSize);
+	for (int i = 0; i < popSize; i++)
+		strategies.push_back(rng.randInt(0, K-1));
+
+	previousFitness = 
+		ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){return population[i]->getFitness();});
+
+	updateActivations(strategies);
+
+	assign(mutation, crossover);
+
+	parameterAdaptationManager->nextParameters(Fs, Crs, 
+			ArrayXi::Map(strategies.data(), strategies.size()));
+}
+
+void RandomStrategyManager::update(std::vector<Solution*>const& trials){
+	// Fitness improvements. Deteriorations are set to 0.
+	ArrayXd const credit = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
+			return previousFitness[i] - trials[i]->getFitness();
+		}).max(0);
+
+	parameterAdaptationManager->update(credit);
 }

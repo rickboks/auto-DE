@@ -38,13 +38,15 @@ class StrategyAdaptationManager {
 		std::vector<MutationManager*> mutationManagers; 
 		std::vector<CrossoverManager*> crossoverManagers; 
 		std::vector<std::tuple<MutationManager*, CrossoverManager*>> configurations;
+		std::vector<int> previousStrategies;
 		int const popSize;
 		int const K;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;
-		std::vector<int> previousStrategies;
 		ArrayXi activations;
 		void updateActivations(std::vector<int> const& assignment);
+		void assign(std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover);
 };
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
@@ -70,17 +72,14 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		void update(std::vector<Solution*>const& trials);
 };
 
-//class RandomStrategyManager : public StrategyAdaptationManager {
-	//private:
-		//CreditManager const* const creditManager;
-		//std::vector<int> previousStrategies;
-		//ArrayXd previousFitness; 
-	//public:
-		//RandomStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
-				//std::vector<Solution*>const& population);
-		//~RandomStrategyManager();
-		//void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
-				//std::map<CrossoverManager*, std::vector<int>>& crossover, 
-				//ArrayXd& Fs, ArrayXd& Crs);
-		//void update(std::vector<Solution*>const& trials);
-//};
+class RandomStrategyManager : public StrategyAdaptationManager {
+	private:
+		ArrayXd previousFitness; 
+	public:
+		RandomStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
+				std::vector<Solution*>const& population);
+		~RandomStrategyManager();
+		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, ArrayXd& Crs);
+		void update(std::vector<Solution*>const& trials);
+};
