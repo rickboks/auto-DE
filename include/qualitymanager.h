@@ -22,12 +22,3 @@ class WeightedSumQuality : public QualityManager {
 		WeightedSumQuality(int const K) : QualityManager(K){};
 		void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const;
 };
-
-class BellmanQuality : public QualityManager {
-	private:
-		double const gamma = 0.75;
-		ArrayXd softmax(ArrayXd const& x) const;
-	public:
-		BellmanQuality(int const K) : QualityManager(K){}
-		void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const;
-};

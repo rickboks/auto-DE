@@ -11,7 +11,7 @@ set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
 set configs (printf '%s\n' $credit" "$reward" "$quality" "$probability |\
 	awk -v exe=$executable '{printf("%1$s -C %2$s -r %3$s -q %4$s -p %5$s -I %2$s_%3$s_%4$s_%5$s\n",exe,$1,$2,$3,$4)}')
 
-set num_configs (count $configs)	
+set num_configs (count $configs)
 set num_nodes (count (string split ',' $hosts))
 set nodes_required (math (count $configs) / $threads)
 

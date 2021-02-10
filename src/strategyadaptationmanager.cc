@@ -81,7 +81,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Zero(K)){
+	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 1.)){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -126,6 +126,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 			credit, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 
 	qualityManager->updateQuality(q, r, p);
+
 	probabilityManager->updateProbability(p, q);
 	parameterAdaptationManager->update(credit);
 }

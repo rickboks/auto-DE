@@ -41,6 +41,7 @@ void experiment(DifferentialEvolution& de,
 	Logger activationsLogger("extra_data/" + de.getIdString() + ".act");
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
+		std::cout << "next problem" << std::endl;
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
 		int const popSize = dimension * POPSIZE_MULTIPLIER;
@@ -49,6 +50,7 @@ void experiment(DifferentialEvolution& de,
 		ArrayXi activations;
 
 		do {
+			std::cout << "restart" << std::endl;
 			de.prepare(PROBLEM, popSize);
 			de.run(budget);
 
