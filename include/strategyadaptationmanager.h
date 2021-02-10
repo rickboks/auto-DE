@@ -24,6 +24,9 @@ class Solution;
 
 class StrategyAdaptationManager {
 	public:
+		static std::function<StrategyAdaptationManager* (StrategyAdaptationConfiguration const, ConstraintHandler *const, 
+				std::vector<Solution*>const&)> create(std::string const id);
+
 		StrategyAdaptationManager(StrategyAdaptationConfiguration const config, ConstraintHandler *const ch, 
 				std::vector<Solution*>const& population);
 		virtual ~StrategyAdaptationManager();
@@ -38,15 +41,15 @@ class StrategyAdaptationManager {
 		std::vector<MutationManager*> mutationManagers; 
 		std::vector<CrossoverManager*> crossoverManagers; 
 		std::vector<std::tuple<MutationManager*, CrossoverManager*>> configurations;
-		std::vector<int> previousStrategies;
 		int const popSize;
 		int const K;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;
 		ArrayXi activations;
+		ArrayXd previousFitness; 
 		void updateActivations(std::vector<int> const& assignment);
 		void assign(std::map<MutationManager*, std::vector<int>>& mutation, 
-				std::map<CrossoverManager*, std::vector<int>>& crossover);
+				std::map<CrossoverManager*, std::vector<int>>& crossover, std::vector<int> const& assignment);
 };
 
 class AdaptiveStrategyManager : public StrategyAdaptationManager {
@@ -57,9 +60,9 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		ProbabilityManager const* const probabilityManager;
 		ArrayXd p; 
 		ArrayXd q; 
-		ArrayXd previousFitness; 
 		ArrayXd previousDistances; // Distances of all K configs
 		ArrayXd previousMean;
+		std::vector<int> previousStrategies;
 		ArrayXd getMean(std::vector<Solution*>const& population) const;
 		ArrayXd getDistances(std::vector<Solution*>const& population, ArrayXd const& mean) const;
 	public:
@@ -73,12 +76,18 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 };
 
 class RandomStrategyManager : public StrategyAdaptationManager {
-	private:
-		ArrayXd previousFitness; 
 	public:
 		RandomStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
-		~RandomStrategyManager();
+		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
+				std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, ArrayXd& Crs);
+		void update(std::vector<Solution*>const& trials);
+};
+
+class ConstantStrategyManager : public StrategyAdaptationManager {
+	public:
+		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
+				std::vector<Solution*>const& population);
 		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, ArrayXd& Crs);
 		void update(std::vector<Solution*>const& trials);

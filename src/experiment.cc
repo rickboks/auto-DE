@@ -86,6 +86,7 @@ int main(int argc, char** argv) {
 
 	// defaults
 	std::string 
+		strategy    = "A",
 		param		= "S",		
 		credit		= "SD",
 		reward 		= "AA",
@@ -107,8 +108,9 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:")) != -1){
+	while ((c = getopt(argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:s:")) != -1){
 		switch (c){
+			OPT('s', strategy)
 			OPT('P', param)
 			OPT('C', credit)
 			OPT('r', reward)
@@ -127,6 +129,7 @@ int main(int argc, char** argv) {
 	DifferentialEvolution de(
 		id, 
 		{
+			.strategy = strategy,
 			.constraintHandler = constraint,
 			.strategyAdaptationConfig = { 
 				.mutation = mutation,
