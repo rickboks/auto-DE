@@ -17,7 +17,7 @@ ParameterAdaptationManager::ParameterAdaptationManager(int const popSize, int co
 
 // SHADE
 SHADEManager::SHADEManager(int const popSize, int const K) : 
-	ParameterAdaptationManager(popSize, K), H(popSize/K), MCr(K, H), MF(K, H), 
+	ParameterAdaptationManager(popSize, K), H(std::max(popSize/K, 10)), MCr(K, H), MF(K, H), 
 	k(ArrayXi::Zero(K)){
 
 	MCr.fill(.5);
