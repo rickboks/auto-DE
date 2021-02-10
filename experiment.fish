@@ -6,6 +6,7 @@ set reward "AA" "AN" "EA" "EN"
 set quality "WS"
 set probability "PM" "AP"
 set threads "32"
+set data_folders "extra_data" "exdata"
 
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
 set configs (printf '%s\n' $credit" "$reward" "$quality" "$probability |\
@@ -18,6 +19,15 @@ set nodes_required (math (count $configs) / $threads)
 if test $num_nodes -eq 0
 	printf "Error: no nodes reserved\n"
 	exit
+end
+
+for folder in $data_folders
+	if test (ls $folder | count) -gt 0
+		printf "WARNING: folder \"%s\" is not empty. Should I remove everything in it? [y\n]\n" $folder
+		if test (read -n1 -P "Folder \"$folder\" is not empty. Should I remove everything in it? [y\n]" ) = "y"
+			rm -rf $folder/*
+		end
+	end
 end
 
 printf "Running %d configurations on %d nodes.\n" $num_configs $num_nodes
