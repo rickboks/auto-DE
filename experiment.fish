@@ -3,7 +3,7 @@ set executable "$HOME/auto-DE/experiment"
 
 set credit "DR" "SD" "FD" "FS" "FI" "CO"
 set reward "AA" "AN" "EA" "EN"
-set quality "WS" "BM"
+set quality "WS"
 set probability "PM" "AP"
 set threads "32"
 

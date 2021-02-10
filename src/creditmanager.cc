@@ -59,8 +59,5 @@ ArrayXd Compass::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previous
 	);
 	angles -= angles.minCoeff();
 
-	//for (int i = 0; i < vectors.cols(); i++){
-		//std::cout << vectors.col(i).transpose() << " " << angles[i] << std::endl;
-	//}
 	return fitnessDeltas;
 }
