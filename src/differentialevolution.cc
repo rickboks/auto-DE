@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "differentialevolution.h"
-#include "parameters.h"
+#include "params.h"
 #include "strategyadaptationmanager.h"
 #include "parameteradaptationmanager.h"
 #include "constrainthandler.h"
@@ -11,7 +11,9 @@
 #define CONVERGENCE_DELTA 1e-9
 
 DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig const config)
-	:id(id), config(config), activationsLogger("extra_data/" + id + ".act"){
+	:id(id), config(config), 
+	activationsLogger(params::extra_data_path + "/" + id + ".act"),
+	parameterLogger(params::extra_data_path + "/" + id + ".par"){
 }
 
 DifferentialEvolution::~DifferentialEvolution(){}
@@ -44,6 +46,9 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 
 	if (params::log_activations)
 		activationsLogger.log(coco_problem_get_id(problem));
+
+	if (params::log_parameters)
+		parameterLogger.log(coco_problem_get_id(problem));
 }
 
 // Wrapper of prepare -> run -> reset
@@ -59,6 +64,7 @@ void DifferentialEvolution::run(int const evalBudget){
 
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
+	ArrayXi recentActivations = ArrayXi::Zero(strategyAdaptationManager->K);
 
 	int iteration = 0;
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
@@ -66,9 +72,17 @@ void DifferentialEvolution::run(int const evalBudget){
 			/*&& !converged(genomes)*/){
 
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
+		recentActivations += strategyAdaptationManager->getLastActivations();
 
-		if (params::log_activations && iteration % params::log_activations_interval == 0)
-			activationsLogger.log(strategyAdaptationManager->getLastActivations().transpose());
+		if (iteration > 0){
+		 	if (params::log_activations && iteration % params::log_activations_interval == 0){
+				activationsLogger.log(recentActivations.transpose().format(params::vecFmt));
+				recentActivations.setZero();
+			}
+			if (params::log_parameters && iteration % params::log_parameters_interval == 0){
+				parameterLogger.log(Fs.mean(), false); parameterLogger.log(" ", false); parameterLogger.log(Crs.mean());
+			}
+		}
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -100,18 +114,20 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		// Selection step
 		for (int i = 0; i < popSize; i++){
-			if (trials[i]->getFitness() < genomes[i]->getFitness()){
+			if (*trials[i] < *genomes[i]){
 				delete genomes[i];
 				genomes[i] = trials[i];
 			} else {
 				delete trials[i];
 			}
 		}
+		iteration++;
 	}
-	iteration++;
 }
 
 void DifferentialEvolution::reset(){
+	activationsLogger.log(""); // blank line
+	parameterLogger.log(""); // blank line
 	for (Solution* d : genomes) 
 		delete d;
 	delete ch;

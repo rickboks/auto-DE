@@ -39,4 +39,5 @@ class DifferentialEvolution {
 		int D;
 		coco_problem_t* problem;
 		Logger activationsLogger;
+		Logger parameterLogger;
 };

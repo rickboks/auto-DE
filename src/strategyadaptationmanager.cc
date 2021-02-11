@@ -24,7 +24,7 @@ std::function<StrategyAdaptationManager* (StrategyAdaptationConfiguration const,
 
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
-	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
+	: K(config.crossover.size() * config.mutation.size()), config(config), popSize(population.size()),  
 	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), 
 	totalActivations(ArrayXi::Zero(K)), previousStrategies(popSize){
 

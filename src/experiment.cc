@@ -1,17 +1,8 @@
-#include <algorithm>
-#include <math.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <assert.h>
 #include <iostream>
+#include <getopt.h>
 #include "coco.h"
 #include "differentialevolution.h"
-#include "rng.h"
-#include "logger.h"
-#include "util.h"
-#include "parameters.h"
-#include <getopt.h>
+#include "params.h"
 
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
@@ -39,7 +30,7 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-	Logger activationsLogger("extra_data/" + de.getIdString() + ".tact");
+	Logger activationsLogger(params::extra_data_path + "/" + de.getIdString() + ".tact");
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
@@ -64,7 +55,7 @@ void experiment(DifferentialEvolution& de,
 
 		if (params::log_activation_totals){
 			activationsLogger.log(fid + " ", false);
-			activationsLogger.log(activations.transpose());
+			activationsLogger.log(activations.transpose().format(params::vecFmt));
 			activationsLogger.flush();
 		}
 	}
@@ -86,7 +77,7 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	coco_set_log_level("warning");
+	//coco_set_log_level("warning");
 
 	// defaults
 	std::string 
@@ -99,7 +90,7 @@ int main(int argc, char** argv) {
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
-	  	dimensions 	= "5",
+	  	dimensions 	= "20",
 	 	functions 	= "1-24",
 		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 
