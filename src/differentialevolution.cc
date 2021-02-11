@@ -64,25 +64,17 @@ void DifferentialEvolution::run(int const evalBudget){
 
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
+
 	ArrayXi recentActivations = ArrayXi::Zero(strategyAdaptationManager->K);
+	double meanF = 0, meanCr = 0;
 
 	int iteration = 0;
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
 			&& !coco_problem_final_target_hit(problem)
 			/*&& !converged(genomes)*/){
-
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 		recentActivations += strategyAdaptationManager->getLastActivations();
-
-		if (iteration > 0){
-		 	if (params::log_activations && iteration % params::log_activations_interval == 0){
-				activationsLogger.log(recentActivations.transpose().format(params::vecFmt));
-				recentActivations.setZero();
-			}
-			if (params::log_parameters && iteration % params::log_parameters_interval == 0){
-				parameterLogger.log(Fs.mean(), false); parameterLogger.log(" ", false); parameterLogger.log(Crs.mean());
-			}
-		}
+		meanF += Fs.mean(); meanCr += Crs.mean();
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -122,6 +114,20 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 		iteration++;
+
+		/* Logging */
+		if (params::log_activations && iteration % params::log_activations_interval == 0){
+			activationsLogger.log(recentActivations.transpose().format(params::vecFmt));
+			recentActivations.setZero();
+		}
+
+		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
+			parameterLogger.log(meanF / params::log_parameters_interval, false); 
+			parameterLogger.log(" ", false); 
+			parameterLogger.log(meanCr / params::log_parameters_interval);
+			meanF = meanCr = 0.;
+		}
+		/* ----- */
 	}
 }
 
@@ -133,12 +139,4 @@ void DifferentialEvolution::reset(){
 	delete ch;
 	delete strategyAdaptationManager;
 	genomes.clear();
-}
-
-std::string DifferentialEvolution::getIdString() const {
-	return id;
-}
-
-ArrayXi DifferentialEvolution::getActivations(){
-	return strategyAdaptationManager->getTotalActivations();
 }

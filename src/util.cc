@@ -1,9 +1,7 @@
 #include "util.h"
 #include "rng.h"
-#include <algorithm>
 #include <experimental/filesystem>
 #include <fstream>
-#include <numeric>
 
 std::string generateConfig(std::string const templateFile, std::string const name){
 	std::string const folder = "configurations";
@@ -61,9 +59,4 @@ Solution* getWorst(std::vector<Solution*>const& genomes){
 std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes){
 	std::sort(genomes.begin(), genomes.end(), [](Solution* a, Solution* b){return *a < *b;});
 	return genomes;
-}
-
-
-int p(int const popSize){
-	return rng.randInt(0, rng.randInt(2, popSize/5)-1);
 }

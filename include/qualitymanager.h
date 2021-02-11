@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 #include "Eigen/Dense"
+#include "params.h"
 
 using Eigen::ArrayXd;
 class QualityManager {
@@ -17,7 +18,7 @@ class QualityManager {
 
 class WeightedSumQuality : public QualityManager {
 	private:
-		double const alpha = 0.3;
+		double const alpha = params::WS_alpha;
 	public:
 		WeightedSumQuality(int const K) : QualityManager(K){};
 		void updateQuality(ArrayXd &q, ArrayXd const& r, ArrayXd const& p) const;

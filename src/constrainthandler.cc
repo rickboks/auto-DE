@@ -138,7 +138,7 @@ void ConservatismRepair::repair(Solution* const p, Solution const*const base, So
 bool ResamplingRepair::resample(Solution * const p, int const resamples) {
 	if (isFeasible(p)){
 		return false;
-	} else if (resamples >= 100){
+	} else if (resamples >= maxResamples){
 		p->setX(p->X().max(lb).min(ub)); // clamp
 		return false;
 	}

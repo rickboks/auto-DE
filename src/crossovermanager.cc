@@ -1,7 +1,5 @@
 #include "util.h"
 #include "crossovermanager.h"
-#include <algorithm>
-#include <functional>
 
 std::function<CrossoverManager* ()> CrossoverManager::create(std::string const id){
 #define ALIAS(X, Y) if(id == X) return [](){return new Y();};

@@ -6,7 +6,6 @@
 
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
-static int const POPSIZE_MULTIPLIER = 5;
 static int const INDEPENDENT_RUNS = 20;
 static std::vector<int> const INSTANCES = {1,2,3,4,5};
 
@@ -30,34 +29,17 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-	Logger activationsLogger(params::extra_data_path + "/" + de.getIdString() + ".tact");
-
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		int const popSize = dimension * POPSIZE_MULTIPLIER;
+		int const popSize = dimension * params::popsize_multiplier;
 		std::string const fid = coco_problem_get_id(PROBLEM);
-
-		ArrayXi activations;
 
 		do {
 			de.prepare(PROBLEM, popSize);
 			de.run(budget);
-
-			if (activations.size() > 0)
-				activations += de.getActivations();
-			else 
-				activations = de.getActivations();
-
 			de.reset();
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
-		
-
-		if (params::log_activation_totals){
-			activationsLogger.log(fid + " ", false);
-			activationsLogger.log(activations.transpose().format(params::vecFmt));
-			activationsLogger.flush();
-		}
 	}
 
 	coco_observer_free(observer);

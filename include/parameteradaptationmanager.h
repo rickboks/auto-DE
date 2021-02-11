@@ -1,9 +1,6 @@
 #pragma once
 #include "solution.h"
-#include <vector>
-#include <set>
-#include <map>
-#include <functional>
+#include "params.h"
 
 using Eigen::ArrayXi;
 using Eigen::MatrixXd;
@@ -41,8 +38,8 @@ class SHADEManager : public ParameterAdaptationManager {
 
 class ConstantParameterManager : public ParameterAdaptationManager {
 	private:
-		double const F = .5;
-		double const Cr = .9;
+		double const F = params::F;
+		double const Cr = params::Cr;
 	public:
 		ConstantParameterManager(int const popSize, int const K);
 		void nextParameters(ArrayXd& Fs, ArrayXd& Crs, ArrayXi const& assignment); 

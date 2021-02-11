@@ -1,9 +1,7 @@
 #pragma once
 #include "Eigen/Dense"
+#include "params.h"
 #include <cmath>
-
-constexpr double pi() { return std::atan(1)*4; }
-
 using Eigen::ArrayXd;
 using Eigen::Vector2d;
 class CreditManager {
@@ -47,7 +45,7 @@ class FitnessImprovement : public CreditManager {
 
 class Compass : public CreditManager {
 	private:
-		double const omega = pi() / 4.;
+		double const omega = params::CO_omega;
 		Vector2d const c;
 	public:
 		Compass() : c(cos(omega), sin(omega)){};

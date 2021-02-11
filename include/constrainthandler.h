@@ -1,10 +1,6 @@
 #pragma once
-#include <vector>
-#include <string>
-#include <set>
-#include <map>
-#include <functional>
 #include "Eigen/Dense"
+#include "params.h"
 
 using Eigen::ArrayXd;
 class Solution;
@@ -65,6 +61,8 @@ class ConservatismRepair : public ConstraintHandler {
 };
 
 class ResamplingRepair : public ConstraintHandler {
+	private:
+		int const maxResamples = params::RS_max_resamples;
 	public:
 		ResamplingRepair(ArrayXd const lb, ArrayXd const ub)
 			:ConstraintHandler(lb,ub){};

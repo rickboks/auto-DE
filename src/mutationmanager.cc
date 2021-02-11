@@ -1,5 +1,6 @@
 #include "mutationmanager.h"
 #include "util.h"
+#include "params.h"
 
 using Eigen::ArrayXXd;
 
@@ -89,7 +90,7 @@ void TTPB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 // Target-to-pbest/1
 Solution* TTPB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const* const pBest = sorted[p(genomes.size())];
+	Solution const* const pBest = sorted[params::SHADE_p(genomes.size())];
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (pBest->X() - genomes[i]->X() + xr[0]->X() - xr[1]->X())
@@ -216,7 +217,7 @@ void ProximityMutationManager::prepare(std::vector<Solution*>const& genomes){
 
 	// Fill distance matrix
 	for (int i = 0; i < size-1; i++){ // Only fill upper triangle
-		for (int j = i + 1; j < size; j++){
+		for (int j = i+1; j < size; j++){
 			double const dist = std::max(distance(genomes[i], genomes[j]), 1.0e-10);
 			Rd(i,j) = Rd(j,i) = dist;
 		}
@@ -255,7 +256,7 @@ Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibiliti
 }
 
 Solution* RankingMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const* const pBest = sorted[p(genomes.size())];
+	Solution const* const pBest = sorted[params::SHADE_p(genomes.size())];
 	std::vector<Solution*> possibilities = remove(genomes,i);
 	Solution const* const xr0 = pickRanked(possibilities); // N.B. Ranked instead of Random (removes from possibilities)
 	Solution const* const xr1 = pickRandom(possibilities, 1, false)[0];
