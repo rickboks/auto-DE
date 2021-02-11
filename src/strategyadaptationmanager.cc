@@ -26,7 +26,7 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
 	: K(config.crossover.size() * config.mutation.size()), config(config), popSize(population.size()),  
 	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), 
-	totalActivations(ArrayXi::Zero(K)), previousStrategies(popSize){
+	previousStrategies(popSize){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(MutationManager::create(m)(ch));
@@ -57,14 +57,6 @@ std::vector<MutationManager*> StrategyAdaptationManager::getMutationManagers() c
 
 std::vector<CrossoverManager*> StrategyAdaptationManager::getCrossoverManagers() const{
 	return crossoverManagers;
-}
-
-void StrategyAdaptationManager::updateTotalActivations(std::vector<int> const& assignment){
-	for (int i : assignment) totalActivations(i)++;
-}
-
-ArrayXi StrategyAdaptationManager::getTotalActivations() const{
-	return totalActivations;
 }
 
 ArrayXi StrategyAdaptationManager::getLastActivations() const{
@@ -111,8 +103,6 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
 	});
-
-	updateTotalActivations(previousStrategies);
 
 	assign(mutation, crossover, previousStrategies);
 
@@ -169,8 +159,6 @@ void RandomStrategyManager::next(std::vector<Solution*>const& population, std::m
 		return population[i]->getFitness();
 	});
 
-	updateTotalActivations(previousStrategies);
-
 	assign(mutation, crossover, previousStrategies);
 
 	parameterAdaptationManager->nextParameters(Fs, Crs, 
@@ -202,8 +190,6 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& population, std:
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
 	});
-
-	updateTotalActivations(previousStrategies);
 
 	assign(mutation, crossover, previousStrategies);
 

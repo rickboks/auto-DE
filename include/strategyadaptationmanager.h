@@ -35,7 +35,6 @@ class StrategyAdaptationManager {
 		virtual void update(std::vector<Solution*>const& trials)=0;
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
-		ArrayXi getTotalActivations() const;
 		ArrayXi getLastActivations() const;
 		int const K;
 	protected:
@@ -46,10 +45,8 @@ class StrategyAdaptationManager {
 		int const popSize;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;
-		ArrayXi totalActivations;
 		ArrayXd previousFitness; 
 		std::vector<int> previousStrategies;
-		void updateTotalActivations(std::vector<int> const& assignment);
 		void assign(std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, std::vector<int> const& assignment);
 };
