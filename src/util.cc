@@ -48,16 +48,6 @@ std::vector<int> range(int const size){
 	return r;
 }
 
-Solution* getPBest(std::vector<Solution*>const& genomes, bool const isSorted){
-	int const P = rng.randDouble(2./genomes.size(), .2) * genomes.size(); // The number of elements to consider
-	if (isSorted)
-		return P > 0 ? genomes[rng.randInt(0, P-1)] : genomes[0];
-	else {
-		std::vector<Solution*> const sorted = sortOnFitness(genomes);
-		return P > 0 ? sorted[rng.randInt(0, P-1)] : sorted[0];
-	}
-}
-
 Solution* getBest(std::vector<Solution*>const& genomes){
 	return *std::min_element(genomes.begin(), genomes.end(), 
 			[](Solution const* const a, Solution const* const b){return *a < *b;});

@@ -89,7 +89,7 @@ void TTPB1MutationManager::prepare(std::vector<Solution*>const& genomes){
 
 // Target-to-pbest/1
 Solution* TTPB1MutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const* const pBest = getPBest(sorted, true); // pBest is sampled for each mutation
+	Solution const* const pBest = sorted[rng.randInt(0, rng.randInt(2, genomes.size()/5))];
 	std::vector<Solution*> const xr = pickRandom(remove(genomes,i), 2, false);
 	Solution* const m = new Solution(
 			genomes[i]->X() + F * (pBest->X() - genomes[i]->X() + xr[0]->X() - xr[1]->X())
@@ -238,11 +238,9 @@ Solution* ProximityMutationManager::doMutation(std::vector<Solution*>const& geno
 void RankingMutationManager::prepare(std::vector<Solution*>const& genomes){
 	int const size = genomes.size();
 	probability.clear();
-	std::vector<Solution*> const _sorted = sortOnFitness(genomes);
+	sorted = sortOnFitness(genomes);
 	for (int i = 0; i < size; i++)
-		probability[_sorted[i]] = double(size - (i+1)) / double(size);
-	
-	this->sorted = _sorted;
+		probability[sorted[i]] = double(size - (i+1)) / double(size);
 }
 
 Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibilities) const{
@@ -257,7 +255,7 @@ Solution* RankingMutationManager::pickRanked(std::vector<Solution*>& possibiliti
 }
 
 Solution* RankingMutationManager::doMutation(std::vector<Solution*>const& genomes, int const i, double const F) const{
-	Solution const * const pBest = getPBest(sorted, true); // pBest is sampled for each mutation
+	Solution const* const pBest = sorted[rng.randInt(0, rng.randInt(2, genomes.size()/5))];
 	std::vector<Solution*> possibilities = remove(genomes,i);
 	Solution const* const xr0 = pickRanked(possibilities); // N.B. Ranked instead of Random (removes from possibilities)
 	Solution const* const xr1 = pickRandom(possibilities, 1, false)[0];
