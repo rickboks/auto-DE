@@ -54,3 +54,9 @@ class Compass : public CreditManager {
 		ArrayXd getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 				ArrayXd const& currentDistances) const;
 };
+
+class ParetoDominance : public CreditManager {
+	public: 
+		ArrayXd getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+				ArrayXd const& currentDistances) const;
+};

@@ -2,6 +2,7 @@
 #include <iostream>
 using Eigen::Vector2d;
 using Eigen::MatrixXd;
+using Eigen::ArrayXi;
 
 std::function<CreditManager* ()> CreditManager::create(std::string const id){
 #define ALIAS(X, Y) if (id == X) return [](){return new Y();};
@@ -11,6 +12,7 @@ std::function<CreditManager* ()> CreditManager::create(std::string const id){
 	ALIAS("FS", FitnessScaledBySquaredDiversityRatio)
 	ALIAS("FI", FitnessImprovement)
 	ALIAS("CO", Compass)
+	ALIAS("PA", ParetoDominance)
 	throw std::invalid_argument("no such CreditManager: " + id);
 }
 
@@ -60,4 +62,26 @@ ArrayXd Compass::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previous
 	angles -= angles.minCoeff();
 
 	return fitnessDeltas;
+}
+
+ArrayXd ParetoDominance::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
+	ArrayXd const& currentDistances) const{
+	int const popSize = fitnessDeltas.size();
+	ArrayXd dominates = ArrayXd::Zero(popSize);
+	ArrayXd const diversityDeltas = currentDistances - previousDistances;
+
+#define DOMINATES(X,Y) \
+	(fitnessDeltas(X) > fitnessDeltas(Y) && diversityDeltas(X) >= diversityDeltas(Y)) || \
+	(diversityDeltas(X) > diversityDeltas(Y) && fitnessDeltas(X) >= fitnessDeltas(Y))
+
+	for (int i = 0; i < popSize-1; i++){
+		for (int j = i+1; j < popSize; j++){
+			if (DOMINATES(i, j))
+				dominates(i)++;
+			else if (DOMINATES(j,i))
+				dominates(j)++;
+		}
+	}
+
+	return dominates;
 }
