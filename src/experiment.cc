@@ -31,14 +31,12 @@ void experiment(DifferentialEvolution& de,
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
-		size_t const budget = dimension * BUDGET_MULTIPLIER;
 		int const popSize = dimension * params::popsize_multiplier;
+		size_t const budget = dimension * BUDGET_MULTIPLIER;
 		std::string const fid = coco_problem_get_id(PROBLEM);
 
 		do {
-			de.prepare(PROBLEM, popSize);
-			de.run(budget);
-			de.reset();
+			de.run(PROBLEM, budget, popSize);
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 	}
 
