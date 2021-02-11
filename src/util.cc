@@ -62,3 +62,8 @@ std::vector<Solution*> sortOnFitness(std::vector<Solution*> genomes){
 	std::sort(genomes.begin(), genomes.end(), [](Solution* a, Solution* b){return *a < *b;});
 	return genomes;
 }
+
+
+int p(int const popSize){
+	return rng.randInt(0, rng.randInt(2, popSize/5)-1);
+}
