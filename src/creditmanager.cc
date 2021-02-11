@@ -52,20 +52,18 @@ ArrayXd Compass::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previous
 	MatrixXd vectors(2, fitnessDeltas.size());
 	vectors.row(0) = diversityDeltas / diversityDeltas.abs().maxCoeff();
 	vectors.row(1) = fitnessDeltas / fitnessDeltas.abs().maxCoeff();
-	vectors.colwise().normalize();
 
 	ArrayXd angles = ArrayXd::NullaryExpr(vectors.cols(), 
 			[this,&vectors](Eigen::Index const i){
-				return c.dot(vectors.col(i));
+				return c.dot(vectors.col(i)); 
 			}
 	);
-	angles -= angles.minCoeff();
-
-	return fitnessDeltas;
+	return angles - angles.minCoeff();
 }
 
 ArrayXd ParetoDominance::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& previousDistances, 
 	ArrayXd const& currentDistances) const{
+
 	int const popSize = fitnessDeltas.size();
 	ArrayXd dominates = ArrayXd::Zero(popSize);
 	ArrayXd const diversityDeltas = currentDistances - previousDistances;
