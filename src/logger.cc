@@ -1,9 +1,18 @@
 #include "logger.h"
 
 Logger::~Logger(){
-	out.close();
+	if (activated)
+		out.close();
 };
 
 void Logger::flush(){
-	out.flush();
+	if (activated)
+		out.flush();
+}
+
+void Logger::checkActive(){
+	if (!activated){
+		out.open(filename);
+		activated = true;
+	}
 }

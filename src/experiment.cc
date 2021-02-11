@@ -10,6 +10,7 @@
 #include "rng.h"
 #include "logger.h"
 #include "util.h"
+#include "parameters.h"
 #include <getopt.h>
 
 static coco_problem_t *PROBLEM;
@@ -37,8 +38,8 @@ void experiment(DifferentialEvolution& de,
 	coco_observer_t *observer;
 	suite = coco_suite(suite_name, ("instances: " + gen_instances()).c_str(), suite_options);
 	observer = coco_observer(observer_name, observer_options);
-	
-	Logger activationsLogger("extra_data/" + de.getIdString() + ".act");
+
+	Logger activationsLogger("extra_data/" + de.getIdString() + ".tact");
 
 	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
 		int const dimension = coco_problem_get_dimension(PROBLEM);
@@ -59,10 +60,13 @@ void experiment(DifferentialEvolution& de,
 
 			de.reset();
 		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
+		
 
-		activationsLogger.log(fid + " ", false);
-		activationsLogger.log(activations.transpose());
-		activationsLogger.flush();
+		if (params::log_activation_totals){
+			activationsLogger.log(fid + " ", false);
+			activationsLogger.log(activations.transpose());
+			activationsLogger.flush();
+		}
 	}
 
 	coco_observer_free(observer);
@@ -95,7 +99,7 @@ int main(int argc, char** argv) {
 		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
-	  	dimensions 	= "20",
+	  	dimensions 	= "5",
 	 	functions 	= "1-24",
 		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
 

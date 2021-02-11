@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "differentialevolution.h"
+#include "parameters.h"
 #include "strategyadaptationmanager.h"
 #include "parameteradaptationmanager.h"
 #include "constrainthandler.h"
@@ -10,7 +11,7 @@
 #define CONVERGENCE_DELTA 1e-9
 
 DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig const config)
-	:config(config), id(id){
+	:id(id), config(config), activationsLogger("extra_data/" + id + ".act"){
 }
 
 DifferentialEvolution::~DifferentialEvolution(){}
@@ -40,6 +41,9 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	ch = ConstraintHandler::create(config.constraintHandler)(lowerBound, upperBound);
 	strategyAdaptationManager = StrategyAdaptationManager::create(config.strategy)(
 			config.strategyAdaptationConfig, ch, genomes);
+
+	if (params::log_activations)
+		activationsLogger.log(coco_problem_get_id(problem));
 }
 
 // Wrapper of prepare -> run -> reset
@@ -56,11 +60,15 @@ void DifferentialEvolution::run(int const evalBudget){
 	std::map<MutationManager*, std::vector<int>> mutationManagers;   // Maps containing the indices that each
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
 
+	int iteration = 0;
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
 			&& !coco_problem_final_target_hit(problem)
-			&& !converged(genomes)){
+			/*&& !converged(genomes)*/){
 
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
+
+		if (params::log_activations && iteration % params::log_activations_interval == 0)
+			activationsLogger.log(strategyAdaptationManager->getLastActivations().transpose());
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -100,8 +108,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			}
 		}
 	}
-
-	//std::cout << strategyAdaptationManager->getActivations().transpose() << std::endl;
+	iteration++;
 }
 
 void DifferentialEvolution::reset(){
@@ -117,5 +124,5 @@ std::string DifferentialEvolution::getIdString() const {
 }
 
 ArrayXi DifferentialEvolution::getActivations(){
-	return strategyAdaptationManager->getActivations();
+	return strategyAdaptationManager->getTotalActivations();
 }

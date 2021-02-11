@@ -3,6 +3,7 @@
 #include "strategyadaptationmanager.h"
 #include <vector>
 #include <string>
+#include "logger.h"
 
 template <typename T>
 class IOHprofiler_problem;
@@ -18,14 +19,6 @@ struct DEConfig {
 };
 
 class DifferentialEvolution {
-	private:
-		DEConfig const config;
-		std::vector<Solution*> genomes;
-		ConstraintHandler* ch;
-		StrategyAdaptationManager* strategyAdaptationManager;
-		int popSize;
-		int D;
-		coco_problem_t* problem;
 	public:
 		std::string const id;
 		DifferentialEvolution(std::string const id, DEConfig const config);
@@ -37,4 +30,13 @@ class DifferentialEvolution {
 		bool converged(std::vector<Solution*>const& population) const;
 		ArrayXi getActivations();
 		std::string getIdString() const;
+	private:
+		DEConfig const config;
+		std::vector<Solution*> genomes;
+		ConstraintHandler* ch;
+		StrategyAdaptationManager* strategyAdaptationManager;
+		int popSize;
+		int D;
+		coco_problem_t* problem;
+		Logger activationsLogger;
 };

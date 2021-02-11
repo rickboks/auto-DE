@@ -25,7 +25,8 @@ std::function<StrategyAdaptationManager* (StrategyAdaptationConfiguration const,
 StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler * const ch, std::vector<Solution*>const& population)
 	:config(config), popSize(population.size()), K(config.crossover.size() * config.mutation.size()), 
-	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), activations(ArrayXi::Zero(K)){
+	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), 
+	totalActivations(ArrayXi::Zero(K)), previousStrategies(popSize){
 
 	for (std::string m : config.mutation)
 		mutationManagers.push_back(MutationManager::create(m)(ch));
@@ -58,11 +59,18 @@ std::vector<CrossoverManager*> StrategyAdaptationManager::getCrossoverManagers()
 	return crossoverManagers;
 }
 
-void StrategyAdaptationManager::updateActivations(std::vector<int> const& assignment){
-	for (int i : assignment) activations(i)++;
+void StrategyAdaptationManager::updateTotalActivations(std::vector<int> const& assignment){
+	for (int i : assignment) totalActivations(i)++;
 }
 
-ArrayXi StrategyAdaptationManager::getActivations() const{
+ArrayXi StrategyAdaptationManager::getTotalActivations() const{
+	return totalActivations;
+}
+
+ArrayXi StrategyAdaptationManager::getLastActivations() const{
+	ArrayXi activations = ArrayXi::Zero(K);
+	for (int i : previousStrategies)
+		activations(i)++;
 	return activations;
 }
 
@@ -104,7 +112,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		return population[i]->getFitness();
 	});
 
-	updateActivations(previousStrategies);
+	updateTotalActivations(previousStrategies);
 
 	assign(mutation, crossover, previousStrategies);
 
@@ -154,21 +162,19 @@ void RandomStrategyManager::next(std::vector<Solution*>const& population, std::m
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
 
-	std::vector<int> assignment;
-	assignment.reserve(popSize);
 	for (int i = 0; i < popSize; i++)
-		assignment.push_back(rng.randInt(0, K-1)); // uniformly random allocation
+		previousStrategies[i] = rng.randInt(0, K-1); // uniformly random allocation
 
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
 	});
 
-	updateActivations(assignment);
+	updateTotalActivations(previousStrategies);
 
-	assign(mutation, crossover, assignment);
+	assign(mutation, crossover, previousStrategies);
 
 	parameterAdaptationManager->nextParameters(Fs, Crs, 
-			ArrayXi::Map(assignment.data(), assignment.size()));
+			ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 }
 
 void RandomStrategyManager::update(std::vector<Solution*>const& trials){
@@ -184,28 +190,28 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
 	: StrategyAdaptationManager(config, ch, population){
 	assert(config.mutation.size() == 1 && config.crossover.size() == 1);
+	std::fill(previousStrategies.begin(), previousStrategies.end(), 0);
 }
 
 void ConstantStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
 
-	std::vector<int> const assignment (popSize, 0);
+	// previousStrategies is not updated because it is constant 0
 
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
 	});
 
-	updateActivations(assignment);
+	updateTotalActivations(previousStrategies);
 
-	assign(mutation, crossover, assignment);
+	assign(mutation, crossover, previousStrategies);
 
 	parameterAdaptationManager->nextParameters(Fs, Crs, 
-			ArrayXi::Map(assignment.data(), assignment.size()));
+			ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 }
 
 void ConstantStrategyManager::update(std::vector<Solution*>const& trials){
-	// Fitness improvements. Deteriorations are set to 0.
 	ArrayXd const credit = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
 		return previousFitness[i] - trials[i]->getFitness();
 	}).max(0);
