@@ -66,6 +66,10 @@ ArrayXi StrategyAdaptationManager::getLastActivations() const{
 	return activations;
 }
 
+ArrayXd StrategyAdaptationManager::getDistancesToMeanPosition() const {
+	throw "The selected StrategyAdaptationManager does not keep track of diversity";
+}
+
 StrategyAdaptationManager::~StrategyAdaptationManager(){
 	for (auto m : mutationManagers)
 		delete m;
@@ -81,7 +85,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 1.)){
+	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 1.)), used(K){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
@@ -99,6 +103,11 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 
 	previousStrategies = //Roulette with replacement
 		rouletteSelect(range(K), std::vector<double>(p.begin(), p.end()), popSize, true); 
+
+	// Update used strategies
+	std::fill(used.begin(), used.end(), false);
+	for (int i : previousStrategies)
+		used[i] = true;
 
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
@@ -123,7 +132,7 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	ArrayXd const r = rewardManager->getReward(
 			credit, ArrayXi::Map(previousStrategies.data(), previousStrategies.size()));
 
-	qualityManager->updateQuality(q, r, p);
+	qualityManager->updateQuality(q, r, used);
 
 	probabilityManager->updateProbability(p, q);
 	parameterAdaptationManager->update(credit);
@@ -141,6 +150,10 @@ ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& popul
 	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 	}); 
+}
+
+ArrayXd AdaptiveStrategyManager::getDistancesToMeanPosition() const {
+	return previousDistances;
 }
 
 RandomStrategyManager::RandomStrategyManager(StrategyAdaptationConfiguration const config, 

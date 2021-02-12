@@ -1,7 +1,7 @@
 #!/usr/bin/env fish
 set executable "$HOME/auto-DE/experiment"
 
-set credit "DR" "SD" "FD" "FS" "FI" "CO"
+set credit "DR" "SD" "FD" "FS" "FI" "CO" "PA"
 set reward "AA" "AN" "EA" "EN"
 set quality "WS"
 set probability "PM" "AP"
@@ -23,7 +23,6 @@ end
 
 for folder in $data_folders
 	if test (ls $folder | count) -gt 0
-		printf "WARNING: folder \"%s\" is not empty. Should I remove everything in it? [y\n]\n" $folder
 		if test (read -n1 -P "Folder \"$folder\" is not empty. Should I remove everything in it? [y\n]" ) = "y"
 			rm -rf $folder/*
 		end

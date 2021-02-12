@@ -36,6 +36,7 @@ class StrategyAdaptationManager {
 		std::vector<MutationManager*> getMutationManagers() const;
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 		ArrayXi getLastActivations() const;
+		virtual ArrayXd getDistancesToMeanPosition() const;
 		int const K;
 	protected:
 		StrategyAdaptationConfiguration const config;
@@ -61,6 +62,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		ArrayXd q; 
 		ArrayXd previousDistances; // Distances of all K configs
 		ArrayXd previousMean;
+		std::vector<bool> used;	
 		ArrayXd getMean(std::vector<Solution*>const& population) const;
 		ArrayXd getDistances(std::vector<Solution*>const& population, ArrayXd const& mean) const;
 	public:
@@ -71,6 +73,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 				std::map<CrossoverManager*, std::vector<int>>& crossover, 
 				ArrayXd& Fs, ArrayXd& Crs);
 		void update(std::vector<Solution*>const& trials);
+		ArrayXd getDistancesToMeanPosition() const;
 };
 
 class RandomStrategyManager : public StrategyAdaptationManager {

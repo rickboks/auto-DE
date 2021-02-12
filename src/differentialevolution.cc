@@ -8,18 +8,18 @@
 #include "crossovermanager.h"
 #include "util.h"
 
-#define CONVERGENCE_DELTA 1e-9
 
 DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig const config)
 	:id(id), config(config), 
 	activationsLogger(params::extra_data_path + "/" + id + ".act"),
-	parameterLogger(params::extra_data_path + "/" + id + ".par"){
+	parameterLogger(params::extra_data_path + "/" + id + ".par"),
+	diversityLogger(params::extra_data_path + "/" + id + ".div"){
 }
 
 DifferentialEvolution::~DifferentialEvolution(){}
 
 bool DifferentialEvolution::converged(std::vector<Solution*>const& population) const{
-	return std::abs(getWorst(population)->getFitness() - getBest(population)->getFitness()) < CONVERGENCE_DELTA;
+	return std::abs(getWorst(population)->getFitness() - getBest(population)->getFitness()) < params::convergence_delta;
 } 
 
 // Should be called before starting to optimize a problem
@@ -49,6 +49,9 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 
 	if (params::log_parameters)
 		parameterLogger.log(coco_problem_get_id(problem));
+
+	if (params::log_diversity)
+		diversityLogger.log(coco_problem_get_id(problem));
 }
 
 // Wrapper of prepare -> run -> reset
@@ -66,15 +69,13 @@ void DifferentialEvolution::run(int const evalBudget){
 	std::map<CrossoverManager*, std::vector<int>> crossoverManagers; // mutation/crossover operator handles.
 
 	ArrayXi recentActivations = ArrayXi::Zero(strategyAdaptationManager->K);
-	double meanF = 0, meanCr = 0;
 
 	int iteration = 0;
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
 			&& !coco_problem_final_target_hit(problem)
-			/*&& !converged(genomes)*/){
+			&& !converged(genomes)){
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 		recentActivations += strategyAdaptationManager->getLastActivations();
-		meanF += Fs.mean(); meanCr += Crs.mean();
 
 		// Mutation step
 		std::vector<Solution*> donors(popSize);
@@ -122,18 +123,21 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
-			parameterLogger.log(meanF / params::log_parameters_interval, false); 
+			parameterLogger.log(Fs.mean(), false); 
 			parameterLogger.log(" ", false); 
-			parameterLogger.log(meanCr / params::log_parameters_interval);
-			meanF = meanCr = 0.;
+			parameterLogger.log(Crs.mean());
 		}
+
+		if (params::log_diversity && iteration % params::log_diversity_interval == 0)
+			diversityLogger.log(strategyAdaptationManager->getDistancesToMeanPosition().mean());
 		/* ----- */
 	}
 }
 
 void DifferentialEvolution::reset(){
 	activationsLogger.log(""); // blank line
-	parameterLogger.log(""); // blank line
+	parameterLogger.log(""); 
+	diversityLogger.log("");
 	for (Solution* d : genomes) 
 		delete d;
 	delete ch;

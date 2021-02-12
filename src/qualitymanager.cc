@@ -12,7 +12,8 @@ std::function<QualityManager* (int const)> QualityManager::create(std::string co
 	throw std::invalid_argument("no such QualityManager: " + id);
 }
 
-void WeightedSumQuality::updateQuality(ArrayXd&q, ArrayXd const& r, 
-		ArrayXd const& /*p*/) const{
-	q += alpha * (r - q); // small alpha -> slow change
+void WeightedSumQuality::updateQuality(ArrayXd &q, ArrayXd const& r, std::vector<bool> const used) const{
+	q = ArrayXd::NullaryExpr(K, [q, r, &used, this](Eigen::Index const i){
+			return used[i] ? q(i) + alpha * (r(i) - q(i)) : q(i);
+		});
 }

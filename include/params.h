@@ -13,6 +13,8 @@ namespace params {
 	static int const log_activations_interval = 10;
 	static bool const log_parameters = true;
 	static int const log_parameters_interval = 10;
+	static bool const log_diversity = true;
+	static int const log_diversity_interval = 10;
 	static std::string const extra_data_path = "./extra_data";
 	static Eigen::IOFormat const vecFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "", "");
 
@@ -20,6 +22,7 @@ namespace params {
 	static double const F = 0.5;
 	static double const Cr = 0.9;
 	static double const popsize_multiplier = 5;
+	static double const convergence_delta = 1e-9;
 
 	static double const CO_omega = pi()/4.;
 
