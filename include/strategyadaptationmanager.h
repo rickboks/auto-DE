@@ -62,7 +62,7 @@ class AdaptiveStrategyManager : public StrategyAdaptationManager {
 		ArrayXd q; 
 		ArrayXd previousDistances; // Distances of all K configs
 		ArrayXd previousMean;
-		std::vector<bool> used;	
+		ArrayXd used;	
 		ArrayXd getMean(std::vector<Solution*>const& population) const;
 		ArrayXd getDistances(std::vector<Solution*>const& population, ArrayXd const& mean) const;
 	public:

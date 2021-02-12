@@ -106,8 +106,8 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 
 	// Update used strategies
 	std::fill(used.begin(), used.end(), false);
-	for (int i : previousStrategies)
-		used[i] = true;
+	for (int i : previousStrategies) 
+		used[i] = 1;
 
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
