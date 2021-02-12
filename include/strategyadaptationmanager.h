@@ -37,7 +37,7 @@ class StrategyAdaptationManager {
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 		ArrayXi getLastActivations() const;
 		virtual ArrayXd getDistancesToMeanPosition() const;
-		std::vector<std::string> getConfigurationIDs();
+		std::vector<std::string> getConfigurationIDs() const;
 		int const K;
 	protected:
 		StrategyAdaptationConfiguration const config;

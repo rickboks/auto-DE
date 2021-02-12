@@ -28,20 +28,20 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 	D(population[0]->D), parameterAdaptationManager(ParameterAdaptationManager::create(config.param)(popSize,K)), 
 	previousStrategies(popSize){
 
-	for (std::string m : config.mutation)
+	for (std::string const& m : config.mutation)
 		mutationManagers.push_back(MutationManager::create(m)(ch));
-	for (std::string c : config.crossover)
+	for (std::string const& c : config.crossover)
 		crossoverManagers.push_back(CrossoverManager::create(c)());
-	for (auto m : mutationManagers)
-		for (auto c : crossoverManagers)
+	for (auto const& m : mutationManagers)
+		for (auto const& c : crossoverManagers)
 			configurations.push_back({m,c});
 
-	for (std::string m : config.mutation)
-		for (std::string c : config.crossover)
+	for (std::string const& m : config.mutation)
+		for (std::string const& c : config.crossover)
 			configurationIDs.push_back(m + "_" + c);
 }
 
-std::vector<std::string> StrategyAdaptationManager::getConfigurationIDs(){
+std::vector<std::string> StrategyAdaptationManager::getConfigurationIDs() const{
 	return configurationIDs;
 }
 
