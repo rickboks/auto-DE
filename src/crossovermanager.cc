@@ -24,7 +24,7 @@ Solution* ExponentialCrossoverManager::crossover(Solution const* const target, S
 	int const start = rng.randInt(0,x.size()-1);
 
 	int L = 1;
-	while (L < x.size() && rng.randDouble(0,1) <= Cr)
+	while (L < x.size() && rng.randDouble(0,1) < Cr)
 		L++;
 
 	int const end = (start+L-1) % x.size();
