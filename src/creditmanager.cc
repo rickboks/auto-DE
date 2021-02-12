@@ -76,7 +76,7 @@ ArrayXd ParetoDominance::getCredit(ArrayXd const& fitnessDeltas, ArrayXd const& 
 		for (int j = i+1; j < popSize; j++){
 			if (DOMINATES(i, j))
 				dominates(i)++;
-			else if (DOMINATES(j,i))
+			else if (DOMINATES(j, i))
 				dominates(j)++;
 		}
 	}

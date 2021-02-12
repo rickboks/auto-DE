@@ -37,12 +37,14 @@ class StrategyAdaptationManager {
 		std::vector<CrossoverManager*> getCrossoverManagers() const;
 		ArrayXi getLastActivations() const;
 		virtual ArrayXd getDistancesToMeanPosition() const;
+		std::vector<std::string> getConfigurationIDs();
 		int const K;
 	protected:
 		StrategyAdaptationConfiguration const config;
 		std::vector<MutationManager*> mutationManagers; 
 		std::vector<CrossoverManager*> crossoverManagers; 
 		std::vector<std::tuple<MutationManager*, CrossoverManager*>> configurations;
+		std::vector<std::string> configurationIDs;
 		int const popSize;
 		int const D;
 		ParameterAdaptationManager* const parameterAdaptationManager;

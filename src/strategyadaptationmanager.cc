@@ -35,6 +35,14 @@ StrategyAdaptationManager::StrategyAdaptationManager(StrategyAdaptationConfigura
 	for (auto m : mutationManagers)
 		for (auto c : crossoverManagers)
 			configurations.push_back({m,c});
+
+	for (std::string m : config.mutation)
+		for (std::string c : config.crossover)
+			configurationIDs.push_back(m + "_" + c);
+}
+
+std::vector<std::string> StrategyAdaptationManager::getConfigurationIDs(){
+	return configurationIDs;
 }
 
 void StrategyAdaptationManager::assign(std::map<MutationManager*, std::vector<int>>& mutation, 
@@ -199,7 +207,6 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& population, std:
 		ArrayXd& Fs, ArrayXd& Crs){
 
 	// previousStrategies is not updated because it is constant 0
-
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){
 		return population[i]->getFitness();
 	});

@@ -5,12 +5,22 @@ set credit "DR" "SD" "FD" "FS" "FI" "CO" "PA"
 set reward "AA" "AN" "EA" "EN"
 set quality "WS"
 set probability "PM" "AP"
+set mutation "BE1,RA1,TB2"
+set crossover "B,E"
 set threads "32"
 set data_folders "extra_data" "exdata"
 
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
-set configs (printf '%s\n' $credit" "$reward" "$quality" "$probability |\
-	awk -v exe=$executable '{printf("%1$s -C %2$s -r %3$s -q %4$s -p %5$s -I %2$s_%3$s_%4$s_%5$s\n",exe,$1,$2,$3,$4)}')
+set configs (printf '%s\n' $credit" "$reward" "$quality" "$probability" "$mutation" "$crossover |\
+	awk -v exe=$executable\
+	'{printf("%1$s -C %2$s -r %3$s -q %4$s -p %5$s -m %6$s -c %7$s -I %2$s_%3$s_%5$s\n",exe,$1,$2,$3,$4,$5,$6)}') \
+	"$executable -s R -I RANDOM" \
+	"$executable -s C -m RA1 -c E -I DE_rand_1_exp" \
+	"$executable -s C -m RA1 -c B -I DE_rand_1_bin" \
+	"$executable -s C -m BE1 -c E -I DE_best_1_exp" \
+	"$executable -s C -m BE1 -c B -I DE_best_1_bin" \
+	"$executable -s C -m TB2 -c E -I DE_ttb_2_exp"  \
+	"$executable -s C -m TB2 -c B -I DE_ttb_2_bin"  \
 
 set num_configs (count $configs)
 set num_nodes (count (string split ',' $hosts))

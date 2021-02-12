@@ -14,25 +14,25 @@ std::function<RewardManager*(int const)> RewardManager::create(std::string const
 
 RewardManager::RewardManager(int const K): K(K){}
 
-std::vector<std::vector<double>> RewardManager::group(ArrayXd const& improvements, 
+std::vector<std::vector<double>> RewardManager::group(ArrayXd const& credits, 
 		ArrayXi const& assignment) const{
 	std::vector<std::vector<double>> groups(K);
-	for (unsigned int i = 0; i < improvements.size(); i++){
-		if (improvements(i) > 0.)
-			groups[assignment(i)].push_back(improvements(i));
+	for (unsigned int i = 0; i < credits.size(); i++){
+		if (credits(i) > 0.)
+			groups[assignment(i)].push_back(credits(i));
 	}
 	return groups;
 }
 
-ArrayXd RewardManager::average(std::vector<std::vector<double>>const& deltas) const {
-	return ArrayXd::NullaryExpr(K, [deltas](Eigen::Index const i){
-			return deltas[i].empty() ? 0. : ArrayXd::Map(deltas[i].data(), deltas[i].size()).mean();
+ArrayXd RewardManager::average(std::vector<std::vector<double>>const& credits) const {
+	return ArrayXd::NullaryExpr(K, [credits](Eigen::Index const i){
+			return credits[i].empty() ? 0. : ArrayXd::Map(credits[i].data(), credits[i].size()).mean();
 		});
 }
 
-ArrayXd RewardManager::extreme(std::vector<std::vector<double>>const& deltas) const {
-	return ArrayXd::NullaryExpr(K, [deltas](Eigen::Index const i){
-			return deltas[i].empty() ? 0. : ArrayXd::Map(deltas[i].data(), deltas[i].size()).maxCoeff();
+ArrayXd RewardManager::extreme(std::vector<std::vector<double>>const& credits) const {
+	return ArrayXd::NullaryExpr(K, [credits](Eigen::Index const i){
+			return credits[i].empty() ? 0. : ArrayXd::Map(credits[i].data(), credits[i].size()).maxCoeff();
 		});
 }
 
