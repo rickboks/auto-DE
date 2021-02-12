@@ -67,7 +67,7 @@ int main(int argc, char** argv) {
 		reward 		= "AA",
 		quality 	= "WS",
 		probability	= "PM",
-		constraint 	= "PM",
+		constraint 	= "RS",
 		//////////////////////
 		suite 		= "bbob",
 	  	dimensions 	= "20",
