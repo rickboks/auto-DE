@@ -142,7 +142,11 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 
 	qualityManager->updateQuality(q, r, used);
 
-	probabilityManager->updateProbability(p, q);
+	if (q.maxCoeff() > 0.)
+		probabilityManager->updateProbability(p, q);
+	else
+		p = 1./K;
+
 	parameterAdaptationManager->update(credit);
 }
 
