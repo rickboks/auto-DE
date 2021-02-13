@@ -93,7 +93,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	rewardManager(RewardManager::create(config.reward)(K)),
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
-	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 1.)), used(K){
+	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 0.)), used(K){
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
