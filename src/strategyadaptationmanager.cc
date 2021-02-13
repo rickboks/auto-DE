@@ -113,7 +113,7 @@ void AdaptiveStrategyManager::next(std::vector<Solution*>const& population, std:
 		rouletteSelect(range(K), std::vector<double>(p.begin(), p.end()), popSize, true); 
 
 	// Update used strategies
-	std::fill(used.begin(), used.end(), false);
+	std::fill(used.begin(), used.end(), 0);
 	for (int i : previousStrategies) 
 		used[i] = 1;
 
