@@ -5,9 +5,9 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1e4;
-static int const INDEPENDENT_RUNS = 20;
-static std::vector<int> const INSTANCES = {1,2,3,4,5};
+static int const BUDGET_MULTIPLIER = 1e5;
+static int const INDEPENDENT_RUNS = 1;
+static std::vector<int> const INSTANCES = {1,2,3,4,5,6,7,8,9,10,11,12,13,14,15};
 
 std::string gen_instances(){
 	std::string instances = "";
