@@ -10,11 +10,11 @@ constexpr double pi() { return std::atan(1)*4.; }
 namespace params {
 	// Logging
 	static bool const log_activations = true;
-	static int const log_activations_interval = 10;
+	static int const log_activations_interval = 1;
 	static bool const log_parameters = true;
-	static int const log_parameters_interval = 10;
+	static int const log_parameters_interval = 1;
 	static bool const log_diversity = true;
-	static int const log_diversity_interval = 10;
+	static int const log_diversity_interval = 1;
 	static std::string const extra_data_path = "./extra_data";
 	static Eigen::IOFormat const vecFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "", "");
 

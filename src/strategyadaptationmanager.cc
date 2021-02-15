@@ -75,7 +75,7 @@ ArrayXi StrategyAdaptationManager::getLastActivations() const{
 }
 
 ArrayXd StrategyAdaptationManager::getDistancesToMeanPosition() const {
-	throw "The selected StrategyAdaptationManager does not keep track of diversity";
+	return previousDistances;
 }
 
 StrategyAdaptationManager::~StrategyAdaptationManager(){
@@ -150,22 +150,18 @@ void AdaptiveStrategyManager::update(std::vector<Solution*>const& trials){
 	parameterAdaptationManager->update(credit);
 }
 
-ArrayXd AdaptiveStrategyManager::getMean(std::vector<Solution*>const& population) const{
+ArrayXd StrategyAdaptationManager::getMean(std::vector<Solution*>const& population) const{
 	ArrayXXd pop(D, popSize);
 	for (int i = 0; i < popSize; i++)
 		pop.col(i) = population[i]->X();
 	return pop.rowwise().mean();
 }
 
-ArrayXd AdaptiveStrategyManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
+ArrayXd StrategyAdaptationManager::getDistances(std::vector<Solution*>const& population, // Distances w.r.t. mean
 		ArrayXd const& mean) const {
 	return ArrayXd::NullaryExpr(popSize, [population, mean](Eigen::Index const i){
 			return distance(population[i]->X(), mean);
 	}); 
-}
-
-ArrayXd AdaptiveStrategyManager::getDistancesToMeanPosition() const {
-	return previousDistances;
 }
 
 RandomStrategyManager::RandomStrategyManager(StrategyAdaptationConfiguration const config, 
@@ -176,6 +172,8 @@ RandomStrategyManager::RandomStrategyManager(StrategyAdaptationConfiguration con
 void RandomStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
+	previousMean = getMean(population);
+	previousDistances = getDistances(population, previousMean);
 
 	for (int i = 0; i < popSize; i++)
 		previousStrategies[i] = rng.randInt(0, K-1); // uniformly random allocation
@@ -209,6 +207,8 @@ ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration
 void ConstantStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
 		std::vector<int>>& mutation, std::map<CrossoverManager*, std::vector<int>>& crossover, 
 		ArrayXd& Fs, ArrayXd& Crs){
+	previousMean = getMean(population);
+	previousDistances = getDistances(population, previousMean);
 
 	// previousStrategies is not updated because it is constant 0
 	previousFitness = ArrayXd::NullaryExpr(popSize, [population](Eigen::Index const i){

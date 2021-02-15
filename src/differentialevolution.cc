@@ -54,7 +54,7 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	if (params::log_parameters)
 		parameterLogger.log(coco_problem_get_id(problem));
 
-	if (config.strategy == "A" && params::log_diversity)
+	if (params::log_diversity)
 		diversityLogger.log(coco_problem_get_id(problem));
 }
 
@@ -132,7 +132,7 @@ void DifferentialEvolution::run(int const evalBudget){
 			parameterLogger.log(Crs.mean());
 		}
 
-		if (config.strategy == "A" && params::log_diversity && iteration % params::log_diversity_interval == 0)
+		if (params::log_diversity && iteration % params::log_diversity_interval == 0)
 			diversityLogger.log(strategyAdaptationManager->getDistancesToMeanPosition().mean());
 		/* ----- */
 	}
@@ -143,7 +143,7 @@ void DifferentialEvolution::reset(){
 		activationsLogger.log(""); // blank line
 	if (params::log_parameters)
 		parameterLogger.log(""); 
-	if (config.strategy == "A" && params::log_diversity)
+	if (params::log_diversity)
 		diversityLogger.log("");
 
 	for (Solution* d : genomes) 
