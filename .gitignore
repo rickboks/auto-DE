@@ -1,6 +1,7 @@
 obj
 data
 exdata
+extra_data
 scratch
 experiment
 mpi_experiment
