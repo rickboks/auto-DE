@@ -5,9 +5,6 @@
 #include <string>
 #include "logger.h"
 
-template <typename T>
-class IOHprofiler_problem;
-class IOHprofiler_csv_logger;
 class ParameterAdaptationManager;
 class StrategyAdaptationManager;
 class Solution;
