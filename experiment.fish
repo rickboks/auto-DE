@@ -26,6 +26,8 @@ set num_configs (count $configs)
 set num_nodes (count (string split ',' $hosts))
 set nodes_required (math (count $configs) / $threads)
 
+mkdir -p /var/scratch/$USER/{exdata,extra_data}
+
 if test $num_nodes -eq 0
 	printf "Error: no nodes reserved\n"
 	exit
