@@ -12,8 +12,8 @@ static int const BUDGET_MULTIPLIER = 1e4;
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
 				char const *const suite_options,
-				char const *const observer_name,
-				char const *const observer_options) {
+				char const *const /*observer_name*/,
+				char const *const /*observer_options*/) {
 
 	coco_suite_t *suite;
 	coco_observer_t *observer;
