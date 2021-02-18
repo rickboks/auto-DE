@@ -15,7 +15,7 @@ void experiment(DifferentialEvolution& de,
 	coco_suite_t *suite;
 	coco_observer_t *observer;
 	suite = coco_suite(suite_name, "instances: 1" , suite_options);
-	observer = coco_observer(observer_name, observer_options);
+	observer = coco_observer("no_observer", "");
 
 	// Only run single problem
 	coco_problem_t *const PROBLEM = coco_suite_get_next_problem(suite, observer);
@@ -48,6 +48,10 @@ std::vector<std::string> splitString(std::string str){
 
 int main(int argc, char** argv) {
 	coco_set_log_level("warning");
+
+	params::log_activations = false;
+	params::log_diversity = false;
+	params::log_parameters = false;
 
 	std::string config_id = argv[1];
 	std::string instance_id = argv[2];

@@ -5,7 +5,7 @@ OBJ_DIR = obj
 INC_DIR = include
 LDFLAGS += -lm -lstdc++fs 
 
-SRC:= $(shell find src/ ! -name "*experiment.cc" ! -name "*tuning.cc" -name "*.cc")
+SRC:= $(shell find src/ ! -name "experiment.cc" ! -name "tuning.cc" -name "*.cc")
 OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 INC = -I $(INC_DIR)
 
@@ -14,9 +14,9 @@ CC_COCO = gcc
 CFLAGS  = -Wall -Wextra -std=c++11 -O2 -g
 CFLAGS_COCO = -g -ggdb -std=c89 -pedantic -Wall -Wextra -Wstrict-prototypes -Wshadow -Wno-sign-compare -Wno-sign-conversion
 
-tune: $(OBJ_DIR) $(TUNE_EXE)
-
 all: $(OBJ_DIR) $(EXE)
+
+tune: $(OBJ_DIR) $(TUNE_EXE)
 
 clean:
 	rm -rf $(OBJ_DIR)/*.o $(EXE) configurations
