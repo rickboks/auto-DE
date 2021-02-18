@@ -1,11 +1,11 @@
 EXE = experiment
-TUNE_EXE = tune
+TUNE_EXE = tuning
 SRC_DIR = src
 OBJ_DIR = obj
 INC_DIR = include
 LDFLAGS += -lm -lstdc++fs 
 
-SRC:= $(shell find src/ ! -name "experiment.cc" ! -name "tuning.cc" -name "*.cc")
+SRC:= $(shell find src/ ! -name "*experiment.cc" ! -name "*tuning.cc" -name "*.cc")
 OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
 INC = -I $(INC_DIR)
 
@@ -14,18 +14,18 @@ CC_COCO = gcc
 CFLAGS  = -Wall -Wextra -std=c++11 -O2 -g
 CFLAGS_COCO = -g -ggdb -std=c89 -pedantic -Wall -Wextra -Wstrict-prototypes -Wshadow -Wno-sign-compare -Wno-sign-conversion
 
-all: $(OBJ_DIR) $(EXE)
-
 tune: $(OBJ_DIR) $(TUNE_EXE)
 
+all: $(OBJ_DIR) $(EXE)
+
 clean:
-	rm -rf $(OBJ_DIR)/*.o $(EXE) $(MPI_EXE) configurations
+	rm -rf $(OBJ_DIR)/*.o $(EXE) configurations
 
 $(EXE): $(OBJ) $(OBJ_DIR)/coco.o $(OBJ_DIR)/experiment.o
 	${CC} ${CFLAGS} -o $(EXE) $(OBJ) $(OBJ_DIR)/experiment.o $(OBJ_DIR)/coco.o ${LDFLAGS}
 
 $(TUNE_EXE): $(OBJ) $(OBJ_DIR)/coco.o $(OBJ_DIR)/tuning.o
-	${CC} ${CFLAGS} -o $(EXE) $(OBJ) $(OBJ_DIR)/tuning.o $(OBJ_DIR)/coco.o ${LDFLAGS}
+	${CC} ${CFLAGS} -o $(TUNE_EXE) $(OBJ) $(OBJ_DIR)/tuning.o $(OBJ_DIR)/coco.o ${LDFLAGS}
 
 $(OBJ_DIR)/coco.o: $(SRC_DIR)/coco.c
 	$(CC_COCO) -c $(CFLAGS_COCO) -o $(OBJ_DIR)/coco.o $(SRC_DIR)/coco.c -lm
@@ -38,3 +38,4 @@ $(OBJ_DIR):
 
 .PHONY: all
 .PHONY: clean
+.PHONY: tune
