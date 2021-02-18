@@ -126,6 +126,7 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
+			std::cout << "logging" << std::endl;
 			parameterLogger.log(Fs.mean(), false); 
 			parameterLogger.log(" ", false); 
 			parameterLogger.log(Crs.mean());

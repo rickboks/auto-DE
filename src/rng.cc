@@ -21,4 +21,9 @@ double RNG::cauchyDouble(double const a, double const b){
 	return C(rng);
 }
 
+
+void RNG::seed(double const s){ 
+	rng.seed(s);
+};
+
 RNG rng; //Global random number generator

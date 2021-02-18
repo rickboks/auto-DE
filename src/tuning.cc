@@ -1,5 +1,6 @@
 #include <iostream>
 #include <getopt.h>
+#include <iomanip>
 #include "coco.h"
 #include "differentialevolution.h"
 #include "params.h"
@@ -28,7 +29,7 @@ void experiment(DifferentialEvolution& de,
 		de.run(PROBLEM, budget, popSize);
 	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
-	std::cout << coco_problem_get_best_observed_fvalue1(PROBLEM) << std::endl;
+	std::cout << std::setprecision(17) << coco_problem_get_best_observed_fvalue1(PROBLEM) << std::endl;
 
 	coco_observer_free(observer);
 	coco_suite_free(suite);
@@ -52,12 +53,6 @@ int main(int argc, char** argv) {
 	params::log_activations = false;
 	params::log_diversity = false;
 	params::log_parameters = false;
-
-	std::string config_id = argv[1];
-	std::string instance_id = argv[2];
-	std::string seed = argv[3];
-	argc-=3;
-	argv+=3;
 
 	// defaults
 	std::string 
@@ -83,7 +78,7 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:s:A:B:")) != -1){
+	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:S:A:B:m:c:")) != -1){
 		switch (c){
 			OPT('s', strategy)
 			OPT('P', param)
@@ -95,6 +90,7 @@ int main(int argc, char** argv) {
 			OPT('d', dimensions)
 			OPT('f', functions)
 			OPT('I', id)
+			case 'S': rng.seed(std::stod(optarg)); break;
 			case 'A': params::WS_alpha = std::stod(optarg); break;
 			case 'B': params::AP_beta = std::stod(optarg); break;
 			case 'm': mutation = splitString(optarg); break;
