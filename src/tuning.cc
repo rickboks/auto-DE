@@ -18,16 +18,15 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, "instances: 1" , suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
-		int const dimension = coco_problem_get_dimension(PROBLEM);
-		int const popSize = dimension * params::popsize_multiplier;
-		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		std::string const fid = coco_problem_get_id(PROBLEM);
+	PROBLEM = coco_suite_get_next_problem(suite, observer);
+	int const dimension = coco_problem_get_dimension(PROBLEM);
+	int const popSize = dimension * params::popsize_multiplier;
+	size_t const budget = dimension * BUDGET_MULTIPLIER;
+	std::string const fid = coco_problem_get_id(PROBLEM);
 
-		do {
-			de.run(PROBLEM, budget, popSize);
-		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
-	}
+	do {
+		de.run(PROBLEM, budget, popSize);
+	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
 	coco_observer_free(observer);
 	coco_suite_free(suite);
