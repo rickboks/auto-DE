@@ -3,7 +3,7 @@
 #include "rng.h"
 
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-const-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 
 constexpr double pi() { return std::atan(1)*4.; }
 
@@ -27,10 +27,10 @@ namespace params {
 	static double const CO_omega = pi()/4.;
 
 	// Quality
-	static double const WS_alpha = 0.4;
+	static double WS_alpha = 0.4;
 
 	// Probability
-	static double const AP_beta = 0.6;
+	static double AP_beta = 0.6;
 	static auto const PM_AP_pMin = [](int const K) -> double {return 1. / (3. * (K-1.));};
 	static auto const AP_pMax = [](int const K) -> double {return 1. - (K-1.) * params::PM_AP_pMin(K);};
 

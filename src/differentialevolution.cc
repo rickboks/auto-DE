@@ -8,7 +8,6 @@
 #include "crossovermanager.h"
 #include "util.h"
 
-
 DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig const config)
 	:id(id), config(config), 
 	activationsLogger(params::extra_data_path + "/" + id + ".act"),
