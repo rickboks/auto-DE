@@ -7,6 +7,8 @@
 
 static int const BUDGET_MULTIPLIER = 1e4;
 
+#include "default_params.h"
+
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
 				char const *const suite_options,

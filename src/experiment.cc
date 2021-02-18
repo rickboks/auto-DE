@@ -1,4 +1,5 @@
 #include <iostream>
+#include <functional>
 #include <getopt.h>
 #include "coco.h"
 #include "differentialevolution.h"
@@ -8,6 +9,8 @@ static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
 static int const INDEPENDENT_RUNS = 10;
 static std::vector<int> const INSTANCES = {1,2,3,4,5};
+
+#include "default_params.h"
 
 std::string gen_instances(){
 	std::string instances = "";

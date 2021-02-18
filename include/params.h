@@ -2,44 +2,39 @@
 #include "Eigen/Dense"
 #include "rng.h"
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-variable"
-
 constexpr double pi() { return std::atan(1)*4.; }
 
 namespace params {
 	// Logging
-	static bool log_activations = true;
-	static int const log_activations_interval = 1;
-	static bool log_parameters = true;
-	static int const log_parameters_interval = 5;
-	static bool log_diversity = true;
-	static int const log_diversity_interval = 5;
-	static std::string const extra_data_path = "./extra_data";
-	static Eigen::IOFormat const vecFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "", "");
+	extern bool log_activations;
+	extern int const log_activations_interval;
+	extern bool log_parameters;
+	extern int const log_parameters_interval;
+	extern bool log_diversity;
+	extern int const log_diversity_interval;
+	extern std::string const extra_data_path;
+	extern Eigen::IOFormat const vecFmt; 
 
 	// DE
-	static double const F = 0.5;
-	static double const Cr = 0.9;
-	static double const popsize_multiplier = 5;
-	static double const convergence_delta = 1e-9;
+	extern double const F;
+	extern double const Cr;
+	extern double const popsize_multiplier;
+	extern double const convergence_delta;
 
-	static double const CO_omega = pi()/4.;
+	extern double const CO_omega;
 
 	// Quality
-	static double WS_alpha = 0.4;
+	extern double WS_alpha;
 
 	// Probability
-	static double AP_beta = 0.6;
-	static auto const PM_AP_pMin = [](int const K) -> double {return 1. / (3. * (K-1.));};
-	static auto const AP_pMax = [](int const K) -> double {return 1. - (K-1.) * params::PM_AP_pMin(K);};
+	extern double AP_beta;
+	extern std::function<double(int)> const PM_AP_pMin;
+	extern std::function<double(int)> const AP_pMax;
 
 	// Parameter self-adaptation
-	static auto	const SHADE_H = [](int const popSize, int const K) -> int {return std::max(popSize/K, 10);};
-	static auto const SHADE_p = [](int const popSize) -> int {return rng.randInt(0, rng.randInt(2, popSize/5)-1);};
+	extern std::function<int(int, int)>	const SHADE_H;
+	extern std::function<int(int)> const SHADE_p;
 
 	// Constraint handling
-	static int const RS_max_resamples = 100;
+	extern int const RS_max_resamples;
 };
-
-#pragma GCC diagnostic pop
