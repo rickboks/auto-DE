@@ -4,7 +4,6 @@
 #include "differentialevolution.h"
 #include "params.h"
 
-static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e4;
 
 void experiment(DifferentialEvolution& de,
@@ -18,16 +17,18 @@ void experiment(DifferentialEvolution& de,
 	suite = coco_suite(suite_name, "instances: 1" , suite_options);
 	observer = coco_observer(observer_name, observer_options);
 
-	while ((PROBLEM = coco_suite_get_next_problem(suite, observer))) {
-		int const dimension = coco_problem_get_dimension(PROBLEM);
-		int const popSize = dimension * params::popsize_multiplier;
-		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		std::string const fid = coco_problem_get_id(PROBLEM);
+	// Only run single problem
+	coco_problem_t *const PROBLEM = coco_suite_get_next_problem(suite, observer);
+	int const dimension = coco_problem_get_dimension(PROBLEM);
+	int const popSize = dimension * params::popsize_multiplier;
+	size_t const budget = dimension * BUDGET_MULTIPLIER;
+	std::string const fid = coco_problem_get_id(PROBLEM);
 
-		do {
-			de.run(PROBLEM, budget, popSize);
-		} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
-	}
+	do {
+		de.run(PROBLEM, budget, popSize);
+	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
+
+	std::cout << coco_problem_get_best_observed_fvalue1(PROBLEM) << std::endl;
 
 	coco_observer_free(observer);
 	coco_suite_free(suite);
@@ -46,8 +47,8 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	//coco_set_log_level("warning");
-	//
+	coco_set_log_level("warning");
+
 	std::string config_id = argv[1];
 	std::string instance_id = argv[2];
 	std::string seed = argv[3];
