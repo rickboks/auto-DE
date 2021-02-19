@@ -28,6 +28,7 @@ namespace params {
 
 	// Probability
 	extern double AP_beta;
+	extern double PM_AP_pMin_divider;
 	extern std::function<double(int)> const PM_AP_pMin;
 	extern std::function<double(int)> const AP_pMax;
 

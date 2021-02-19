@@ -5,7 +5,7 @@
 #include "differentialevolution.h"
 #include "params.h"
 
-static int const BUDGET_MULTIPLIER = 1e4;
+static int const BUDGET_MULTIPLIER = 1e5;
 
 #include "default_params.h"
 
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:S:A:B:m:c:")) != -1){
+	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:S:A:B:m:c:M:")) != -1){
 		switch (c){
 			OPT('s', strategy)
 			OPT('P', param)
@@ -97,6 +97,7 @@ int main(int argc, char** argv) {
 			case 'B': params::AP_beta = std::stod(optarg); break;
 			case 'm': mutation = splitString(optarg); break;
 			case 'c': crossover = splitString(optarg); break;
+			case 'M': params::PM_AP_pMin_divider = std::stod(optarg); break;
 		}
 	}
 

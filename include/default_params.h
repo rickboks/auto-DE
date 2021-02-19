@@ -21,7 +21,8 @@ double params::WS_alpha = 0.4;
 
 // Probability
 double params::AP_beta = 0.6;
-std::function<double(int)> const params::PM_AP_pMin = [](int const K) -> double {return 1. / (3. * (K-1.));};
+double params::PM_AP_pMin_divider = 3;
+std::function<double(int)> const params::PM_AP_pMin = [](int const K) -> double {return 1. / (params::PM_AP_pMin_divider * (K-1.));};
 std::function<double(int)> const params::AP_pMax = [](int const K) -> double {return 1. - (K-1.) * params::PM_AP_pMin(K);};
 
 // Parameter self-adaptation
