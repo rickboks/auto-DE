@@ -5,7 +5,7 @@
 #include "differentialevolution.h"
 #include "params.h"
 
-static int const BUDGET_MULTIPLIER = 1e5;
+static int const BUDGET_MULTIPLIER = 1e4;
 
 #include "default_params.h"
 
@@ -17,7 +17,7 @@ void experiment(DifferentialEvolution& de,
 
 	coco_suite_t *suite;
 	coco_observer_t *observer;
-	suite = coco_suite(suite_name, "instances: 1" , suite_options);
+	suite = coco_suite(suite_name, "instances:1-5" , suite_options);
 	observer = coco_observer("no_observer", "");
 
 	// Only run single problem
@@ -80,7 +80,7 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:S:A:B:m:c:M:")) != -1){
+	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:i:S:A:B:m:c:M:")) != -1){
 		switch (c){
 			OPT('s', strategy)
 			OPT('P', param)
@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
 			OPT('d', dimensions)
 			OPT('f', functions)
 			OPT('I', id)
+			OPT('i', instances)
 			case 'S': rng.seed(std::stod(optarg)); break;
 			case 'A': params::WS_alpha = std::stod(optarg); break;
 			case 'B': params::AP_beta = std::stod(optarg); break;

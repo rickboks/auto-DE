@@ -72,7 +72,7 @@ extern "C" {
  * Automatically updated by do.py.
  */
 /**@{*/
-static const char coco_version[32] = "2.3.3";
+static const char coco_version[32] = "2.4";
 /**@}*/
 
 /***********************************************************************************************************/
@@ -4623,7 +4623,7 @@ static void coco_compute_truncated_uniform_swap_permutation(size_t *P, long seed
 
       second_swap_var = (size_t) coco_random_unif_integer((long) lower_bound,
                                                           (long) upper_bound - 1,
-                                                          seed + (1 + idx_swap) * 1000);
+                                                          seed + (long) (1 + idx_swap) * 1000);
       if (second_swap_var >= first_swap_var) {
         second_swap_var += 1;
       }
@@ -10762,9 +10762,10 @@ static coco_suite_t *suite_bbob_initialize(void) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 2, 3, 5, 10, 20, 40 };
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
 
   /* IMPORTANT: Make sure to change the default instance for every new workshop! */
-  suite = coco_suite_allocate("bbob", 24, 6, dimensions, "year: 2018");
+  suite = coco_suite_allocate("bbob", 24, num_dimensions, dimensions, "year: 2018");
 
   return suite;
 }
@@ -11585,7 +11586,9 @@ static coco_suite_t *suite_largescale_initialize(void) {
   
   coco_suite_t *suite;
   const size_t dimensions[] = { 20, 40, 80, 160, 320, 640};
-  suite = coco_suite_allocate("bbob-largescale", 24, 6, dimensions, "instances: 1-15");
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
+
+  suite = coco_suite_allocate("bbob-largescale", 24, num_dimensions, dimensions, "instances: 1-15");
   return suite;
 }
 
@@ -11908,7 +11911,8 @@ static coco_suite_t *suite_bbob_mixint_initialize(const char *suite_name) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 5, 10, 20, 40, 80, 160 };
-  suite = coco_suite_allocate(suite_name, 24, 6, dimensions, "instances: 1-15");
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
+  suite = coco_suite_allocate(suite_name, 24, num_dimensions, dimensions, "instances: 1-15");
 
   return suite;
 }
@@ -29369,11 +29373,12 @@ static coco_suite_t *suite_biobj_initialize(const char *suite_name) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 2, 3, 5, 10, 20, 40 };
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
 
   if (strcmp(suite_name, "bbob-biobj") == 0) {
-    suite = coco_suite_allocate("bbob-biobj", 55, 6, dimensions, "instances: 1-15");
+    suite = coco_suite_allocate("bbob-biobj", 55, num_dimensions, dimensions, "instances: 1-15");
   } else if (strcmp(suite_name, "bbob-biobj-ext") == 0) {
-    suite = coco_suite_allocate("bbob-biobj-ext", 55+37, 6, dimensions, "instances: 1-15");
+    suite = coco_suite_allocate("bbob-biobj-ext", 55+37, num_dimensions, dimensions, "instances: 1-15");
   } else {
     coco_error("suite_biobj_initialize(): unknown problem suite");
     return NULL;
@@ -29460,8 +29465,9 @@ static coco_suite_t *suite_biobj_mixint_initialize(void) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 5, 10, 20, 40, 80, 160 };
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
 
-  suite = coco_suite_allocate("bbob-biobj-mixint", 92, 6, dimensions, "instances: 1-15");
+  suite = coco_suite_allocate("bbob-biobj-mixint", 92, num_dimensions, dimensions, "instances: 1-15");
   suite->data_free_function = suite_biobj_new_inst_free;
 
   return suite;
@@ -29663,8 +29669,9 @@ static coco_suite_t *suite_toy_initialize(void) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 2, 3, 5, 10, 20 };
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
 
-  suite = coco_suite_allocate("toy", 6, 3, dimensions, "instances: 1");
+  suite = coco_suite_allocate("toy", 6, num_dimensions, dimensions, "instances: 1");
 
   return suite;
 }
@@ -30244,7 +30251,8 @@ static void feasible_direction_set_length(double * feasible_direction,
   size_t i;
   double r[1], maxabs, maxrel;
 
-  for (maxabs = maxrel = i = 0; i < dimension; ++i) {
+  maxabs = maxrel = 0.0;
+  for (i = 0; i < dimension; ++i) {
     maxabs = coco_double_max(maxabs, fabs(xopt[i]));
     maxrel = coco_double_max(maxrel, feasible_direction[i] / (feas_bound - xopt[i]));
     maxrel = coco_double_max(maxrel, feasible_direction[i] / (-feas_bound - xopt[i]));
@@ -30913,9 +30921,10 @@ static coco_suite_t *suite_cons_bbob_initialize(void) {
 
   coco_suite_t *suite;
   const size_t dimensions[] = { 2, 3, 5, 10, 20, 40 };
+  const size_t num_dimensions = sizeof(dimensions) / sizeof(dimensions[0]);
 
   /* IMPORTANT: Make sure to change the default instance for every new workshop! */
-  suite = coco_suite_allocate("bbob-constrained", 48, 6, dimensions, "year: 2016");
+  suite = coco_suite_allocate("bbob-constrained", 48, num_dimensions, dimensions, "year: 2016");
 
   return suite;
 }

@@ -52,7 +52,7 @@ extern "C" {
  * Automatically updated by do.py.
  */
 /**@{*/
-static const char coco_version[32] = "2.3.3";
+static const char coco_version[32] = "2.4";
 /**@}*/
 
 /***********************************************************************************************************/
@@ -60,7 +60,7 @@ static const char coco_version[32] = "2.3.3";
  * @brief COCO's own pi constant. Simplifies the case, when the value of pi changes.
  */
 /**@{*/
-//static const double coco_pi = 3.14159265358979323846;
+static const double coco_pi = 3.14159265358979323846;
 static const double coco_two_pi = 2.0 * 3.14159265358979323846;
 /**@}*/
 
