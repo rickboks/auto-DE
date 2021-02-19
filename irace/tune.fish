@@ -1,4 +1,9 @@
 #!/usr/bin/env fish
+if test (count $argv) -lt 1
+	echo "ERROR: no credit manager passed"
+	exit
+end
+
 set d "$HOME/auto-DE/irace"
 
 set cred $argv[1]
@@ -16,7 +21,7 @@ irace --parameter-file "$d/parameters-$prob.txt" \
 	--configurations-file "$d/configurations-$prob.txt" \
 	--forbidden-file "$d/forbidden-$prob.txt" \
 	--target-runner "$d/runners/$cred.runner" \
-	--max-experiments "1" \
+	--max-experiments "10000" \
 	--parallel (nproc --all) \
 	-l results/$cred/result.Rdata \
 	-s $d/scenario.txt
