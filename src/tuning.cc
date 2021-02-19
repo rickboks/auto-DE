@@ -69,7 +69,7 @@ int main(int argc, char** argv) {
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 	 	functions 	= "",
-		instances 	= "1";
+		instances 	= "";
 
 	std::string id = "DE";
 

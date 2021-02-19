@@ -21,7 +21,8 @@ irace --parameter-file "$d/parameters-$prob.txt" \
 	--configurations-file "$d/configurations-$prob.txt" \
 	--forbidden-file "$d/forbidden-$prob.txt" \
 	--target-runner "$d/runners/$cred.runner" \
-	--max-experiments "10000" \
+	--max-experiments "100000" \
 	--parallel (nproc --all) \
+	--digits 2 \
 	-l results/$cred/result.Rdata \
 	-s $d/scenario.txt
