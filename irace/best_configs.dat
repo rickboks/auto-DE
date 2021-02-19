@@ -1,0 +1,7 @@
+-C FI -r AA -p PM
+-C FD -r AN -p PM
+-C FS -r AA -p PM
+-C DR -r AA -p PM
+-C SD -r EA -p PM
+-C CO -r EN -p AP
+-C PA -r EA -p AP
