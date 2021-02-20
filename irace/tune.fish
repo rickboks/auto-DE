@@ -25,4 +25,6 @@ irace --parameter-file "$d/parameters-$prob.txt" \
 	--parallel (nproc --all) \
 	--digits 2 \
 	-l results/$cred/result.Rdata \
-	-s $d/scenario.txt
+	-s $d/scenario.txt \
+	--exec-dir $HOME/auto-DE/irace
+
