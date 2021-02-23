@@ -7,7 +7,7 @@
 
 static coco_problem_t *PROBLEM;
 static int const BUDGET_MULTIPLIER = 1e5;
-static int const INDEPENDENT_RUNS = 10;
+static int const INDEPENDENT_RUNS = 20;
 static std::vector<int> const INSTANCES = {1,2,3,4,5};
 
 #include "default_params.h"
