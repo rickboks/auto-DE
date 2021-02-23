@@ -1,0 +1,7 @@
+-C FI -r AA -p PM -A 0.97 -M 5.5 -I FI
+-C FD -r AN -p PM -A 0.87 -M 4.98 -I FD
+-C FS -r AA -p PM -A 0.77 -M 5.03 -I FS
+-C DR -r AA -p PM -A 0.59 -M 8.6 -I DR
+-C SD -r EA -p PM -A 0.96 -M 2.27 -I SD
+-C CO -r EN -p AP -A 0.96 -B 0.96 -M 2.48 -I CO
+-C PA -r EA -p AP -A 0.86 -B 0.84 -M 7.86 -I PA
