@@ -13,7 +13,7 @@ irace --parameter-file "$d/parameters.txt" \
 	--train-instances-file "$d/instances-list.txt" \
 	--forbidden-file "$d/forbidden.txt" \
 	--target-runner "$d/runners/$cred.runner" \
-	--max-experiments "5000" \
+	--max-experiments "500000" \
 	--parallel (nproc --all) \
 	--digits 2 \
 	-l results/$cred/result.Rdata \

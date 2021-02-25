@@ -1,6 +1,6 @@
 # 1:            2:                   3: 4:      5:
 alpha           "-A "                r  (0, 1) 
-beta			"-B "				 r  (0, 1)  | probability == "PM"
+beta			"-B "				 r  (0, 1)  | probability == "AP"
 pMin			"-M "				 r  (2, 10)
-reward			"-r"                 c  ("AA", "AN", "EN", "EA", "ER", "AR") 
-probability		"-p"                 c  ("AP", "PM") 
+reward			"-r "                c  ("AA", "AN", "EN", "EA", "ER", "AR") 
+probability		"-p "                c  ("AP", "PM") 
