@@ -13,6 +13,7 @@ class RewardManager {
 		ArrayXd average(std::vector<std::vector<double>>const& deltas) const;
 		ArrayXd extreme(std::vector<std::vector<double>>const& deltas) const;
 		ArrayXd normalized(ArrayXd const& x) const;
+		ArrayXd ranks(ArrayXd const& x) const;
 		std::vector<std::vector<double>> group(ArrayXd const& improvements, 
 				ArrayXi const& assignment) const;
 		int const K;
@@ -45,5 +46,17 @@ class ExtremeNormalizedReward : public RewardManager {
 class ExtremeReward : public RewardManager {
 	public:
 		ExtremeReward(int const K): RewardManager(K){};
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
+};
+
+class ExtremeRankReward : public RewardManager {
+	public:
+		ExtremeRankReward(int const K): RewardManager(K){};
+		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
+};
+
+class AverageRankReward : public RewardManager {
+	public:
+		AverageRankReward(int const K): RewardManager(K){};
 		ArrayXd getReward(ArrayXd const& improvements, ArrayXi const& assignment) const;
 };

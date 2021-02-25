@@ -9,6 +9,8 @@ std::function<RewardManager*(int const)> RewardManager::create(std::string const
 	ALIAS("AA", AverageReward)
 	ALIAS("EN", ExtremeNormalizedReward)
 	ALIAS("EA", ExtremeReward)
+	ALIAS("ER", ExtremeRankReward)
+	ALIAS("AR", AverageRankReward)
 	throw std::invalid_argument("no such RewardManager: " + id);
 }
 
@@ -41,6 +43,22 @@ ArrayXd RewardManager::normalized(ArrayXd const& x) const {
 	return max > 0. ? x/max : x;
 }
 
+ArrayXd RewardManager::ranks(ArrayXd const& x) const{
+	ArrayXi ranks = ArrayXi::NullaryExpr(x.size(), [](Eigen::Index const i){return i;});
+	std::sort(ranks.begin(), ranks.end(), [x](int const i, int const j){
+		return x[i] < x[j];
+	});
+
+	int cRank = 0;
+	ArrayXd score(ranks.size());
+	for (int i = 0; i < ranks.size(); i++){
+		if (i > 0 && x[ranks[i]] > x[ranks[i-1]])
+			cRank++;
+		score[ranks[i]] = cRank;
+	}
+	return score;
+}
+
 ArrayXd AverageNormalizedReward::getReward(ArrayXd const& improvements, 
 		ArrayXi const& assignment) const {
 	return normalized(average(group(improvements, assignment)));
@@ -59,4 +77,12 @@ ArrayXd ExtremeReward::getReward(ArrayXd const& improvements,
 ArrayXd AverageReward::getReward(ArrayXd const& improvements, 
 		ArrayXi const& assignment) const {
 	return average(group(improvements, assignment));
+}
+
+ArrayXd AverageRankReward::getReward(ArrayXd const& improvements, ArrayXi const& assignment) const{
+	return average(group(ranks(improvements), assignment));
+}
+
+ArrayXd ExtremeRankReward::getReward(ArrayXd const& improvements, ArrayXi const& assignment) const{
+	return extreme(group(ranks(improvements), assignment));
 }
