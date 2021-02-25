@@ -23,8 +23,8 @@ error() {
 
 
 CREDIT="__CREDIT__"
-FIXED_PARAMS="__FIXED_PARAMS__"
-LOG_DIR="logs/__CREDIT__"
+FIXED_PARAMS="-C $CREDIT"
+LOG_DIR="logs/$CREDIT"
 
 EXE=$HOME/auto-DE/tuning
 

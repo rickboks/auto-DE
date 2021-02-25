@@ -1,2 +1,0 @@
-alpha pMin
-0.4   3
