@@ -5,7 +5,7 @@
 #include "differentialevolution.h"
 #include "params.h"
 
-static int const BUDGET_MULTIPLIER = 1e4;
+static int const BUDGET_MULTIPLIER = 1e5;
 
 #include "default_params.h"
 
