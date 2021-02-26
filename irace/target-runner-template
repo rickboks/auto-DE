@@ -21,6 +21,7 @@ error() {
     exit 1
 }
 
+START_TIME=$(date +%s.%N)
 
 CREDIT="__CREDIT__"
 FIXED_PARAMS="-C $CREDIT"
@@ -55,9 +56,12 @@ done
 # This is an example of reading a number from the output.
 # It assumes that the objective value is the first number in
 # the first column of the last line of the output.
+END_TIME=$(date +%s.%N)
+DIFF_TIME=$(echo "($END_TIME - $START_TIME) * 1000" | bc | sed 's/\..*//')
+
 if [ -s "${STDOUT}" ]; then
     COST=$(tail -n 1 ${STDOUT})
-    echo "$COST"
+    echo "$COST $DIFF_TIME"
     rm "${STDOUT}" "${STDERR}"
     exit 0
 else

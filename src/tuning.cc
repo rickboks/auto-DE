@@ -9,7 +9,7 @@ static int const BUDGET_MULTIPLIER = 1e4;
 
 #include "default_params.h"
 
-void experiment(DifferentialEvolution& de,
+double experiment(DifferentialEvolution& de,
 				char const *const suite_name,
 				char const *const suite_options,
 				char const *const /*observer_name*/,
@@ -31,13 +31,13 @@ void experiment(DifferentialEvolution& de,
 		de.run(PROBLEM, budget, popSize);
 	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
-	std::cout 
-		<< std::setprecision(17) 
-		<< std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8) 
-		<< std::endl;
+	double val =
+		std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8); 
 
 	coco_observer_free(observer);
 	coco_suite_free(suite);
+
+	return val;
 }
 
 std::vector<std::string> splitString(std::string str){
@@ -122,13 +122,16 @@ int main(int argc, char** argv) {
 		}
 	);
 
-	experiment(
+	double fval = experiment(
 		de, 
 		suite.c_str(), 
 		("dimensions: " + dimensions + " instance_indices: " + instances + " function_indices: " + functions).c_str(), 
 		suite.c_str(), 
 		("result_folder: " + id).c_str()
 	);
+
+	std::cout 
+		<< std::setprecision(17) << fval  << std::endl;;
 
 	return 0;
 }
