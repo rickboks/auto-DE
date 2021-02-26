@@ -388,7 +388,7 @@ double coco_problem_get_best_observed_fvalue1(const coco_problem_t *problem);
 /**
  * @brief Returns the target value for the first objective.
  */
-double depreciated_coco_problem_get_final_target_fvalue1(const coco_problem_t *problem);
+double coco_problem_get_final_target_fvalue1(const coco_problem_t *problem);
 
 /**
  * @brief Returns a vector of size 'dimension' with lower bounds of the region of interest in
