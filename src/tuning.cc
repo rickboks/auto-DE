@@ -8,7 +8,7 @@
 static int const BUDGET_MULTIPLIER = 1e4;
 
 #include "default_params.h"
-//double coco_problem_get_final_target_fvalue1(const coco_problem_t *problem);
+
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
 				char const *const suite_options,
