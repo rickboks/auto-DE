@@ -22,4 +22,4 @@ irace --parameter-file "$d/parameters.txt" \
 	-l results/$cred.Rdata \
 	-s $d/scenario.txt \
 	--exec-dir $HOME/auto-DE/irace \
-	--elitist 0 \
+	--elitist 0
