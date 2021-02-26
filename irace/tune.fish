@@ -8,7 +8,7 @@ set d "$HOME/auto-DE/irace"
 set cred $argv[1]
 set HOURS 60
 
-mkdir -p results logs/$cred recovery
+mkdir -p results logs/$cred
 
 irace --parameter-file "$d/parameters.txt" \
 	--train-instances-file "$d/instances-list.txt" \
