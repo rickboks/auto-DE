@@ -31,8 +31,9 @@ void experiment(DifferentialEvolution& de,
 		de.run(PROBLEM, budget, popSize);
 	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
-	std::cout << std::setprecision(17) << 
-		std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8) 
+	std::cout 
+		<< std::setprecision(17) 
+		<< std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8) 
 		<< std::endl;
 
 	coco_observer_free(observer);
