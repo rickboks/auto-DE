@@ -61,7 +61,7 @@ DIFF_TIME=$(echo "$END_TIME - $START_TIME" | bc)
 
 if [ -s "${STDOUT}" ]; then
     COST=$(tail -n 1 ${STDOUT})
-    echo "$COST $DIFF_TIME"
+    echo "$COST"
     rm "${STDOUT}" "${STDERR}"
     exit 0
 else
