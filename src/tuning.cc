@@ -130,7 +130,7 @@ int main(int argc, char** argv) {
 		("result_folder: " + id).c_str()
 	);
 
-	std::cout << std::setprecision(17) << fval  << std::endl;;
+	std::cout << std::setprecision(17) << fval << std::endl;
 
 	return 0;
 }
