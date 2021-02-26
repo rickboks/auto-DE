@@ -52,10 +52,11 @@ ArrayXd RewardManager::ranks(ArrayXd const& x) const{
 	int cRank = 0;
 	ArrayXd score(ranks.size());
 	for (int i = 0; i < ranks.size(); i++){
-		if (i > 0 && x[ranks[i]] > x[ranks[i-1]])
+		if (i > 0 ? x[ranks[i]] > x[ranks[i-1]] : x[ranks[i]] > 0.)
 			cRank++;
 		score[ranks[i]] = cRank;
 	}
+
 	return score;
 }
 

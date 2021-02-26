@@ -8,7 +8,7 @@
 static int const BUDGET_MULTIPLIER = 1e4;
 
 #include "default_params.h"
-
+//double coco_problem_get_final_target_fvalue1(const coco_problem_t *problem);
 void experiment(DifferentialEvolution& de,
 				char const *const suite_name,
 				char const *const suite_options,
@@ -31,7 +31,9 @@ void experiment(DifferentialEvolution& de,
 		de.run(PROBLEM, budget, popSize);
 	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
-	std::cout << std::setprecision(17) << coco_problem_get_best_observed_fvalue1(PROBLEM) << std::endl;
+	std::cout << std::setprecision(17) << 
+		std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8) 
+		<< std::endl;
 
 	coco_observer_free(observer);
 	coco_suite_free(suite);
