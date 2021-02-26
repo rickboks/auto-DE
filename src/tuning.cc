@@ -31,7 +31,7 @@ double experiment(DifferentialEvolution& de,
 		de.run(PROBLEM, budget, popSize);
 	} while (!coco_problem_final_target_hit(PROBLEM) && coco_problem_get_evaluations(PROBLEM) < budget);
 
-	double val =
+	double const val =
 		std::max(coco_problem_get_best_observed_fvalue1(PROBLEM) - coco_problem_get_final_target_fvalue1(PROBLEM),1e-8); 
 
 	coco_observer_free(observer);
@@ -130,8 +130,7 @@ int main(int argc, char** argv) {
 		("result_folder: " + id).c_str()
 	);
 
-	std::cout 
-		<< std::setprecision(17) << fval  << std::endl;;
+	std::cout << std::setprecision(17) << fval  << std::endl;;
 
 	return 0;
 }
