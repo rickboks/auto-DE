@@ -57,7 +57,7 @@ done
 # It assumes that the objective value is the first number in
 # the first column of the last line of the output.
 END_TIME=$(date +%s.%N)
-DIFF_TIME=$(echo "($END_TIME - $START_TIME) * 1000" | bc | cut -d '.' -f1)
+DIFF_TIME=$(echo "$END_TIME - $START_TIME" | bc)
 
 if [ -s "${STDOUT}" ]; then
     COST=$(tail -n 1 ${STDOUT})
