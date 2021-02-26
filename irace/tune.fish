@@ -6,7 +6,7 @@ end
 
 set d "$HOME/auto-DE/irace"
 set cred $argv[1]
-set HOURS 60
+set HOURS 62
 
 mkdir -p results logs/$cred
 
