@@ -8,7 +8,7 @@ set data_folders "extra_data" "exdata"
 
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
 
-set configs "$executable -m $mutation -c $crossover "(cat tuned_configs.dat) \
+set configs "$executable -m $mutation -c $crossover "(cat irace/tuned_configs.dat) \
 	"$executable -s R -m "$mutation" -c "$crossover" -I RANDOM" \
 	"$executable -s C -m RA1 -c E -I DE_rand_1_exp" \
 	"$executable -s C -m RA1 -c B -I DE_rand_1_bin" \
