@@ -1,0 +1,7 @@
+-C CO -A 0.78 -B 0.45 -M 7.53 -r ER -p AP -I CO
+-C DR -A 0.03 -B 0.03 -M 7.9 -r EA -p AP -I DR
+-C FD -A 0.19 -B 0.36 -M 8.93 -r ER -p AP -I FD
+-C FI -A 0.06 -B 0.68 -M 8.04 -r EN -p AP -I FI
+-C FS -A 0.18 -B 0.66 -M 9.95 -r ER -p AP -I FS
+-C PA -A 0.21 -B 0.09 -M 8.68 -r EN -p AP -I PA
+-C SD -A 0.03 -B 0.37 -M 9.16 -r EN -p AP -I SD
