@@ -21,4 +21,5 @@ irace --parameter-file "$d/parameters.txt" \
 	--digits 2 \
 	-l results/$cred.Rdata \
 	-s $d/scenario.txt \
+	--elitist-new-instances 5 \
 	--exec-dir $HOME/auto-DE/irace > output/$cred.log
