@@ -10,6 +10,8 @@ namespace params {
 	extern int const log_activations_interval;
 	extern bool log_parameters;
 	extern int const log_parameters_interval;
+	extern bool log_positions;
+	extern int const log_positions_interval;
 	extern bool log_diversity;
 	extern int const log_diversity_interval;
 	extern std::string const extra_data_path;
@@ -18,7 +20,7 @@ namespace params {
 	// DE
 	extern double const F;
 	extern double const Cr;
-	extern double const popsize_multiplier;
+	extern double popsize_multiplier;
 	extern double const convergence_delta;
 
 	extern double const CO_omega;

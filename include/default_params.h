@@ -5,13 +5,15 @@ bool params::log_parameters = true;
 int const params::log_parameters_interval = 5;
 bool params::log_diversity = true;
 int const params::log_diversity_interval = 5;
+bool params::log_positions = true;
+int const params::log_positions_interval = 1;
 std::string const params::extra_data_path = "./extra_data";
 Eigen::IOFormat const params::vecFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "", "");
 
 // DE
 double const params::F = 0.5;
 double const params::Cr = 0.9;
-double const params::popsize_multiplier = 5;
+double params::popsize_multiplier = 5;
 double const params::convergence_delta = 1e-9;
 
 double const params::CO_omega = pi()/4.;

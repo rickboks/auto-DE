@@ -12,6 +12,7 @@ DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig cons
 	:id(id), config(config), 
 	activationsLogger(params::extra_data_path + "/" + id + ".act"),
 	parameterLogger(params::extra_data_path + "/" + id + ".par"),
+	positionsLogger(params::extra_data_path + "/" + id + ".pos"),
 	diversityLogger(params::extra_data_path + "/" + id + ".div"){
 }
 
@@ -55,6 +56,9 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 
 	if (params::log_diversity)
 		diversityLogger.log(coco_problem_get_id(problem));
+
+	//if (params::log_positions)
+		//positionsLogger.log(coco_problem_get_id(problem));
 }
 
 // Wrapper of prepare -> run -> reset
@@ -77,6 +81,7 @@ void DifferentialEvolution::run(int const evalBudget){
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
 			&& !coco_problem_final_target_hit(problem)
 			&& !converged(genomes)){
+
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 		recentActivations += strategyAdaptationManager->getLastActivations();
 
@@ -133,6 +138,13 @@ void DifferentialEvolution::run(int const evalBudget){
 
 		if (params::log_diversity && iteration % params::log_diversity_interval == 0)
 			diversityLogger.log(strategyAdaptationManager->getDistancesToMeanPosition().mean());
+
+		if (params::log_positions && iteration % params::log_positions_interval == 0){
+			for (Solution const* const s : genomes)
+				positionsLogger.log(s->X().transpose().format(params::vecFmt));
+			positionsLogger.log("");
+		}
+
 		/* ----- */
 	}
 }
