@@ -40,5 +40,5 @@ def animate(i):
 	return sc 
 	
 # plt.axis('off') 
-anim = animation.FuncAnimation(fig, animate, init_func=init, interval=50) 
+anim = animation.FuncAnimation(fig, animate, init_func=init, interval=5) 
 plt.show()

@@ -83,7 +83,7 @@ int main(int argc, char** argv) {
 	int c;
 
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:i:S:A:B:m:c:M:")) != -1){
+	while ((c = getopt(argc, argv, "s:P:C:r:q:p:b:d:f:I:i:S:A:B:m:c:M:x:")) != -1){
 		switch (c){
 			OPT('s', strategy)
 			OPT('P', param)
@@ -102,6 +102,7 @@ int main(int argc, char** argv) {
 			case 'm': mutation = splitString(optarg); break;
 			case 'c': crossover = splitString(optarg); break;
 			case 'M': params::PM_AP_pMin_divider = std::stod(optarg); break;
+			case 'x': params::popsize_multiplier = std::stod(optarg); break;
 		}
 	}
 

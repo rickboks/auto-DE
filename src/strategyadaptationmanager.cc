@@ -94,6 +94,7 @@ AdaptiveStrategyManager::AdaptiveStrategyManager(StrategyAdaptationConfiguration
 	qualityManager(QualityManager::create(config.quality)(K)),
 	probabilityManager(ProbabilityManager::create(config.probability)(K)), 
 	p(ArrayXd::Constant(K, 1./K)), q(ArrayXd::Constant(K, 0.)), used(K){
+	assert(configurations.size() > 1);
 }
 
 AdaptiveStrategyManager::~AdaptiveStrategyManager(){
