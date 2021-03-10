@@ -17,8 +17,6 @@ set configs "$executable -m $mutation -c $crossover "(cat irace/tuned_configs.da
 	"$executable -s C -m TB2 -c E -I DE_ttb_2_exp"  \
 	"$executable -s C -m TB2 -c B -I DE_ttb_2_bin" 
 
-printf '%s\n' $configs	
-
 set num_configs (count $configs)
 set num_nodes (count (string split ',' $hosts))
 set nodes_required (math (count $configs) / $threads)
@@ -32,7 +30,7 @@ end
 
 for folder in $data_folders
 	if test (ls $folder | count) -gt 0
-		if test (read -n1 -P "Folder \"$folder\" is not empty. Should I remove everything in it? [y\n]" ) = "y"
+		if test (read -n1 -P "Folder \"$folder\" is not empty. Should I remove everything in it? [y/n]" ) = "y"
 			rm -rf $folder/*
 		end
 	end

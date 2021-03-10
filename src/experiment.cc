@@ -60,7 +60,7 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv) {
-	//coco_set_log_level("warning");
+	coco_set_log_level("warning");
 
 	// defaults
 	std::string 
