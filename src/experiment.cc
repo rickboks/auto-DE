@@ -62,6 +62,9 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("warning");
 
+	params::log_parameters = true;
+	params::log_parameters_interval = 10;
+
 	// defaults
 	std::string 
 		strategy    = "A",

@@ -7,13 +7,13 @@ constexpr double pi() { return std::atan(1)*4.; }
 namespace params {
 	// Logging
 	extern bool log_activations;
-	extern int const log_activations_interval;
+	extern int log_activations_interval;
 	extern bool log_parameters;
-	extern int const log_parameters_interval;
+	extern int log_parameters_interval;
 	extern bool log_positions;
-	extern int const log_positions_interval;
+	extern int log_positions_interval;
 	extern bool log_diversity;
-	extern int const log_diversity_interval;
+	extern int log_diversity_interval;
 	extern std::string const extra_data_path;
 	extern Eigen::IOFormat const vecFmt; 
 

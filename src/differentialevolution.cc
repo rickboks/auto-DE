@@ -113,6 +113,19 @@ void DifferentialEvolution::run(int const evalBudget){
 		// Update the adaptation manager
 		strategyAdaptationManager->update(trials);
 
+		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
+			for (int i = 0; i < popSize; i++){
+				parameterLogger.log(int(Fs(i)*100), false);
+				parameterLogger.log(":", false);
+				parameterLogger.log(int(Crs(i)*100), false);
+				parameterLogger.log(":", false);
+				parameterLogger.log(trials[i]->getFitness(),false);
+				parameterLogger.log(" ", false);
+			}
+			parameterLogger.log("");
+		}
+
+
 		// Selection step
 		for (int i = 0; i < popSize; i++){
 			if (*trials[i] < *genomes[i]){
@@ -122,22 +135,11 @@ void DifferentialEvolution::run(int const evalBudget){
 				delete trials[i];
 			}
 		}
-		iteration++;
 
 		/* Logging */
-		if (params::log_activations && iteration % params::log_activations_interval == 0){
+		if (params::log_activations && iteration > 0 && iteration % params::log_activations_interval == 0){
 			activationsLogger.log(recentActivations.transpose().format(params::vecFmt));
 			recentActivations.setZero();
-		}
-
-		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
-			for (int i = 0; i < popSize; i++){
-				parameterLogger.log(Fs(i), false);
-				parameterLogger.log(":", false);
-				parameterLogger.log(Crs(i), false);
-				parameterLogger.log(" ", false);
-			}
-			parameterLogger.log("");
 		}
 
 		if (params::log_diversity && iteration % params::log_diversity_interval == 0)
@@ -148,8 +150,8 @@ void DifferentialEvolution::run(int const evalBudget){
 				positionsLogger.log(s->X().transpose().format(params::vecFmt));
 			positionsLogger.log("");
 		}
-
 		/* ----- */
+		iteration++;
 	}
 }
 
