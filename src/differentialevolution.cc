@@ -131,9 +131,13 @@ void DifferentialEvolution::run(int const evalBudget){
 		}
 
 		if (params::log_parameters && iteration % params::log_parameters_interval == 0){
-			parameterLogger.log(Fs.mean(), false); 
-			parameterLogger.log(" ", false); 
-			parameterLogger.log(Crs.mean());
+			for (int i = 0; i < popSize; i++){
+				parameterLogger.log(Fs(i), false);
+				parameterLogger.log(":", false);
+				parameterLogger.log(Crs(i), false);
+				parameterLogger.log(" ", false);
+			}
+			parameterLogger.log("");
 		}
 
 		if (params::log_diversity && iteration % params::log_diversity_interval == 0)
