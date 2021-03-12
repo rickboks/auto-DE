@@ -2,9 +2,9 @@
 bool params::log_activations = true;
 int const params::log_activations_interval = 1;
 bool params::log_parameters = true;
-int const params::log_parameters_interval = 5;
+int const params::log_parameters_interval = 1;
 bool params::log_diversity = true;
-int const params::log_diversity_interval = 5;
+int const params::log_diversity_interval = 1;
 bool params::log_positions = false;
 int const params::log_positions_interval = 1;
 std::string const params::extra_data_path = "./extra_data";
