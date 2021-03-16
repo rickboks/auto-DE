@@ -118,9 +118,10 @@ void DifferentialEvolution::run(int const evalBudget){
 				parameterLogger.log(int(Fs(i)*100), false);
 				parameterLogger.log(":", false);
 				parameterLogger.log(int(Crs(i)*100), false);
-				parameterLogger.log(":", false);
-				parameterLogger.log(trials[i]->getFitness(),false);
-				parameterLogger.log(" ", false);
+				//parameterLogger.log(":", false);
+				//parameterLogger.log(trials[i]->getFitness(),false);
+				if (i != popSize-1)
+					parameterLogger.log(" ", false);
 			}
 			parameterLogger.log("");
 		}

@@ -3,7 +3,7 @@ set executable "$HOME/auto-DE/experiment"
 
 set mutation "BE1" "RA1" "RA2" "TB1" 
 set crossover "B" "E"
-set correction "CO" "RS" "DP" "PM"
+set correction "PR" "RS" "DP" "MT"
 set threads "32"
 
 set data_folders "extra_data" "exdata"
