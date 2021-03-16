@@ -7,7 +7,9 @@ int params::log_parameters_interval = 10;
 bool params::log_diversity = false;
 int params::log_diversity_interval = 10;
 bool params::log_positions = false;
-int params::log_positions_interval = 1;
+int params::log_positions_interval = 10;
+bool params::log_repairs = false;
+int params::log_repairs_interval = 10;
 std::string const params::extra_data_path = "./extra_data";
 Eigen::IOFormat const params::vecFmt(Eigen::StreamPrecision, Eigen::DontAlignCols, " ", "", "", "", "", "");
 

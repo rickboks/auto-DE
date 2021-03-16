@@ -14,6 +14,8 @@ namespace params {
 	extern int log_positions_interval;
 	extern bool log_diversity;
 	extern int log_diversity_interval;
+	extern bool log_repairs;
+	extern int log_repairs_interval;
 	extern std::string const extra_data_path;
 	extern Eigen::IOFormat const vecFmt; 
 

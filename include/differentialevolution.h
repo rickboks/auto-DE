@@ -37,4 +37,5 @@ class DifferentialEvolution {
 		Logger parameterLogger;
 		Logger positionsLogger;
 		Logger diversityLogger;
+		Logger repairsLogger;
 };

@@ -13,7 +13,8 @@ DifferentialEvolution::DifferentialEvolution(std::string const id, DEConfig cons
 	activationsLogger(params::extra_data_path + "/" + id + ".act"),
 	parameterLogger(params::extra_data_path + "/" + id + ".par"),
 	positionsLogger(params::extra_data_path + "/" + id + ".pos"),
-	diversityLogger(params::extra_data_path + "/" + id + ".div"){
+	diversityLogger(params::extra_data_path + "/" + id + ".div"),
+	repairsLogger(params::extra_data_path + "/" + id + ".rep"){
 }
 
 DifferentialEvolution::~DifferentialEvolution(){}
@@ -57,8 +58,8 @@ void DifferentialEvolution::prepare(coco_problem_t* const problem, int const pop
 	if (params::log_diversity)
 		diversityLogger.log(coco_problem_get_id(problem));
 
-	//if (params::log_positions)
-		//positionsLogger.log(coco_problem_get_id(problem));
+	if (params::log_repairs)
+		repairsLogger.log(coco_problem_get_id(problem));
 }
 
 // Wrapper of prepare -> run -> reset
@@ -151,6 +152,9 @@ void DifferentialEvolution::run(int const evalBudget){
 				positionsLogger.log(s->X().transpose().format(params::vecFmt));
 			positionsLogger.log("");
 		}
+
+		if (params::log_repairs && iteration > 0 && iteration % params::log_repairs_interval == 0)
+			repairsLogger.log(double(ch->getCorrections()) / (int)coco_problem_get_evaluations(problem));
 		/* ----- */
 		iteration++;
 	}
@@ -163,6 +167,8 @@ void DifferentialEvolution::reset(){
 		parameterLogger.log(""); 
 	if (params::log_diversity)
 		diversityLogger.log("");
+	if (params::log_repairs)
+		repairsLogger.log("");
 
 	for (Solution* d : genomes) 
 		delete d;

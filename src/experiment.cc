@@ -64,6 +64,8 @@ int main(int argc, char** argv) {
 
 	params::log_parameters = true;
 	params::log_parameters_interval = 10;
+	params::log_repairs = true;
+	params::log_repairs_interval = 100;
 	params::restart_on_convergence = false;
 
 	// defaults
