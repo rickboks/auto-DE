@@ -22,6 +22,7 @@ namespace params {
 	extern double const Cr;
 	extern double popsize_multiplier;
 	extern double const convergence_delta;
+	extern bool restart_on_convergence;
 
 	extern double const CO_omega;
 

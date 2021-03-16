@@ -1,4 +1,5 @@
 // Logging
+#include "params.h"
 bool params::log_activations = false;
 int params::log_activations_interval = 10;
 bool params::log_parameters = false;
@@ -15,6 +16,7 @@ double const params::F = 0.5;
 double const params::Cr = 0.9;
 double params::popsize_multiplier = 5;
 double const params::convergence_delta = 1e-9;
+bool params::restart_on_convergence = true;
 
 double const params::CO_omega = pi()/4.;
 

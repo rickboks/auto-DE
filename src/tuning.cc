@@ -55,8 +55,8 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("warning");
 
-	params::log_parameters = true;
-	params::log_parameters_interval = 10;
+	params::log_positions = true;
+	params::log_parameters_interval = 1;
 
 	// defaults
 	std::string 

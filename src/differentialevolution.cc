@@ -80,7 +80,7 @@ void DifferentialEvolution::run(int const evalBudget){
 	int iteration = 0;
 	while ((int)coco_problem_get_evaluations(problem) < evalBudget
 			&& !coco_problem_final_target_hit(problem)
-			&& !converged(genomes)){
+			&& (!params::restart_on_convergence || !converged(genomes))){
 
 		strategyAdaptationManager->next(genomes, mutationManagers, crossoverManagers, Fs, Crs);
 		recentActivations += strategyAdaptationManager->getLastActivations();

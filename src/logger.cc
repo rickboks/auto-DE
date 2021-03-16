@@ -13,7 +13,6 @@ void Logger::flush(){
 void Logger::checkActive(){
 	if (!activated){
 		out.open(filename);
-		out.precision(3);
 		activated = true;
 	}
 }
