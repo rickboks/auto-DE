@@ -6,7 +6,7 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1e4;
+static int const BUDGET_MULTIPLIER = 1e5;
 static int const INDEPENDENT_RUNS = 20;
 static std::vector<int> const INSTANCES = {1,2,3,4,5};
 
@@ -36,7 +36,6 @@ void experiment(DifferentialEvolution& de,
 		int const dimension = coco_problem_get_dimension(PROBLEM);
 		int const popSize = dimension * params::popsize_multiplier;
 		size_t const budget = dimension * BUDGET_MULTIPLIER;
-		std::string const fid = coco_problem_get_id(PROBLEM);
 
 		do {
 			de.run(PROBLEM, budget, popSize);
@@ -62,11 +61,11 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("warning");
 
-	params::log_parameters = true;
-	params::log_parameters_interval = 10;
-	params::log_repairs = true;
-	params::log_repairs_interval = 100;
-	params::restart_on_convergence = false;
+	//params::log_parameters = true;
+	//params::log_parameters_interval = 10;
+	//params::log_repairs = true;
+	//params::log_repairs_interval = 100;
+	//params::restart_on_convergence = false;
 
 	// defaults
 	std::string 
