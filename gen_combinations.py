@@ -1,22 +1,26 @@
 #!/usr/bin/env python
 import itertools
 
-mutations = ["TB2", "RA1", "BE1", "TR1", "TO1"]
+mutations = ["BE1", "RA1", "RA2", "TP1", "TB2", "TR1", "TO1"]
 crossovers = ["B", "E"]
-corrections = ["RS", "MT"]
+
+def gen_params(m, c):
+	return '-m ' + ','.join(m) + ' -c ' + ','.join(c)
 
 mutation_combinations = []
 for i in range(1,len(mutations)+1):
-	mutation_combinations += [ '-m ' + ','.join(x) for x in itertools.combinations(mutations,i) ]
+	mutation_combinations += [ list(x) for x in itertools.combinations(mutations,i) ]
 
 crossover_combinations = []
 for i in range(1,len(crossovers)+1):
-	crossover_combinations += [ '-c ' + ','.join(x) for x in itertools.combinations(crossovers,i) ]
-
-correction_combinations = []
-for i in range(1,len(corrections)+1):
-	correction_combinations += [ '-b ' + ','.join(x) for x in itertools.combinations(corrections,i) ]
+	crossover_combinations += [ list(x) for x in itertools.combinations(crossovers,i) ]
 
 configs = list(itertools.product(mutation_combinations, crossover_combinations))
-print(configs)
-print(len(configs))
+configs = [c for c in configs if len(c[0]) * len(c[1]) > 1]
+
+config_strings = [ gen_params(*x) for x in configs ]
+
+outfile = open("parameter_combinations.dat", "w")
+for s in config_strings:
+	outfile.write("{}\n".format(s))
+outfile.close()
