@@ -5,7 +5,9 @@ set data_folders "extra_data" "exdata"
 
 set base_params (cat irace/tuned_configs.dat | grep "^-C CO")
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
-set configs $base_params" "(cat parameter_combinations.dat | grep -- '-c B$')
+set configs "$executable $base_params "(cat parameter_combinations.dat | grep -- '-c B ')
+
+printf '%s\n' $configs
 
 set num_configs (count $configs)
 set num_nodes (count (string split ',' $hosts))
