@@ -185,7 +185,7 @@ int main(int argc, char** argv){
 		}
 	}
 
-	DifferentialEvolution de(
+	DifferentialEvolution de (
 		id, 
 		{
 			.strategy = strategy,
