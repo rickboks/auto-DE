@@ -16,17 +16,17 @@ namespace params {
 	extern int log_diversity_interval;
 	extern bool log_repairs;
 	extern int log_repairs_interval;
-	extern std::string const extra_data_path;
+	extern std::string extra_data_path;
 	extern Eigen::IOFormat const vecFmt; 
 
 	// DE
-	extern double const F;
-	extern double const Cr;
+	extern double F;
+	extern double Cr;
 	extern double popsize_multiplier;
-	extern double const convergence_delta;
+	extern double convergence_delta;
 	extern bool restart_on_convergence;
 
-	extern double const CO_omega;
+	extern double CO_omega;
 
 	// Quality
 	extern double WS_alpha;
@@ -42,5 +42,5 @@ namespace params {
 	extern std::function<int(int)> const SHADE_p;
 
 	// Constraint handling
-	extern int const RS_max_resamples;
+	extern int RS_max_resamples;
 };
