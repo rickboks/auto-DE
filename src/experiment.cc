@@ -61,28 +61,19 @@ std::vector<std::string> splitString(std::string str){
 int main(int argc, char** argv) {
 	coco_set_log_level("warning");
 
-	//params::log_parameters = true;
-	//params::log_parameters_interval = 10;
-	//params::log_repairs = true;
-	//params::log_repairs_interval = 100;
-	//params::restart_on_convergence = false;
-
-	// defaults
 	std::string 
 		strategy    = "A",
 		param		= "S",		
-		credit		= "SD",
-		reward 		= "AA",
+		credit		= "CO",
+		reward 		= "EA",
 		quality 	= "WS",
-		probability	= "PM",
+		probability	= "AP",
 		constraint 	= "RS",
-		//////////////////////
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 		functions 	= "1-24",
-		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS);
-
-	std::string id = "DE";
+		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS),
+		id = "DE";
 
 	std::vector<std::string>
 		mutation = {"BE1", "RA1", "TB2"},
@@ -129,21 +120,21 @@ int main(int argc, char** argv) {
 					printf (" with arg %s", optarg);
 				printf ("\n");
 				break;
-			OPT(1000, strategy)
-			OPT(1001, param)
-			OPT(1002, credit)
-			OPT(1003, reward)
-			OPT(1004, quality)
-			OPT(1005, probability)
-			OPT(1006, constraint)
-			OPT(1007, id)
-			OPT('d', dimensions)
-			OPT('f', functions)
-			OPT('i', instances)
-			case 1008: params::WS_alpha = std::stod(optarg); break;
-			case 1009: params::AP_beta = std::stod(optarg); break;
+			case 'd': dimensions = optarg;
+			case 'f': functions = optarg;
+			case 'i': instances = optarg;
+			case 1000: strategy = optarg;
+			case 1001: param = optarg;
+			case 1002: credit = optarg;
+			case 1003: reward = optarg;
+			case 1004: quality = optarg;
+			case 1005: probability = optarg;
+			case 1006: constraint = optarg;
+			case 1007: id = optarg;
 			case 'm': mutation = splitString(optarg); break;
 			case 'c': crossover = splitString(optarg); break;
+			case 1008: params::WS_alpha = std::stod(optarg); break;
+			case 1009: params::AP_beta = std::stod(optarg); break;
 			case 1010: params::PM_AP_pMin_divider = std::stod(optarg); break;
 			case 1011: params::popsize_multiplier = std::stod(optarg); break;
 		}
