@@ -69,7 +69,6 @@ int main(int argc, char** argv){
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
-		suite 		= "bbob",
 	  	dimensions 	= "20",
 		functions 	= "1-24",
 		id = "DE";
@@ -108,6 +107,7 @@ int main(int argc, char** argv){
 			{"instances", 			required_argument,	0, 	'i'},
 			{"mutation", 			required_argument,	0, 	'm'},
 			{"crossover", 			required_argument,	0, 	'c'},
+			{"Cr",					required_argument, 	0,	'C'},
 
 			{"strategy", 			required_argument,	0,	STRATEGY_FLAG},
 			{"parameter",			required_argument,	0, 	PARAMETER_FLAG},
@@ -123,7 +123,6 @@ int main(int argc, char** argv){
 			{"popsize-multiplier",	required_argument,	0, 	POPSIZE_MULTIPLIER_FLAG},
 			{"budget-multiplier",	required_argument, 	0,	BUDGET_MULTIPLIER_FLAG},
 			{"independent-runs",	required_argument, 	0,	INDEPENDENT_RUNS_FLAG},
-			{"Cr",					required_argument, 	0,	'C'},
 
 			{"log-activations",		optional_argument, 	0,	LOG_ACTIVATIONS_FLAG},
 			{"log-parameters",		optional_argument, 	0,	LOG_PARAMETERS_FLAG},
@@ -204,9 +203,9 @@ int main(int argc, char** argv){
 
 	experiment(
 		de, 
-		suite.c_str(), 
+		"bbob", 
 		("dimensions: " + dimensions + " function_indices: " + functions).c_str(), 
-		suite.c_str(), 
+		"bbob", 
 		("result_folder: " + id).c_str()
 	);
 
