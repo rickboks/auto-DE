@@ -90,26 +90,62 @@ int main(int argc, char** argv) {
 
 	int c;
 
+	while(true){	
+		static struct option long_options[] =
+		{
+			{"strategy", 			required_argument,	0,	1000},
+			{"parameter",			required_argument,	0, 	1001},
+			{"credit", 				required_argument,	0, 	1002},
+			{"reward", 				required_argument,	0, 	1003},
+			{"quality", 			required_argument,	0, 	1004},
+			{"probability", 		required_argument,	0, 	1005},
+			{"constraint", 			required_argument,	0, 	1006},
+			{"id", 					required_argument,	0, 	1007},
+			{"alpha", 				required_argument,	0, 	1008},
+			{"beta", 				required_argument,	0, 	1009},
+			{"gamma", 				required_argument,	0, 	1010},
+			{"popsize-multiplier",	required_argument,	0, 	1011},
+			{"dimensions", 			required_argument,	0, 	'd'},
+			{"functions", 			required_argument,	0, 	'f'},
+			{"instances", 			required_argument,	0, 	'i'},
+			{"mutation", 			required_argument,	0, 	'm'},
+			{"crossover", 			required_argument,	0, 	'c'},
+			{0, 0, 0, 0}
+		};
+
+		int option_index = 0;
+		c = getopt_long (argc, argv, "d:f:i:m:c:", long_options, &option_index);
+
+		if (c == -1)
+			break;
+
 #define OPT(X,Y) case X: Y = optarg; break;
-	while ((c = getopt(argc, argv, "P:C:r:q:p:b:d:f:i:I:m:c:s:A:B:M:x:")) != -1){
 		switch (c){
-			OPT('s', strategy)
-			OPT('P', param)
-			OPT('C', credit)
-			OPT('r', reward)
-			OPT('q', quality)
-			OPT('p', probability)
-			OPT('b', constraint)
+			case 0:
+				if (long_options[option_index].flag != 0)
+					break;
+				printf ("option %s", long_options[option_index].name);
+				if (optarg)
+					printf (" with arg %s", optarg);
+				printf ("\n");
+				break;
+			OPT(1000, strategy)
+			OPT(1001, param)
+			OPT(1002, credit)
+			OPT(1003, reward)
+			OPT(1004, quality)
+			OPT(1005, probability)
+			OPT(1006, constraint)
+			OPT(1007, id)
 			OPT('d', dimensions)
 			OPT('f', functions)
 			OPT('i', instances)
-			OPT('I', id)
-			case 'A': params::WS_alpha = std::stod(optarg); break;
-			case 'B': params::AP_beta = std::stod(optarg); break;
+			case 1008: params::WS_alpha = std::stod(optarg); break;
+			case 1009: params::AP_beta = std::stod(optarg); break;
 			case 'm': mutation = splitString(optarg); break;
 			case 'c': crossover = splitString(optarg); break;
-			case 'M': params::PM_AP_pMin_divider = std::stod(optarg); break;
-			case 'x': params::popsize_multiplier = std::stod(optarg); break;
+			case 1010: params::PM_AP_pMin_divider = std::stod(optarg); break;
+			case 1011: params::popsize_multiplier = std::stod(optarg); break;
 		}
 	}
 
