@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import itertools
 
-mutations = ["BE1", "RA1", "RA2", "TP1", "TB2", "TR1", "TO1"]
+mutations = ["BE1", "RA1", "TP1", "TB2", "TR1", "TO1"]
 crossovers = ["B", "E"]
 
 def gen_params(m, c):
