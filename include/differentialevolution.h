@@ -1,8 +1,8 @@
 #pragma once
-#include "coco.h"
-#include "strategyadaptationmanager.h"
 #include <vector>
 #include <string>
+#include "coco.h"
+#include "strategyadaptationmanager.h"
 #include "logger.h"
 
 class ParameterAdaptationManager;

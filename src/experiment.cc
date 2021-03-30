@@ -72,7 +72,6 @@ int main(int argc, char** argv){
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 		functions 	= "1-24",
-		//instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS),
 		id = "DE";
 
 	std::vector<std::string> 
