@@ -134,7 +134,7 @@ int main(int argc, char** argv){
 		};
 
 		int option_index = 0;
-		c = getopt_long (argc, argv, "d:f:i:m:c:", long_options, &option_index);
+		c = getopt_long (argc, argv, "d:f:i:m:c:F:C:", long_options, &option_index);
 
 		if (c == -1)
 			break;
