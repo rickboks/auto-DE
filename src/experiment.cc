@@ -6,17 +6,17 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int const BUDGET_MULTIPLIER = 1e5;
-static int const INDEPENDENT_RUNS = 20;
-static std::vector<int> const INSTANCES = {1,2,3,4,5};
+static int BUDGET_MULTIPLIER = 1e5;
+static int INDEPENDENT_RUNS = 20;
+static std::vector<std::string> INSTANCES = {"1","2","3","4","5"};
 
 #include "default_params.h"
 
 std::string gen_instances(){
 	std::string instances = "";
-	for (int i : INSTANCES)
+	for (std::string i : INSTANCES)
 		for (int j = 0; j < INDEPENDENT_RUNS; j++)
-			instances += std::to_string(i) + ",";
+			instances += i + ",";
 	instances.pop_back();
 	return instances;
 }
@@ -58,7 +58,7 @@ std::vector<std::string> splitString(std::string str){
 	return v;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv){
 	coco_set_log_level("warning");
 
 	std::string 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
 		suite 		= "bbob",
 	  	dimensions 	= "20",
 		functions 	= "1-24",
-		instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS),
+		//instances 	= "1-" + std::to_string(INSTANCES.size() * INDEPENDENT_RUNS),
 		id = "DE";
 
 	std::vector<std::string> 
@@ -98,10 +98,18 @@ int main(int argc, char** argv) {
 #define LOG_POSITIONS_FLAG 1014
 #define LOG_DIVERSITY_FLAG 1015
 #define LOG_REPAIRS_FLAG 1016
+#define BUDGET_MULTIPLIER_FLAG 1017
+#define INDEPENDENT_RUNS_FLAG 1018
 
 	while(true){	
 		static struct option long_options[] =
 		{
+			{"dimensions", 			required_argument,	0, 	'd'},
+			{"functions", 			required_argument,	0, 	'f'},
+			{"instances", 			required_argument,	0, 	'i'},
+			{"mutation", 			required_argument,	0, 	'm'},
+			{"crossover", 			required_argument,	0, 	'c'},
+
 			{"strategy", 			required_argument,	0,	STRATEGY_FLAG},
 			{"parameter",			required_argument,	0, 	PARAMETER_FLAG},
 			{"credit", 				required_argument,	0, 	CREDIT_FLAG},
@@ -114,16 +122,14 @@ int main(int argc, char** argv) {
 			{"beta", 				required_argument,	0, 	BETA_FLAG},
 			{"gamma", 				required_argument,	0, 	GAMMA_FLAG},
 			{"popsize-multiplier",	required_argument,	0, 	POPSIZE_MULTIPLIER_FLAG},
+			{"budget-multiplier",	required_argument, 	0,	BUDGET_MULTIPLIER_FLAG},
+			{"independent-runs",	required_argument, 	0,	INDEPENDENT_RUNS_FLAG},
+
 			{"log-activations",		optional_argument, 	0,	LOG_ACTIVATIONS_FLAG},
 			{"log-parameters",		optional_argument, 	0,	LOG_PARAMETERS_FLAG},
 			{"log-positions",		optional_argument, 	0,	LOG_POSITIONS_FLAG},
 			{"log-diversity",		optional_argument, 	0,	LOG_DIVERSITY_FLAG},
 			{"log-repairs",			optional_argument, 	0,	LOG_REPAIRS_FLAG},
-			{"dimensions", 			required_argument,	0, 	'd'},
-			{"functions", 			required_argument,	0, 	'f'},
-			{"instances", 			required_argument,	0, 	'i'},
-			{"mutation", 			required_argument,	0, 	'm'},
-			{"crossover", 			required_argument,	0, 	'c'},
 			{0, 0, 0, 0}
 		};
 
@@ -135,17 +141,9 @@ int main(int argc, char** argv) {
 
 #define OPT(X,Y) case X: Y = optarg; break;
 		switch (c){
-			case 0:
-				if (long_options[option_index].flag != 0)
-					break;
-				printf ("option %s", long_options[option_index].name);
-				if (optarg)
-					printf (" with arg %s", optarg);
-				printf ("\n");
-				break;
 			case 'd':						dimensions = optarg; break;
 			case 'f':						functions = optarg; break;
-			case 'i':						instances = optarg; break;
+			case 'i':						INSTANCES = splitString(optarg); break;
 			case 'm':						mutation = splitString(optarg); break;
 			case 'c':						crossover = splitString(optarg); break;
 			case STRATEGY_FLAG:				strategy = optarg; break;
@@ -160,6 +158,8 @@ int main(int argc, char** argv) {
 			case BETA_FLAG:					params::AP_beta = std::stod(optarg); break;
 			case GAMMA_FLAG:				params::PM_AP_pMin_divider = std::stod(optarg); break;
 			case POPSIZE_MULTIPLIER_FLAG: 	params::popsize_multiplier = std::stod(optarg); break;
+			case BUDGET_MULTIPLIER_FLAG: 	BUDGET_MULTIPLIER = std::stoi(optarg); break;
+			case INDEPENDENT_RUNS_FLAG: 	INDEPENDENT_RUNS = std::stoi(optarg); break;
 			case LOG_ACTIVATIONS_FLAG: 
 				params::log_activations = true; 
 				if (optarg) params::log_activations_interval = std::stoi(optarg);
@@ -203,7 +203,7 @@ int main(int argc, char** argv) {
 	experiment(
 		de, 
 		suite.c_str(), 
-		("dimensions: " + dimensions + " instance_indices: " + instances + " function_indices: " + functions).c_str(), 
+		("dimensions: " + dimensions + " function_indices: " + functions).c_str(), 
 		suite.c_str(), 
 		("result_folder: " + id).c_str()
 	);
