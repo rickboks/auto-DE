@@ -124,6 +124,7 @@ int main(int argc, char** argv){
 			{"popsize-multiplier",	required_argument,	0, 	POPSIZE_MULTIPLIER_FLAG},
 			{"budget-multiplier",	required_argument, 	0,	BUDGET_MULTIPLIER_FLAG},
 			{"independent-runs",	required_argument, 	0,	INDEPENDENT_RUNS_FLAG},
+			{"Cr",					required_argument, 	0,	'C'},
 
 			{"log-activations",		optional_argument, 	0,	LOG_ACTIVATIONS_FLAG},
 			{"log-parameters",		optional_argument, 	0,	LOG_PARAMETERS_FLAG},
@@ -146,6 +147,8 @@ int main(int argc, char** argv){
 			case 'i':						INSTANCES = splitString(optarg); break;
 			case 'm':						mutation = splitString(optarg); break;
 			case 'c':						crossover = splitString(optarg); break;
+			case 'F':						params::F = std::stod(optarg); break;
+			case 'C':						params::Cr = std::stod(optarg); break;
 			case STRATEGY_FLAG:				strategy = optarg; break;
 			case PARAMETER_FLAG:			param = optarg; break;
 			case CREDIT_FLAG:				credit = optarg; break;
