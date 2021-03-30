@@ -119,8 +119,6 @@ void DifferentialEvolution::run(int const evalBudget){
 				parameterLogger.log(int(Fs(i)*100), false);
 				parameterLogger.log(":", false);
 				parameterLogger.log(int(Crs(i)*100), false);
-				//parameterLogger.log(":", false);
-				//parameterLogger.log(trials[i]->getFitness(),false);
 				if (i != popSize-1)
 					parameterLogger.log(" ", false);
 			}
@@ -161,14 +159,10 @@ void DifferentialEvolution::run(int const evalBudget){
 }
 
 void DifferentialEvolution::reset(){
-	if (params::log_activations)
-		activationsLogger.log(""); // blank line
-	if (params::log_parameters)
-		parameterLogger.log(""); 
-	if (params::log_diversity)
-		diversityLogger.log("");
-	if (params::log_repairs)
-		repairsLogger.log("");
+	if (params::log_activations) activationsLogger.log(""); // blank line
+	if (params::log_parameters) parameterLogger.log(""); 
+	if (params::log_diversity) diversityLogger.log("");
+	if (params::log_repairs) repairsLogger.log("");
 
 	for (Solution* d : genomes) 
 		delete d;
