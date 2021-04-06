@@ -1,6 +1,8 @@
 # auto-DE
 A framework for Differential Evolution with adaptive selection of operators and parameters.
 
+## Parameters
+
 | Flags | Meaning | Examples | 
 |-------|---------|---------|
 | -d, --dimensions | Comma-separated list of dimensionalities of the problems | -d 2,3,5|
@@ -29,3 +31,56 @@ A framework for Differential Evolution with adaptive selection of operators and 
 | --log-positions | Activate logging of solution positions. Optional argument controls the interval in terms of iterations | --log-positions **or** --log-positions 10 |
 | --log-diversity | Activate population diversity logging. Optional argument controls the interval in terms of iterations | --log-diversity **or** --log-diversity 10 |
 | --log-repairs | Activate logging of percentages of repaired solutions. Optional argument controls the interval in terms of iterations | --log-repairs **or** --log-repairs 10 |
+
+## Mutation options
+| Shorthand | Meaning |
+|-----------|---------|
+| RA1 | rand/1 |
+| TB1 | target-to-best/1 |
+| TB2 | target-to-best/2 |
+| TR1 | target-to-rand/1 |
+| TP1 | target-to-pbest/1 |
+| BE1 | best/1 |
+| BE2 | best/2 |
+| RA2 | rand/2 |
+| R2D | rand/2/dir |
+| NSD | NSDE |
+| TRI | trigonometric |
+| TO1 | two-opt/1 |
+| TO2 | two-opt/2 |
+| PRX | proximity-based rand/1 |
+| RAN | ranking-based target-to-pbest/1 |
+
+## Crossover options
+| Shorthand | Meaning |
+|-----------|---------|
+| B | Binomial |
+| E | Exponential |
+
+## Boundary Constraint Handling Methods
+| Shorthand | Meaning |
+|-----------|---------|
+| DP | Death Penalty |
+| RS | Resampling |
+| RI | Reinitialization |
+| PR |Projection |
+| RF | Reflection |
+| WR | Wrapping |
+| TR | Boundary Transformation |
+| RB | Rand Base |
+| MB | Midpoint Base |
+| MT | Midpoint Target |
+| PM | Projection to Midpoint |
+| PB | Projection to Base |
+
+## Credit assignment options
+| Shorthand | Meaning |
+|-----------|---------|
+| DR | Diversity ratio |
+| SD | Squared diversity ratio |
+| FD | Fitness improvement scaled by diversity ratio | 
+| FS | Fitness improvement scaled by squared diversity ratio |
+| FI | Fitness improvement |
+| CO | Compass |
+| PA | Pareto dominance |
+
