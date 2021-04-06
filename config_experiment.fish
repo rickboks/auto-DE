@@ -5,7 +5,7 @@ set data_folders "extra_data" "exdata"
 
 set base_params (cat irace/tuned_configs.dat | grep "^-C CO")
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
-set configs "$executable $base_params "(cat parameter_combinations.dat | grep -- '-c [A-Z] ')
+set configs "$executable $base_params "(cat parameter_combinations.dat | grep -- '-c B,E ')
 
 printf '%s\n' $configs
 
