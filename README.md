@@ -1,5 +1,9 @@
 # auto-DE
-A framework for Differential Evolution with adaptive selection of operators and parameters.
+A framework for Differential Evolution with adaptive selection of operators and parameters. The accompanying paper, with documentation about all the different options, will be provided soon. The generated algorithm(s) can be benchmarked on BBOB. Many options can be configured using command-line parameters, listed below. To compile, simply run:
+
+```
+make
+```
 
 ## Parameters
 
@@ -32,6 +36,18 @@ A framework for Differential Evolution with adaptive selection of operators and 
 | --log-diversity | Activate population diversity logging. Optional argument controls the interval in terms of iterations | --log-diversity **or** --log-diversity 10 |
 | --log-repairs | Activate logging of percentages of repaired solutions. Optional argument controls the interval in terms of iterations | --log-repairs **or** --log-repairs 10 |
 
+## Operator adaptation strategy options
+| Shorthand | Meaning |
+|-----------|---------|
+| A | Adaptive strategy |
+| C | Constant strategy (no adaptation) | 
+| R | Random strategy |
+
+## Parameter adaptation options (F and Cr)
+| Shorthand | Meaning |
+|-----------|---------|
+| S | SHADE parameter adaptation | 
+| C | Constant parameters (no adaptation) |
 ## Mutation options
 | Shorthand | Meaning |
 |-----------|---------|
