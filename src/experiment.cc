@@ -6,8 +6,8 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int BUDGET_MULTIPLIER = 1e5;
-static int INDEPENDENT_RUNS = 20;
+static int BUDGET_MULTIPLIER = 1e4;
+static int INDEPENDENT_RUNS = 1;
 static std::vector<std::string> INSTANCES = {"1","2","3","4","5"};
 
 #include "default_params.h"
@@ -59,22 +59,21 @@ std::vector<std::string> splitString(std::string str){
 }
 
 int main(int argc, char** argv){
-	//coco_set_log_level("warning");
-
 	std::string 
-		strategy    = "A",
+		strategy    = "C",
 		param		= "S",		
 		credit		= "CO",
 		reward 		= "EA",
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
-	  	dimensions 	= "20",
+	  	dimensions 	= "2,3,5",
 		functions 	= "1-24",
-		id = "DE";
+		id = "DE",
+		coco_log_level = "info";
 
 	std::vector<std::string> 
-		mutation = {"RA1", "BE1"}, 
+		mutation = {"RA1"}, 
 		crossover = {"B"};
 
 	int c;
@@ -98,6 +97,7 @@ int main(int argc, char** argv){
 #define LOG_REPAIRS_FLAG 1016
 #define BUDGET_MULTIPLIER_FLAG 1017
 #define INDEPENDENT_RUNS_FLAG 1018
+#define COCO_LOG_LEVEL_FLAG 1019
 
 	while(true){	
 		static struct option long_options[] =
@@ -123,6 +123,7 @@ int main(int argc, char** argv){
 			{"popsize-multiplier", required_argument, 0, POPSIZE_MULTIPLIER_FLAG},
 			{"budget-multiplier", required_argument, 0, BUDGET_MULTIPLIER_FLAG},
 			{"independent-runs", required_argument, 0, INDEPENDENT_RUNS_FLAG},
+			{"coco-log-level", required_argument, 0, COCO_LOG_LEVEL_FLAG},
 
 			{"log-activations", optional_argument, 0, LOG_ACTIVATIONS_FLAG},
 			{"log-parameters", optional_argument, 0, LOG_PARAMETERS_FLAG},
@@ -147,6 +148,7 @@ int main(int argc, char** argv){
 			case 'c': crossover = splitString(optarg); break;
 			case 'F': params::F = std::stod(optarg); break;
 			case 'C': params::Cr = std::stod(optarg); break;
+
 			case STRATEGY_FLAG: strategy = optarg; break;
 			case PARAMETER_FLAG: param = optarg; break;
 			case CREDIT_FLAG: credit = optarg; break;
@@ -161,6 +163,8 @@ int main(int argc, char** argv){
 			case POPSIZE_MULTIPLIER_FLAG: params::popsize_multiplier = std::stod(optarg); break;
 			case BUDGET_MULTIPLIER_FLAG: BUDGET_MULTIPLIER = std::stoi(optarg); break;
 			case INDEPENDENT_RUNS_FLAG: INDEPENDENT_RUNS = std::stoi(optarg); break;
+			case COCO_LOG_LEVEL_FLAG: coco_log_level = optarg; break;
+
 			case LOG_ACTIVATIONS_FLAG: 
 				params::log_activations = true; 
 				if (optarg) params::log_activations_interval = std::stoi(optarg);
@@ -183,6 +187,8 @@ int main(int argc, char** argv){
 				break;
 		}
 	}
+
+	coco_set_log_level(coco_log_level.c_str());
 
 	DifferentialEvolution de (
 		id, 
