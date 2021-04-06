@@ -90,19 +90,16 @@ void DifferentialEvolution::run(int const evalBudget){
 		std::vector<Solution*> donors(popSize);
 		for (MutationManager* const m : strategyAdaptationManager->getMutationManagers()){
 			if (mutationManagers.count(m)){
-				std::vector<int> const indices = mutationManagers[m];
-				if (!indices.empty()){
-					m->prepare(genomes);
-					for (int i : indices)
-						 donors[i] = m->mutate(genomes, i, Fs[i]);
-				}
+				m->prepare(genomes);
+				for (int const& i : mutationManagers[m])
+					 donors[i] = m->mutate(genomes, i, Fs[i]);
 			}
 		}
 
 		// Crossover step
 		std::vector<Solution*> trials(popSize); 
 		for (CrossoverManager* const c : strategyAdaptationManager->getCrossoverManagers()){
-			for (int i : crossoverManagers[c]){
+			for (int const& i : crossoverManagers[c]){
 				trials[i] = c->crossover(genomes[i], donors[i], Crs[i]);
 				delete donors[i];
 
