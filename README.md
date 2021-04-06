@@ -39,6 +39,7 @@ Then, to run an experiment:
 | --log-positions | Activate logging of solution positions. Optional argument controls the interval in terms of iterations | --log-positions **or** --log-positions 10 |
 | --log-diversity | Activate population diversity logging. Optional argument controls the interval in terms of iterations | --log-diversity **or** --log-diversity 10 |
 | --log-repairs | Activate logging of percentages of repaired solutions. Optional argument controls the interval in terms of iterations | --log-repairs **or** --log-repairs 10 |
+| --coco-log-level | Logging level for COCO | --coco-log-level warning |
 
 ## Operator adaptation strategy options
 | Shorthand | Meaning |
