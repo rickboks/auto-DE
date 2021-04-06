@@ -57,7 +57,7 @@ A framework for Differential Evolution with adaptive selection of operators and 
 | B | Binomial |
 | E | Exponential |
 
-## Boundary Constraint Handling Methods
+## Boundary Constraint Handling Method options
 | Shorthand | Meaning |
 |-----------|---------|
 | DP | Death Penalty |
@@ -83,4 +83,25 @@ A framework for Differential Evolution with adaptive selection of operators and 
 | FI | Fitness improvement |
 | CO | Compass |
 | PA | Pareto dominance |
+
+## Reward assignment options
+| Shorthand | Meaning |
+|-----------|---------|
+| AN | Average normalized reward |
+| AA | Average absolute reward |
+| EN | Extreme normalized reward |
+| EA | Extreme absolute reward |
+| ER | Extreme rank reward |
+| AR | Average rank reward | 
+
+## Quality assignment options
+| Shorthand | Meaning |
+|-----------|---------|
+| WS | Weighted sum |
+
+## Probability update methods
+| Shorthand | Meaning |
+|-----------|---------|
+| AP | Adaptive Pursuit |
+| PM | Probability Matching |
 
