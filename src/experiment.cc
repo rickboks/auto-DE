@@ -102,33 +102,33 @@ int main(int argc, char** argv){
 	while(true){	
 		static struct option long_options[] =
 		{
-			{"dimensions", 			required_argument,	0, 	'd'},
-			{"functions", 			required_argument,	0, 	'f'},
-			{"instances", 			required_argument,	0, 	'i'},
-			{"mutation", 			required_argument,	0, 	'm'},
-			{"crossover", 			required_argument,	0, 	'c'},
-			{"Cr",					required_argument, 	0,	'C'},
+			{"dimensions", required_argument, 0, 'd'},
+			{"functions", required_argument, 0, 'f'},
+			{"instances", required_argument, 0, 'i'},
+			{"mutation", required_argument, 0, 'm'},
+			{"crossover", required_argument, 0, 'c'},
+			{"Cr", required_argument, 0, 'C'},
 
-			{"strategy", 			required_argument,	0,	STRATEGY_FLAG},
-			{"parameter",			required_argument,	0, 	PARAMETER_FLAG},
-			{"credit", 				required_argument,	0, 	CREDIT_FLAG},
-			{"reward", 				required_argument,	0, 	REWARD_FLAG},
-			{"quality", 			required_argument,	0, 	QUALITY_FLAG},
-			{"probability", 		required_argument,	0, 	PROBABILITY_FLAG},
-			{"constraint", 			required_argument,	0, 	CONSTRAINT_FLAG},
-			{"id", 					required_argument,	0, 	ID_FLAG},
-			{"alpha", 				required_argument,	0, 	ALPHA_FLAG},
-			{"beta", 				required_argument,	0, 	BETA_FLAG},
-			{"gamma", 				required_argument,	0, 	GAMMA_FLAG},
-			{"popsize-multiplier",	required_argument,	0, 	POPSIZE_MULTIPLIER_FLAG},
-			{"budget-multiplier",	required_argument, 	0,	BUDGET_MULTIPLIER_FLAG},
-			{"independent-runs",	required_argument, 	0,	INDEPENDENT_RUNS_FLAG},
+			{"strategy", required_argument, 0, STRATEGY_FLAG},
+			{"parameter", required_argument, 0, PARAMETER_FLAG},
+			{"credit", required_argument, 0, CREDIT_FLAG},
+			{"reward", required_argument, 0, REWARD_FLAG},
+			{"quality", required_argument, 0, QUALITY_FLAG},
+			{"probability", required_argument, 0, PROBABILITY_FLAG},
+			{"constraint", required_argument, 0, CONSTRAINT_FLAG},
+			{"id", required_argument, 0, ID_FLAG},
+			{"alpha", required_argument, 0, ALPHA_FLAG},
+			{"beta", required_argument, 0, BETA_FLAG},
+			{"gamma", required_argument, 0, GAMMA_FLAG},
+			{"popsize-multiplier", required_argument, 0, POPSIZE_MULTIPLIER_FLAG},
+			{"budget-multiplier", required_argument, 0, BUDGET_MULTIPLIER_FLAG},
+			{"independent-runs", required_argument, 0, INDEPENDENT_RUNS_FLAG},
 
-			{"log-activations",		optional_argument, 	0,	LOG_ACTIVATIONS_FLAG},
-			{"log-parameters",		optional_argument, 	0,	LOG_PARAMETERS_FLAG},
-			{"log-positions",		optional_argument, 	0,	LOG_POSITIONS_FLAG},
-			{"log-diversity",		optional_argument, 	0,	LOG_DIVERSITY_FLAG},
-			{"log-repairs",			optional_argument, 	0,	LOG_REPAIRS_FLAG},
+			{"log-activations", optional_argument, 0, LOG_ACTIVATIONS_FLAG},
+			{"log-parameters", optional_argument, 0, LOG_PARAMETERS_FLAG},
+			{"log-positions", optional_argument, 0, LOG_POSITIONS_FLAG},
+			{"log-diversity", optional_argument, 0, LOG_DIVERSITY_FLAG},
+			{"log-repairs", optional_argument, 0, LOG_REPAIRS_FLAG},
 			{0, 0, 0, 0}
 		};
 
@@ -140,27 +140,27 @@ int main(int argc, char** argv){
 
 #define OPT(X,Y) case X: Y = optarg; break;
 		switch (c){
-			case 'd':						dimensions = optarg; break;
-			case 'f':						functions = optarg; break;
-			case 'i':						INSTANCES = splitString(optarg); break;
-			case 'm':						mutation = splitString(optarg); break;
-			case 'c':						crossover = splitString(optarg); break;
-			case 'F':						params::F = std::stod(optarg); break;
-			case 'C':						params::Cr = std::stod(optarg); break;
-			case STRATEGY_FLAG:				strategy = optarg; break;
-			case PARAMETER_FLAG:			param = optarg; break;
-			case CREDIT_FLAG:				credit = optarg; break;
-			case REWARD_FLAG:				reward = optarg; break;
-			case QUALITY_FLAG:				quality = optarg; break;
-			case PROBABILITY_FLAG:			probability = optarg; break;
-			case CONSTRAINT_FLAG:			constraint = optarg; break;
-			case ID_FLAG:					id = optarg; break;
-			case ALPHA_FLAG:				params::WS_alpha = std::stod(optarg); break;
-			case BETA_FLAG:					params::AP_beta = std::stod(optarg); break;
-			case GAMMA_FLAG:				params::PM_AP_pMin_divider = std::stod(optarg); break;
-			case POPSIZE_MULTIPLIER_FLAG: 	params::popsize_multiplier = std::stod(optarg); break;
-			case BUDGET_MULTIPLIER_FLAG: 	BUDGET_MULTIPLIER = std::stoi(optarg); break;
-			case INDEPENDENT_RUNS_FLAG: 	INDEPENDENT_RUNS = std::stoi(optarg); break;
+			case 'd': dimensions = optarg; break;
+			case 'f': functions = optarg; break;
+			case 'i': INSTANCES = splitString(optarg); break;
+			case 'm': mutation = splitString(optarg); break;
+			case 'c': crossover = splitString(optarg); break;
+			case 'F': params::F = std::stod(optarg); break;
+			case 'C': params::Cr = std::stod(optarg); break;
+			case STRATEGY_FLAG: strategy = optarg; break;
+			case PARAMETER_FLAG: param = optarg; break;
+			case CREDIT_FLAG: credit = optarg; break;
+			case REWARD_FLAG: reward = optarg; break;
+			case QUALITY_FLAG: quality = optarg; break;
+			case PROBABILITY_FLAG: probability = optarg; break;
+			case CONSTRAINT_FLAG: constraint = optarg; break;
+			case ID_FLAG: id = optarg; break;
+			case ALPHA_FLAG: params::WS_alpha = std::stod(optarg); break;
+			case BETA_FLAG: params::AP_beta = std::stod(optarg); break;
+			case GAMMA_FLAG: params::PM_AP_pMin_divider = std::stod(optarg); break;
+			case POPSIZE_MULTIPLIER_FLAG: params::popsize_multiplier = std::stod(optarg); break;
+			case BUDGET_MULTIPLIER_FLAG: BUDGET_MULTIPLIER = std::stoi(optarg); break;
+			case INDEPENDENT_RUNS_FLAG: INDEPENDENT_RUNS = std::stoi(optarg); break;
 			case LOG_ACTIVATIONS_FLAG: 
 				params::log_activations = true; 
 				if (optarg) params::log_activations_interval = std::stoi(optarg);
