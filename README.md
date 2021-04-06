@@ -3,11 +3,11 @@ A framework for Differential Evolution with adaptive selection of operators and 
 
 | Flags | Meaning | Examples | 
 |-------|---------|---------|
-| -d, --dimensions | comma-separated list of dimensionalities of the problems | -d 2,3,5|
-| -f, --functions | comma-separated list or range notation of functions to include | -f 1-5 **or** -f 4,14,21|
-| -i, --instances | comma-separated list or range notation of instances to include | -i 1-5 **or** -i 1,3,5 |
-| -m, --mutation | comma-separated list of mutation options to use | -m BE1,RA1,TB2 |
-| -c, --crossover | comma-separated list of crossover options to use | -c B,E |
+| -d, --dimensions | Comma-separated list of dimensionalities of the problems | -d 2,3,5|
+| -f, --functions | Comma-separated list or range notation of functions to include | -f 1-5 **or** -f 4,14,21|
+| -i, --instances | Comma-separated list or range notation of instances to include | -i 1-5 **or** -i 1,3,5 |
+| -m, --mutation | Comma-separated list of mutation options to use | -m BE1,RA1,TB2 |
+| -c, --crossover | Comma-separated list of crossover options to use | -c B,E |
 | -F | Mutation rate, used when parameter adaptation is disabled | -F 0.9 |
 | -C, --Cr | Crossover rate, used when parameter adaptation is disabled | -C 0.5 |
 | --strategy | Strategy/operator adaptation method | --strategy A | 
