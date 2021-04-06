@@ -1,8 +1,12 @@
 # auto-DE
-A framework for Differential Evolution with adaptive selection of operators and parameters. The accompanying paper, with documentation about all the different options, will be provided soon. The generated algorithm(s) can be benchmarked on BBOB. Many options can be configured using command-line parameters, listed below. To compile, simply run:
+A framework for Differential Evolution with adaptive selection of operators and parameters. The accompanying paper, with documentation about the structure of the framework and all its components, will be provided soon. The generated algorithm(s) can be benchmarked on [BBOB](https://github.com/numbbo/coco). Many options can be configured using command-line parameters, listed below. To compile, simply run:
 
 ```
 make
+```
+Then, to run an experiment:
+```
+./experiment <options>
 ```
 
 ## Parameters
