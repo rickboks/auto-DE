@@ -13,7 +13,7 @@ std::string generateConfig(std::string const templateFile, std::string const nam
 	}
 
 	std::ifstream src(templateFile, std::ios::binary);
-    std::ofstream dst(cfgFile, std::ios::binary);
+	std::ofstream dst(cfgFile, std::ios::binary);
 
 	dst << src.rdbuf() 
 		<< "result_folder = " + name << std::endl 
