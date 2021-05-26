@@ -6,8 +6,8 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int BUDGET_MULTIPLIER = 1e4;
-static int INDEPENDENT_RUNS = 1;
+static int BUDGET_MULTIPLIER = 1e5;
+static int INDEPENDENT_RUNS = 20;
 static std::vector<std::string> INSTANCES = {"1","2","3","4","5"};
 
 #include "default_params.h"

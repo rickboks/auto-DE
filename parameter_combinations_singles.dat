@@ -1,0 +1,12 @@
+-s C -m BE1 -c B -I BE1,B
+-s C -m BE1 -c E -I BE1,E
+-s C -m RA1 -c B -I RA1,B
+-s C -m RA1 -c E -I RA1,E
+-s C -m TP1 -c B -I TP1,B
+-s C -m TP1 -c E -I TP1,E
+-s C -m TB2 -c B -I TB2,B
+-s C -m TB2 -c E -I TB2,E
+-s C -m TR1 -c B -I TR1,B
+-s C -m TR1 -c E -I TR1,E
+-s C -m TO1 -c B -I TO1,B
+-s C -m TO1 -c E -I TO1,E
