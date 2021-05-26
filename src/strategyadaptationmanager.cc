@@ -200,9 +200,14 @@ void RandomStrategyManager::update(std::vector<Solution*>const& trials){
 
 ConstantStrategyManager::ConstantStrategyManager(StrategyAdaptationConfiguration const config, 
 		ConstraintHandler*const ch, std::vector<Solution*>const& population)
-	: StrategyAdaptationManager(config, ch, population){
+	: StrategyAdaptationManager(config, ch, population), 
+	creditManager(CreditManager::create(config.credit)()){
 	assert(config.mutation.size() == 1 && config.crossover.size() == 1);
 	std::fill(previousStrategies.begin(), previousStrategies.end(), 0);
+}
+
+ConstantStrategyManager::~ConstantStrategyManager(){
+	delete creditManager;
 }
 
 void ConstantStrategyManager::next(std::vector<Solution*>const& population, std::map<MutationManager*, 
@@ -223,9 +228,13 @@ void ConstantStrategyManager::next(std::vector<Solution*>const& population, std:
 }
 
 void ConstantStrategyManager::update(std::vector<Solution*>const& trials){
-	ArrayXd const credit = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
+	ArrayXd const fitnessDeltas = ArrayXd::NullaryExpr(popSize, [trials, this](Eigen::Index const i){
 		return previousFitness[i] - trials[i]->getFitness();
-	}).max(0);
+	});
+
+	ArrayXd const currentDistances = getDistances(trials, previousMean);
+	
+	ArrayXd const credit = creditManager->getCredit(fitnessDeltas, previousDistances, currentDistances);
 
 	parameterAdaptationManager->update(credit);
 }

@@ -87,9 +87,12 @@ class RandomStrategyManager : public StrategyAdaptationManager {
 };
 
 class ConstantStrategyManager : public StrategyAdaptationManager {
+	private:
+		CreditManager const* const creditManager;
 	public:
 		ConstantStrategyManager(StrategyAdaptationConfiguration const config, ConstraintHandler* const ch, 
 				std::vector<Solution*>const& population);
+		~ConstantStrategyManager();
 		void next(std::vector<Solution*>const & population, std::map<MutationManager*, std::vector<int>>& mutation, 
 				std::map<CrossoverManager*, std::vector<int>>& crossover, ArrayXd& Fs, ArrayXd& Crs);
 		void update(std::vector<Solution*>const& trials);

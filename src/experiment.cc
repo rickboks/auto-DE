@@ -6,8 +6,8 @@
 #include "params.h"
 
 static coco_problem_t *PROBLEM;
-static int BUDGET_MULTIPLIER = 1e4;
-static int INDEPENDENT_RUNS = 1;
+static int BUDGET_MULTIPLIER = 1e5;
+static int INDEPENDENT_RUNS = 20;
 static std::vector<std::string> INSTANCES = {"1","2","3","4","5"};
 
 #include "default_params.h"
@@ -67,7 +67,7 @@ int main(int argc, char** argv){
 		quality 	= "WS",
 		probability	= "AP",
 		constraint 	= "RS",
-	  	dimensions 	= "2,3,5",
+	  	dimensions 	= "20",
 		functions 	= "1-24",
 		id = "DE",
 		coco_log_level = "info";
