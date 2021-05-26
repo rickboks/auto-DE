@@ -3,7 +3,7 @@ set executable "$HOME/auto-DE/experiment"
 set threads "32"
 set data_folders "extra_data" "exdata"
 
-set base_params (cat irace/tuned_configs.dat | grep "^-C CO")
+set base_params (cat irace/tuned_configs.dat | grep "^--credit CO")
 set hosts (preserve -llist | grep "$USER" | cut -f9- | tr ' ' ',')
 set configs "$executable $base_params "(cat parameter_combinations_singles.dat)
 

@@ -1,7 +1,7 @@
--C CO -A 0.59 -B 0.13 -M 9.52 -r EA -p AP -I CO
--C DR -A 0.05 -B 0.03 -M 9.92 -r EN -p AP -I DR
--C FD -A 0.07 -B 0.33 -M 8.74 -r EN -p AP -I FD
--C FI -A 0.1 -B 0.68 -M 9.65 -r ER -p AP -I FI
--C FS -A 0.03 -B 0.52 -M 8.15 -r EA -p AP -I FS
--C PA -A 0.54 -B 0.3 -M 8.98 -r EA -p AP -I PA
--C SD -A 0.11 -B 0.05 -M 8.38 -r EN -p AP -I SD
+--credit CO --alpha 0.59 --beta 0.13 --gamma 9.52 --reward EA --probability AP --id CO
+--credit DR --alpha 0.05 --beta 0.03 --gamma 9.92 --reward EN --probability AP --id DR
+--credit FD --alpha 0.07 --beta 0.33 --gamma 8.74 --reward EN --probability AP --id FD
+--credit FI --alpha 0.1 --beta 0.68 --gamma 9.65 --reward ER --probability AP --id FI
+--credit FS --alpha 0.03 --beta 0.52 --gamma 8.15 --reward EA --probability AP --id FS
+--credit PA --alpha 0.54 --beta 0.3 --gamma 8.98 --reward EA --probability AP --id PA
+--credit SD --alpha 0.11 --beta 0.05 --gamma 8.38 --reward EN --probability AP --id SD
