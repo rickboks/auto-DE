@@ -6,7 +6,7 @@ INC_DIR = include
 LDFLAGS += -lm -lstdc++fs 
 
 SRC:= $(shell find src/ ! -name "experiment.cc" ! -name "tuning.cc" -name "*.cc")
-OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o)
+OBJ = $(SRC:$(SRC_DIR)/%.cc=$(OBJ_DIR)/%.o) $(OBJ_DIR)/coco.o 
 INC = -I $(INC_DIR)
 
 CC = g++
@@ -21,14 +21,14 @@ tune: $(OBJ_DIR) $(TUNE_EXE)
 clean:
 	rm -rf $(OBJ_DIR)/*.o $(EXE) configurations
 
-$(EXE): $(OBJ) $(OBJ_DIR)/coco.o $(OBJ_DIR)/experiment.o
-	${CC} ${CFLAGS} -o $(EXE) $(OBJ) $(OBJ_DIR)/experiment.o $(OBJ_DIR)/coco.o ${LDFLAGS}
+$(EXE): $(OBJ) $(OBJ_DIR)/experiment.o
+	${CC} ${CFLAGS} -o $(EXE) $^ ${LDFLAGS}
 
-$(TUNE_EXE): $(OBJ) $(OBJ_DIR)/coco.o $(OBJ_DIR)/tuning.o
-	${CC} ${CFLAGS} -o $(TUNE_EXE) $(OBJ) $(OBJ_DIR)/tuning.o $(OBJ_DIR)/coco.o ${LDFLAGS}
+$(TUNE_EXE): $(OBJ) $(OBJ_DIR)/tuning.o
+	${CC} ${CFLAGS} -o $(TUNE_EXE) $^ ${LDFLAGS}
 
 $(OBJ_DIR)/coco.o: $(SRC_DIR)/coco.c
-	$(CC_COCO) -c $(CFLAGS_COCO) -o $(OBJ_DIR)/coco.o $(SRC_DIR)/coco.c -lm
+	$(CC_COCO) -c $(CFLAGS_COCO) -o $@ $< -lm
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/*
 	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
@@ -36,6 +36,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc $(INC_DIR)/*
 $(OBJ_DIR):
 	mkdir $(OBJ_DIR)
 
-.PHONY: all
-.PHONY: clean
-.PHONY: tune
+.PHONY: all clean tune
