@@ -22,10 +22,10 @@ clean:
 	rm -rf $(OBJ_DIR)/*.o $(EXE) configurations
 
 $(EXE): $(OBJ) $(OBJ_DIR)/experiment.o
-	${CC} ${CFLAGS} -o $(EXE) $^ ${LDFLAGS}
+	$(CC) $(CFLAGS) -o $(EXE) $^ $(LDFLAGS)
 
 $(TUNE_EXE): $(OBJ) $(OBJ_DIR)/tuning.o
-	${CC} ${CFLAGS} -o $(TUNE_EXE) $^ ${LDFLAGS}
+	$(CC) $(CFLAGS) -o $(TUNE_EXE) $^ $(LDFLAGS)
 
 $(OBJ_DIR)/coco.o: $(SRC_DIR)/coco.c
 	$(CC_COCO) -c $(CFLAGS_COCO) -o $@ $< -lm
